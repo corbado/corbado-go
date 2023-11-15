@@ -1,0 +1,10 @@
+.idea/
+.task/
+.DS_Store
+_view_backup/
+data/db/*
+data/go-modules/*
+main/
+
+# Generated files
+gen/
