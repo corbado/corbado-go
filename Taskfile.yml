@@ -1,0 +1,11 @@
+version: '3'
+
+tasks:
+  lint:
+    desc: Runs Golang linters
+    cmds:
+      - GOFLAGS="-buildvcs=false" golangci-lint run --timeout=5m
+    sources:
+      - ./**/*.go
+      - ./.golangci.yml
+    method: checksum
