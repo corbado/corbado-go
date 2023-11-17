@@ -1,4 +1,4 @@
-package corbado
+package config
 
 import (
 	"fmt"
@@ -21,6 +21,9 @@ func TestNewConfig_Success(t *testing.T) {
 	assert.Equal(t, configDefaultBackendAPI, cfg.BackendAPI)
 	assert.Equal(t, configDefaultShortSessionCookieName, cfg.ShortSessionCookieName)
 	assert.Equal(t, configDefaultCacheMaxAge, cfg.CacheMaxAge)
+	assert.Equal(t, configDefaultJWKSRefreshInterval, cfg.JWKSRefreshInterval)
+	assert.Equal(t, configDefaultJWKSRefreshRateLimit, cfg.JWKSRefreshRateLimit)
+	assert.Equal(t, configDefaultJWKSRefreshTimeout, cfg.JWKSRefreshTimeout)
 }
 
 func TestNewConfig_Failure(t *testing.T) {

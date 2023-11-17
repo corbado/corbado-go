@@ -4,18 +4,18 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/corbado/corbado-go"
 	"github.com/corbado/corbado-go/pkg/sdk/assert"
+	"github.com/corbado/corbado-go/pkg/sdk/config"
 	"github.com/corbado/corbado-go/pkg/sdk/entity/common"
 	"github.com/corbado/corbado-go/pkg/sdk/util"
 	"github.com/pkg/errors"
 )
 
 type SDKHelpers struct {
-	config *corbado.Config
+	config *config.Config
 }
 
-func NewSDKHelpers(config *corbado.Config) (*SDKHelpers, error) {
+func NewSDKHelpers(config *config.Config) (*SDKHelpers, error) {
 	if err := assert.NotNil(config); err != nil {
 		return nil, err
 	}
