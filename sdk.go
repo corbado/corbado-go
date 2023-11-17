@@ -10,6 +10,7 @@ import (
 	"github.com/corbado/corbado-go/pkg/sdk/project"
 	"github.com/corbado/corbado-go/pkg/sdk/servererror"
 	"github.com/corbado/corbado-go/pkg/sdk/session"
+	"github.com/corbado/corbado-go/pkg/sdk/template"
 	"github.com/corbado/corbado-go/pkg/sdk/user"
 	"github.com/corbado/corbado-go/pkg/sdk/validation"
 	"github.com/pkg/errors"
@@ -22,6 +23,7 @@ type SDK interface {
 	EmailLinks() emaillink.EmailLink
 	Projects() project.Project
 	Sessions() session.Session
+	Templates() template.Template
 	Users() user.User
 	Validations() validation.Validation
 }
@@ -34,6 +36,7 @@ type Impl struct {
 	emailLinks emaillink.EmailLink
 	projects   project.Project
 	sessions   session.Session
+	templates  template.Template
 	validation validation.Validation
 	users      user.User
 }
@@ -72,6 +75,11 @@ func NewSDK(config *Config) (*Impl, error) {
 		return nil, err
 	}
 
+	templates, err := template.New(client)
+	if err != nil {
+		return nil, err
+	}
+
 	users, err := user.New(client)
 	if err != nil {
 		return nil, err
@@ -93,6 +101,7 @@ func NewSDK(config *Config) (*Impl, error) {
 		emailLinks: emailLinks,
 		projects:   projects,
 		sessions:   sessions,
+		templates:  templates,
 		users:      users,
 		validation: validation,
 		HTTPClient: httpClient,
@@ -122,6 +131,11 @@ func (i *Impl) Projects() project.Project {
 // Sessions returns sessions client
 func (i *Impl) Sessions() session.Session {
 	return i.sessions
+}
+
+// Templates returns templates client
+func (i *Impl) Templates() template.Template {
+	return i.templates
 }
 
 // Users returns users client
