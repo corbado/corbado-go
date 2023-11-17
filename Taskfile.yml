@@ -9,3 +9,8 @@ tasks:
       - ./**/*.go
       - ./.golangci.yml
     method: checksum
+
+  unittest:
+    desc: Runs Golang unit tests
+    cmds:
+      - go test -v ./...

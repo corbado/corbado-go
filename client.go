@@ -9,12 +9,13 @@ import (
 
 	"github.com/corbado/corbado-go/pkg/logger"
 	"github.com/corbado/corbado-go/pkg/sdk/assert"
+	"github.com/corbado/corbado-go/pkg/sdk/config"
 	"github.com/corbado/corbado-go/pkg/sdk/entity/api"
 	"github.com/deepmap/oapi-codegen/pkg/securityprovider"
 	"github.com/pkg/errors"
 )
 
-func newClient(config *Config) (*api.ClientWithResponses, error) {
+func newClient(config *config.Config) (*api.ClientWithResponses, error) {
 	if err := assert.NotNil(config); err != nil {
 		return nil, err
 	}

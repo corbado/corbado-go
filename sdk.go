@@ -5,6 +5,7 @@ import (
 
 	"github.com/corbado/corbado-go/pkg/sdk/assert"
 	"github.com/corbado/corbado-go/pkg/sdk/authtoken"
+	"github.com/corbado/corbado-go/pkg/sdk/config"
 	"github.com/corbado/corbado-go/pkg/sdk/emaillink"
 	"github.com/corbado/corbado-go/pkg/sdk/entity/api"
 	"github.com/corbado/corbado-go/pkg/sdk/project"
@@ -44,7 +45,7 @@ type Impl struct {
 var _ SDK = &Impl{}
 
 // NewSDK returns new SDK
-func NewSDK(config *Config) (*Impl, error) {
+func NewSDK(config *config.Config) (*Impl, error) {
 	if err := assert.NotNil(config); err != nil {
 		return nil, err
 	}
@@ -70,7 +71,7 @@ func NewSDK(config *Config) (*Impl, error) {
 		return nil, err
 	}
 
-	sessions, err := session.New(client, config.ProjectID, config.FrontendAPI, config.ShortSessionCookieName, config.JWTIssuer)
+	sessions, err := session.New(client, config)
 	if err != nil {
 		return nil, err
 	}
@@ -160,4 +161,16 @@ func AsServerError(err error) *servererror.ServerError {
 	}
 
 	return serverError
+}
+
+// NewConfig returns new config with sane defaults
+// this is a convenience function for config.NewConfig to avoid import cycles
+func NewConfig(projectID string, apiSecret string) (*config.Config, error) {
+	return config.NewConfig(projectID, apiSecret)
+}
+
+// MustNewConfig returns new config and panics if projectID or apiSecret are not specified/empty
+// this is a convenience function for config.NewConfig to avoid import cycles
+func MustNewConfig(projectID string, apiSecret string) *config.Config {
+	return config.MustNewConfig(projectID, apiSecret)
 }

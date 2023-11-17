@@ -1,4 +1,4 @@
-package corbado
+package config
 
 import (
 	"fmt"
@@ -18,6 +18,10 @@ type Config struct {
 	CacheMaxAge            time.Duration
 	JWTIssuer              string
 
+	JWKSRefreshInterval  time.Duration
+	JWKSRefreshRateLimit time.Duration
+	JWKSRefreshTimeout   time.Duration
+
 	HTTPClient         *http.Client
 	ExtraClientOptions []api.ClientOption
 }
@@ -27,6 +31,10 @@ const (
 	configDefaultFrontendAPI            string = "https://%s.frontendapi.corbado.io"
 	configDefaultShortSessionCookieName string = "cbo_short_session"
 	configDefaultCacheMaxAge                   = time.Minute
+
+	configDefaultJWKSRefreshInterval  = time.Hour
+	configDefaultJWKSRefreshRateLimit = 5 * time.Minute
+	configDefaultJWKSRefreshTimeout   = 10 * time.Second
 )
 
 // NewConfig returns new config with sane defaults
@@ -46,6 +54,9 @@ func NewConfig(projectID string, apiSecret string) (*Config, error) {
 		FrontendAPI:            fmt.Sprintf(configDefaultFrontendAPI, projectID),
 		ShortSessionCookieName: configDefaultShortSessionCookieName,
 		CacheMaxAge:            configDefaultCacheMaxAge,
+		JWKSRefreshInterval:    configDefaultJWKSRefreshInterval,
+		JWKSRefreshRateLimit:   configDefaultJWKSRefreshRateLimit,
+		JWKSRefreshTimeout:     configDefaultJWKSRefreshTimeout,
 	}, nil
 }
 
