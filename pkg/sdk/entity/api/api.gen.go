@@ -1207,6 +1207,7 @@ type ProjectConfig struct {
 	UserFullNameRequired       bool                 `json:"userFullNameRequired"`
 	WebComponentDebug          bool                 `json:"webComponentDebug"`
 	WebauthnRPID               string               `json:"webauthnRPID"`
+	WebhookActions             []string             `json:"webhookActions"`
 	WebhookPassword            *string              `json:"webhookPassword,omitempty"`
 	WebhookTestInvalidUsername *string              `json:"webhookTestInvalidUsername,omitempty"`
 	WebhookTestValidPassword   *string              `json:"webhookTestValidPassword,omitempty"`
@@ -1297,6 +1298,7 @@ type ProjectConfigSaveReq struct {
 	UserFullNameRequired       *bool                   `json:"userFullNameRequired,omitempty"`
 	WebComponentDebug          *bool                   `json:"webComponentDebug,omitempty"`
 	WebauthnRPID               *string                 `json:"webauthnRPID,omitempty"`
+	WebhookActions             *[]string               `json:"webhookActions,omitempty"`
 	WebhookPassword            *string                 `json:"webhookPassword,omitempty"`
 	WebhookTestInvalidUsername *string                 `json:"webhookTestInvalidUsername,omitempty"`
 	WebhookTestValidPassword   *string                 `json:"webhookTestValidPassword,omitempty"`
