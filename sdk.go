@@ -7,6 +7,7 @@ import (
 	"github.com/corbado/corbado-go/pkg/sdk/authtoken"
 	"github.com/corbado/corbado-go/pkg/sdk/emaillink"
 	"github.com/corbado/corbado-go/pkg/sdk/entity/api"
+	"github.com/corbado/corbado-go/pkg/sdk/project"
 	"github.com/corbado/corbado-go/pkg/sdk/servererror"
 	"github.com/corbado/corbado-go/pkg/sdk/session"
 	"github.com/corbado/corbado-go/pkg/sdk/user"
@@ -19,6 +20,7 @@ const Version = "v0.1.0"
 type SDK interface {
 	AuthTokens() authtoken.AuthToken
 	EmailLinks() emaillink.EmailLink
+	Projects() project.Project
 	Sessions() session.Session
 	Users() user.User
 	Validations() validation.Validation
@@ -30,6 +32,7 @@ type Impl struct {
 
 	authTokens authtoken.AuthToken
 	emailLinks emaillink.EmailLink
+	projects   project.Project
 	sessions   session.Session
 	validation validation.Validation
 	users      user.User
@@ -49,7 +52,17 @@ func NewSDK(config *Config) (*Impl, error) {
 	}
 
 	// instantiate all APIs eagerly because it's cheap to do so and we don't have to deal with thread safety this way
+	authTokens, err := authtoken.New(client)
+	if err != nil {
+		return nil, err
+	}
+
 	emailLinks, err := emaillink.New(client)
+	if err != nil {
+		return nil, err
+	}
+
+	projects, err := project.New(client)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +89,9 @@ func NewSDK(config *Config) (*Impl, error) {
 
 	return &Impl{
 		client:     client,
+		authTokens: authTokens,
 		emailLinks: emailLinks,
+		projects:   projects,
 		sessions:   sessions,
 		users:      users,
 		validation: validation,
@@ -97,6 +112,11 @@ func (i *Impl) EmailLinks() emaillink.EmailLink {
 // Validations returns validation client
 func (i *Impl) Validations() validation.Validation {
 	return i.validation
+}
+
+// Projects returns projects client
+func (i *Impl) Projects() project.Project {
+	return i.projects
 }
 
 // Sessions returns sessions client
