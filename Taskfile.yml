@@ -18,4 +18,4 @@ tasks:
   integration-test:
     desc: Runs Golang integration tests
     cmds:
-      - go test -tags=integration ./tests/integration
+      - go test -tags=integration ./tests/integration/...

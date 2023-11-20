@@ -1,6 +1,6 @@
 //go:build integration
 
-package integration_test
+package integration
 
 import (
 	"crypto/rand"
@@ -15,10 +15,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func initClient(t *testing.T) corbado.SDK {
-	config, err := corbado.NewConfig(getEnv(t, "CORBADO_PROJECT_ID"), getEnv(t, "CORBADO_API_SECRET"))
+func SDK(t *testing.T) corbado.SDK {
+	config, err := corbado.NewConfig(GetProjectID(t), GetAPISecret(t))
 	require.NoError(t, err)
-	config.BackendAPI = getEnv(t, "CORBADO_BACKEND_API")
+	config.BackendAPI = GetBackendAPI(t)
 
 	sdk, err := corbado.NewSDK(config)
 	require.NoError(t, err)
@@ -35,11 +35,30 @@ func getEnv(t *testing.T, name string) string {
 	return env
 }
 
-func createRandomTestEmail(t *testing.T) string {
+func GetProjectID(t *testing.T) string {
+	return getEnv(t, "CORBADO_PROJECT_ID")
+}
+
+func GetAPISecret(t *testing.T) string {
+	return getEnv(t, "CORBADO_API_SECRET")
+}
+
+func GetBackendAPI(t *testing.T) string {
+	return getEnv(t, "CORBADO_BACKEND_API")
+}
+
+func CreateRandomTestEmail(t *testing.T) string {
 	value, err := generateString(10)
 	require.NoError(t, err)
 
 	return getFunctionName() + value + "@test.de"
+}
+
+func CreateRandomTestName(t *testing.T) string {
+	value, err := generateString(10)
+	require.NoError(t, err)
+
+	return value
 }
 
 func generateString(length int) (string, error) {
