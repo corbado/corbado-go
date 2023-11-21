@@ -10,7 +10,12 @@ tasks:
       - ./.golangci.yml
     method: checksum
 
-  unittest:
+  unit-test:
     desc: Runs Golang unit tests
     cmds:
       - go test -v ./...
+
+  integration-test:
+    desc: Runs Golang integration tests
+    cmds:
+      - go test -tags=integration ./tests/integration/...
