@@ -114,7 +114,7 @@ func NewLoggingClientOption() api.ClientOption {
 }
 
 func newSDKVersionHeaderEditorFn(_ context.Context, req *http.Request) error {
-	req.Header.Set("X-Corbado-SDK-Version", fmt.Sprintf("Go %s", Version))
+	req.Header.Set("X-Corbado-SDK-Version", fmt.Sprintf("Go SDK %s", Version))
 
 	return nil
 }
