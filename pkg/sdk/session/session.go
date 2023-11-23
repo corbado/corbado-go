@@ -37,15 +37,9 @@ func New(client *api.ClientWithResponses, config *config.Config) (*Impl, error) 
 		return nil, err
 	}
 
-	jwks, err := newJWKS(config)
-	if err != nil {
-		return nil, err
-	}
-
 	return &Impl{
 		client: client,
 		config: config,
-		jwks:   jwks,
 	}, nil
 }
 
@@ -90,6 +84,15 @@ func newJWKS(config *config.Config) (*keyfunc.JWKS, error) {
 func (i *Impl) ValidateShortSessionValue(shortSession string) (*entity.User, error) {
 	if shortSession == "" {
 		return nil, nil
+	}
+
+	if i.jwks == nil {
+		jwks, err := newJWKS(i.config)
+		if err != nil {
+			return nil, err
+		}
+
+		i.jwks = jwks
 	}
 
 	token, err := jwt.ParseWithClaims(shortSession, &entity.Claims{}, i.jwks.Keyfunc)
