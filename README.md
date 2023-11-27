@@ -5,6 +5,7 @@ Go SDK for Corbado Backend API
 [![Go Reference](https://pkg.go.dev/badge/github.com/corbado/corbado-go.svg)](https://pkg.go.dev/github.com/corbado/corbado-go)
 [![Test Status](https://github.com/corbado/corbado-go/workflows/tests/badge.svg)](https://github.com/corbado/corbado-go/actions?query=workflow%3Atests)
 [![documentation](https://img.shields.io/badge/documentation-Corbado_Backend_API_Reference-blue.svg)](https://api.corbado.com/docs/api/)
+[![Go Report Card](https://goreportcard.com/badge/github.com/corbado/corbado-go)](https://goreportcard.com/report/github.com/corbado/corbado-go)
 
 ## Requirements
 
