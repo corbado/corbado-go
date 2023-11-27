@@ -17,7 +17,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-const Version = "v0.4.0"
+const Version = "v0.4.2"
 
 type SDK interface {
 	AuthTokens() authtoken.AuthToken
