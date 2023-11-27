@@ -54,6 +54,13 @@ func CreateRandomTestEmail(t *testing.T) string {
 	return getFunctionName() + value + "@test.de"
 }
 
+func CreateRandomTestPhoneNumber(t *testing.T) string {
+	value, err := generateNumber(13)
+	require.NoError(t, err)
+
+	return "+49" + value
+}
+
 func CreateRandomTestName(t *testing.T) string {
 	value, err := generateString(10)
 	require.NoError(t, err)
@@ -64,6 +71,22 @@ func CreateRandomTestName(t *testing.T) string {
 func generateString(length int) (string, error) {
 	// Removed I, 1, 0 and O because of risk of confusion
 	const letters = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijklmnopwrstuvwxyz23456789"
+
+	res := make([]byte, length)
+	for i := 0; i < length; i++ {
+		num, err := rand.Int(rand.Reader, big.NewInt(int64(len(letters))))
+		if err != nil {
+			return "", errors.WithStack(err)
+		}
+
+		res[i] = letters[num.Int64()]
+	}
+
+	return string(res), nil
+}
+
+func generateNumber(length int) (string, error) {
+	const letters = "0123456789"
 
 	res := make([]byte, length)
 	for i := 0; i < length; i++ {

@@ -6,14 +6,29 @@ import (
 	"context"
 	"testing"
 
+	"github.com/corbado/corbado-go"
 	"github.com/corbado/corbado-go/pkg/sdk/entity/api"
+	"github.com/corbado/corbado-go/pkg/sdk/servererror"
 	"github.com/corbado/corbado-go/pkg/sdk/util"
 	"github.com/corbado/corbado-go/tests/integration"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-func TestUserList(t *testing.T) {
+func TestUserList_ValidationError(t *testing.T) {
+	usersRsp, err := integration.SDK(t).Users().List(context.TODO(), &api.UserListParams{
+		Sort: util.Ptr("foo:bar"),
+	})
+
+	require.Nil(t, usersRsp)
+	require.NotNil(t, err)
+	serverErr := corbado.AsServerError(err)
+	require.NotNil(t, serverErr)
+
+	assert.Equal(t, "sort: Invalid order direction 'bar'", servererror.GetValidationMessage(serverErr.Validation))
+}
+
+func TestUserList_Success(t *testing.T) {
 	// send email link first so that we have at least one user
 	_, err := integration.SDK(t).EmailLinks().Send(context.TODO(), api.EmailLinkSendReq{
 		Email:             integration.CreateRandomTestEmail(t),
