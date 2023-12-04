@@ -7,6 +7,12 @@ const (
 	ProjectIDScopes = "projectID.Scopes"
 )
 
+// Defines values for AppType.
+const (
+	Native AppType = "native"
+	Web    AppType = "web"
+)
+
 // Defines values for AuthMethod.
 const (
 	AuthMethodEmail       AuthMethod = "email"
@@ -69,6 +75,9 @@ type AllTypes struct {
 	// P20 ID of the email OTP
 	P20 *EmailCodeID `json:"p20,omitempty"`
 
+	// P21 Application type
+	P21 *AppType `json:"p21,omitempty"`
+
 	// P3 generic ID
 	P3 *ID `json:"p3,omitempty"`
 
@@ -90,6 +99,9 @@ type AllTypes struct {
 	// P9 Timestamp of when the entity was last updated in yyyy-MM-dd'T'HH:mm:ss format
 	P9 *Updated `json:"p9,omitempty"`
 }
+
+// AppType Application type
+type AppType string
 
 // AuthMethod Authentication methods
 type AuthMethod string
@@ -126,6 +138,7 @@ type EmailLinkID = string
 
 // ErrorRsp defines model for errorRsp.
 type ErrorRsp struct {
+	Data  *map[string]interface{} `json:"data,omitempty"`
 	Error struct {
 		// Details Details of error
 		Details *string `json:"details,omitempty"`

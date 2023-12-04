@@ -22,7 +22,7 @@ import (
 type Session interface {
 	ValidateShortSessionValue(shortSession string) (*entity.User, error)
 	GetCurrentUser(shortSession string) (*entity.User, error)
-	ConfigGet(ctx context.Context, editors ...api.RequestEditorFn) (*api.SessionConfigGetRsp, error)
+	ConfigGet(ctx context.Context, params *api.SessionConfigGetParams, editors ...api.RequestEditorFn) (*api.SessionConfigGetRsp, error)
 	LongSessionRevoke(ctx context.Context, sessionID string, req api.LongSessionRevokeReq, editors ...api.RequestEditorFn) error
 	LongSessionGet(ctx context.Context, sessionID string, editors ...api.RequestEditorFn) (*api.LongSessionGetRsp, error)
 }
@@ -132,8 +132,8 @@ func (i *Impl) GetCurrentUser(shortSession string) (*entity.User, error) {
 }
 
 // ConfigGet retrieves session config by projectID inferred from authentication
-func (i *Impl) ConfigGet(ctx context.Context, editors ...api.RequestEditorFn) (*api.SessionConfigGetRsp, error) {
-	res, err := i.client.SessionConfigGetWithResponse(ctx, editors...)
+func (i *Impl) ConfigGet(ctx context.Context, params *api.SessionConfigGetParams, editors ...api.RequestEditorFn) (*api.SessionConfigGetRsp, error) {
+	res, err := i.client.SessionConfigGetWithResponse(ctx, params, editors...)
 	if err != nil {
 		return nil, err
 	}

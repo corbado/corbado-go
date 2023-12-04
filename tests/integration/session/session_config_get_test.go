@@ -21,7 +21,7 @@ func TestSessionConfigGet_AuthError(t *testing.T) {
 	sdk, err := corbado.NewSDK(config)
 	require.NoError(t, err)
 
-	rsp, err := sdk.Sessions().ConfigGet(context.TODO())
+	rsp, err := sdk.Sessions().ConfigGet(context.TODO(), nil)
 
 	require.Nil(t, rsp)
 	serverErr := corbado.AsServerError(err)
@@ -32,7 +32,7 @@ func TestSessionConfigGet_AuthError(t *testing.T) {
 }
 
 func TestSessionConfigGet_Success(t *testing.T) {
-	rsp, err := integration.SDK(t).Sessions().ConfigGet(context.TODO())
+	rsp, err := integration.SDK(t).Sessions().ConfigGet(context.TODO(), nil)
 
 	require.NoError(t, err)
 	assert.Equal(t, integration.GetProjectID(t), rsp.Data.ProjectID)

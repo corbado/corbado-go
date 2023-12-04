@@ -90,12 +90,6 @@ const (
 	PhoneNumberValidationResultValidationCodeValid              PhoneNumberValidationResultValidationCode = "valid"
 )
 
-// Defines values for ProjectConfigAppType.
-const (
-	ProjectConfigAppTypeNative ProjectConfigAppType = "native"
-	ProjectConfigAppTypeWeb    ProjectConfigAppType = "web"
-)
-
 // Defines values for ProjectConfigBackendLanguage.
 const (
 	ProjectConfigBackendLanguageGo         ProjectConfigBackendLanguage = "go"
@@ -116,6 +110,11 @@ const (
 	ProjectConfigFrontendFrameworkVuejs     ProjectConfigFrontendFramework = "vuejs"
 )
 
+// Defines values for ProjectConfigLoginFlow.
+const (
+	ProjectConfigLoginFlowPasskeyWithEmailOTPFallback ProjectConfigLoginFlow = "PasskeyWithEmailOTPFallback"
+)
+
 // Defines values for ProjectConfigPasskeyAppendInterval.
 const (
 	ProjectConfigPasskeyAppendIntervalN0d ProjectConfigPasskeyAppendInterval = "0d"
@@ -127,16 +126,16 @@ const (
 	ProjectConfigPasskeyAppendIntervalN3w ProjectConfigPasskeyAppendInterval = "3w"
 )
 
+// Defines values for ProjectConfigSignupFlow.
+const (
+	ProjectConfigSignupFlowEmailOTPSignup              ProjectConfigSignupFlow = "EmailOTPSignup"
+	ProjectConfigSignupFlowPasskeyWithEmailOTPFallback ProjectConfigSignupFlow = "PasskeyWithEmailOTPFallback"
+)
+
 // Defines values for ProjectConfigStatus.
 const (
 	ProjectConfigStatusActive      ProjectConfigStatus = "active"
 	ProjectConfigStatusConfiguring ProjectConfigStatus = "configuring"
-)
-
-// Defines values for ProjectConfigSaveReqAppType.
-const (
-	ProjectConfigSaveReqAppTypeNative ProjectConfigSaveReqAppType = "native"
-	ProjectConfigSaveReqAppTypeWeb    ProjectConfigSaveReqAppType = "web"
 )
 
 // Defines values for ProjectConfigSaveReqBackendLanguage.
@@ -165,6 +164,11 @@ const (
 	ProjectConfigSaveReqFrontendFrameworkVuejs     ProjectConfigSaveReqFrontendFramework = "vuejs"
 )
 
+// Defines values for ProjectConfigSaveReqLoginFlow.
+const (
+	ProjectConfigSaveReqLoginFlowPasskeyWithEmailOTPFallback ProjectConfigSaveReqLoginFlow = "PasskeyWithEmailOTPFallback"
+)
+
 // Defines values for ProjectConfigSaveReqPasskeyAppendInterval.
 const (
 	ProjectConfigSaveReqPasskeyAppendIntervalN0d ProjectConfigSaveReqPasskeyAppendInterval = "0d"
@@ -174,6 +178,12 @@ const (
 	ProjectConfigSaveReqPasskeyAppendIntervalN3d ProjectConfigSaveReqPasskeyAppendInterval = "3d"
 	ProjectConfigSaveReqPasskeyAppendIntervalN3m ProjectConfigSaveReqPasskeyAppendInterval = "3m"
 	ProjectConfigSaveReqPasskeyAppendIntervalN3w ProjectConfigSaveReqPasskeyAppendInterval = "3w"
+)
+
+// Defines values for ProjectConfigSaveReqSignupFlow.
+const (
+	ProjectConfigSaveReqSignupFlowEmailOTPSignup              ProjectConfigSaveReqSignupFlow = "EmailOTPSignup"
+	ProjectConfigSaveReqSignupFlowPasskeyWithEmailOTPFallback ProjectConfigSaveReqSignupFlow = "PasskeyWithEmailOTPFallback"
 )
 
 // Defines values for ProjectConfigWebhookTestReqAction.
@@ -235,6 +245,12 @@ const (
 	Unknown TrackingOSDetailedStatsOsPlatform = "unknown"
 )
 
+// Defines values for UserUpdateReqStatus.
+const (
+	UserUpdateReqStatusActive   UserUpdateReqStatus = "active"
+	UserUpdateReqStatusDisabled UserUpdateReqStatus = "disabled"
+)
+
 // Defines values for WebAuthnAssociateStartRspStatus.
 const (
 	WebAuthnAssociateStartRspStatusDuplicate WebAuthnAssociateStartRspStatus = "duplicate"
@@ -292,8 +308,8 @@ const (
 
 // Defines values for WebAuthnRegisterStartReqCredentialStatus.
 const (
-	WebAuthnRegisterStartReqCredentialStatusActive  WebAuthnRegisterStartReqCredentialStatus = "active"
-	WebAuthnRegisterStartReqCredentialStatusPending WebAuthnRegisterStartReqCredentialStatus = "pending"
+	Active  WebAuthnRegisterStartReqCredentialStatus = "active"
+	Pending WebAuthnRegisterStartReqCredentialStatus = "pending"
 )
 
 // Defines values for WebAuthnRegisterStartRspStatus.
@@ -1153,9 +1169,11 @@ type PhoneNumberValidationResultValidationCode string
 
 // ProjectConfig defines model for projectConfig.
 type ProjectConfig struct {
-	AllowIPStickiness      *bool                         `json:"allowIPStickiness,omitempty"`
-	AllowUserRegistration  *bool                         `json:"allowUserRegistration,omitempty"`
-	AppType                *ProjectConfigAppType         `json:"appType,omitempty"`
+	AllowIPStickiness     *bool `json:"allowIPStickiness,omitempty"`
+	AllowUserRegistration *bool `json:"allowUserRegistration,omitempty"`
+
+	// AppType Application type
+	AppType                *externalRef0.AppType         `json:"appType,omitempty"`
 	ApplicationUrl         string                        `json:"applicationUrl"`
 	AuthSuccessRedirectUrl *string                       `json:"authSuccessRedirectUrl,omitempty"`
 	AutoDetectLanguage     bool                          `json:"autoDetectLanguage"`
@@ -1185,21 +1203,25 @@ type ProjectConfig struct {
 	IntegrationModeHosted              bool                                `json:"integrationModeHosted"`
 	IntegrationModeWebComponent        bool                                `json:"integrationModeWebComponent"`
 	LegacyAuthMethodsUrl               *string                             `json:"legacyAuthMethodsUrl,omitempty"`
+	LoginFlow                          ProjectConfigLoginFlow              `json:"loginFlow"`
+	LoginFlowOptions                   map[string]interface{}              `json:"loginFlowOptions"`
 	PasskeyAppendInterval              *ProjectConfigPasskeyAppendInterval `json:"passkeyAppendInterval,omitempty"`
 	PasswordResetUrl                   *string                             `json:"passwordResetUrl,omitempty"`
 	PasswordVerifyUrl                  *string                             `json:"passwordVerifyUrl,omitempty"`
 	ProductKey                         *string                             `json:"productKey,omitempty"`
 
 	// ProjectID ID of project
-	ProjectID     externalRef0.ProjectID `json:"projectID"`
-	SmsFrom       string                 `json:"smsFrom"`
-	SmtpHost      *string                `json:"smtpHost,omitempty"`
-	SmtpPassword  *string                `json:"smtpPassword,omitempty"`
-	SmtpPort      *int                   `json:"smtpPort,omitempty"`
-	SmtpUseCustom *bool                  `json:"smtpUseCustom,omitempty"`
-	SmtpUsername  *string                `json:"smtpUsername,omitempty"`
-	Status        ProjectConfigStatus    `json:"status"`
-	SupportEmail  *string                `json:"supportEmail,omitempty"`
+	ProjectID         externalRef0.ProjectID  `json:"projectID"`
+	SignupFlow        ProjectConfigSignupFlow `json:"signupFlow"`
+	SignupFlowOptions map[string]interface{}  `json:"signupFlowOptions"`
+	SmsFrom           string                  `json:"smsFrom"`
+	SmtpHost          *string                 `json:"smtpHost,omitempty"`
+	SmtpPassword      *string                 `json:"smtpPassword,omitempty"`
+	SmtpPort          *int                    `json:"smtpPort,omitempty"`
+	SmtpUseCustom     *bool                   `json:"smtpUseCustom,omitempty"`
+	SmtpUsername      *string                 `json:"smtpUsername,omitempty"`
+	Status            ProjectConfigStatus     `json:"status"`
+	SupportEmail      *string                 `json:"supportEmail,omitempty"`
 
 	// Updated Timestamp of when the entity was last updated in yyyy-MM-dd'T'HH:mm:ss format
 	Updated                    externalRef0.Updated `json:"updated"`
@@ -1216,9 +1238,6 @@ type ProjectConfig struct {
 	WebhookUsername            *string              `json:"webhookUsername,omitempty"`
 }
 
-// ProjectConfigAppType defines model for ProjectConfig.AppType.
-type ProjectConfigAppType string
-
 // ProjectConfigBackendLanguage defines model for ProjectConfig.BackendLanguage.
 type ProjectConfigBackendLanguage string
 
@@ -1228,8 +1247,14 @@ type ProjectConfigEnvironment string
 // ProjectConfigFrontendFramework defines model for ProjectConfig.FrontendFramework.
 type ProjectConfigFrontendFramework string
 
+// ProjectConfigLoginFlow defines model for ProjectConfig.LoginFlow.
+type ProjectConfigLoginFlow string
+
 // ProjectConfigPasskeyAppendInterval defines model for ProjectConfig.PasskeyAppendInterval.
 type ProjectConfigPasskeyAppendInterval string
+
+// ProjectConfigSignupFlow defines model for ProjectConfig.SignupFlow.
+type ProjectConfigSignupFlow string
 
 // ProjectConfigStatus defines model for ProjectConfig.Status.
 type ProjectConfigStatus string
@@ -1251,9 +1276,11 @@ type ProjectConfigGetRsp struct {
 
 // ProjectConfigSaveReq defines model for projectConfigSaveReq.
 type ProjectConfigSaveReq struct {
-	AllowIPStickiness           *bool                                `json:"allowIPStickiness,omitempty"`
-	AllowUserRegistration       *bool                                `json:"allowUserRegistration,omitempty"`
-	AppType                     *ProjectConfigSaveReqAppType         `json:"appType,omitempty"`
+	AllowIPStickiness     *bool `json:"allowIPStickiness,omitempty"`
+	AllowUserRegistration *bool `json:"allowUserRegistration,omitempty"`
+
+	// AppType Application type
+	AppType                     *externalRef0.AppType                `json:"appType,omitempty"`
 	ApplicationUrl              *string                              `json:"applicationUrl,omitempty"`
 	AuthSuccessRedirectUrl      *string                              `json:"authSuccessRedirectUrl,omitempty"`
 	AutoDetectLanguage          *bool                                `json:"autoDetectLanguage,omitempty"`
@@ -1280,36 +1307,37 @@ type ProjectConfigSaveReq struct {
 	IntegrationModeHosted              *bool                                                   `json:"integrationModeHosted,omitempty"`
 	IntegrationModeWebComponent        *bool                                                   `json:"integrationModeWebComponent,omitempty"`
 	LegacyAuthMethodsUrl               *string                                                 `json:"legacyAuthMethodsUrl,omitempty"`
+	LoginFlow                          *ProjectConfigSaveReqLoginFlow                          `json:"loginFlow,omitempty"`
+	LoginFlowOptions                   *map[string]interface{}                                 `json:"loginFlowOptions,omitempty"`
 	PasskeyAppendInterval              *ProjectConfigSaveReqPasskeyAppendInterval              `json:"passkeyAppendInterval,omitempty"`
 	PasswordResetUrl                   *string                                                 `json:"passwordResetUrl,omitempty"`
 	PasswordVerifyUrl                  *string                                                 `json:"passwordVerifyUrl,omitempty"`
 	ProductKey                         *string                                                 `json:"productKey,omitempty"`
 
 	// RequestID Unique ID of request, you can provide your own while making the request, if not the ID will be randomly generated on server side
-	RequestID                  *externalRef0.RequestID `json:"requestID,omitempty"`
-	SmsFrom                    *string                 `json:"smsFrom,omitempty"`
-	SmtpHost                   *string                 `json:"smtpHost,omitempty"`
-	SmtpPassword               *string                 `json:"smtpPassword,omitempty"`
-	SmtpPort                   *int                    `json:"smtpPort,omitempty"`
-	SmtpUseCustom              *bool                   `json:"smtpUseCustom,omitempty"`
-	SmtpUsername               *string                 `json:"smtpUsername,omitempty"`
-	SupportEmail               *string                 `json:"supportEmail,omitempty"`
-	UseCli                     *bool                   `json:"useCli,omitempty"`
-	UserFullNameRequired       *bool                   `json:"userFullNameRequired,omitempty"`
-	WebComponentDebug          *bool                   `json:"webComponentDebug,omitempty"`
-	WebauthnRPID               *string                 `json:"webauthnRPID,omitempty"`
-	WebhookActions             *[]string               `json:"webhookActions,omitempty"`
-	WebhookPassword            *string                 `json:"webhookPassword,omitempty"`
-	WebhookTestInvalidUsername *string                 `json:"webhookTestInvalidUsername,omitempty"`
-	WebhookTestValidPassword   *string                 `json:"webhookTestValidPassword,omitempty"`
-	WebhookTestValidUsername   *string                 `json:"webhookTestValidUsername,omitempty"`
-	WebhookURL                 *string                 `json:"webhookURL,omitempty"`
-	WebhookUsername            *string                 `json:"webhookUsername,omitempty"`
-	Wizard                     *bool                   `json:"wizard,omitempty"`
+	RequestID                  *externalRef0.RequestID         `json:"requestID,omitempty"`
+	SignupFlow                 *ProjectConfigSaveReqSignupFlow `json:"signupFlow,omitempty"`
+	SignupFlowOptions          *map[string]interface{}         `json:"signupFlowOptions,omitempty"`
+	SmsFrom                    *string                         `json:"smsFrom,omitempty"`
+	SmtpHost                   *string                         `json:"smtpHost,omitempty"`
+	SmtpPassword               *string                         `json:"smtpPassword,omitempty"`
+	SmtpPort                   *int                            `json:"smtpPort,omitempty"`
+	SmtpUseCustom              *bool                           `json:"smtpUseCustom,omitempty"`
+	SmtpUsername               *string                         `json:"smtpUsername,omitempty"`
+	SupportEmail               *string                         `json:"supportEmail,omitempty"`
+	UseCli                     *bool                           `json:"useCli,omitempty"`
+	UserFullNameRequired       *bool                           `json:"userFullNameRequired,omitempty"`
+	WebComponentDebug          *bool                           `json:"webComponentDebug,omitempty"`
+	WebauthnRPID               *string                         `json:"webauthnRPID,omitempty"`
+	WebhookActions             *[]string                       `json:"webhookActions,omitempty"`
+	WebhookPassword            *string                         `json:"webhookPassword,omitempty"`
+	WebhookTestInvalidUsername *string                         `json:"webhookTestInvalidUsername,omitempty"`
+	WebhookTestValidPassword   *string                         `json:"webhookTestValidPassword,omitempty"`
+	WebhookTestValidUsername   *string                         `json:"webhookTestValidUsername,omitempty"`
+	WebhookURL                 *string                         `json:"webhookURL,omitempty"`
+	WebhookUsername            *string                         `json:"webhookUsername,omitempty"`
+	Wizard                     *bool                           `json:"wizard,omitempty"`
 }
-
-// ProjectConfigSaveReqAppType defines model for ProjectConfigSaveReq.AppType.
-type ProjectConfigSaveReqAppType string
 
 // ProjectConfigSaveReqBackendLanguage defines model for ProjectConfigSaveReq.BackendLanguage.
 type ProjectConfigSaveReqBackendLanguage string
@@ -1323,8 +1351,14 @@ type ProjectConfigSaveReqExternalApplicationProtocolVersion string
 // ProjectConfigSaveReqFrontendFramework defines model for ProjectConfigSaveReq.FrontendFramework.
 type ProjectConfigSaveReqFrontendFramework string
 
+// ProjectConfigSaveReqLoginFlow defines model for ProjectConfigSaveReq.LoginFlow.
+type ProjectConfigSaveReqLoginFlow string
+
 // ProjectConfigSaveReqPasskeyAppendInterval defines model for ProjectConfigSaveReq.PasskeyAppendInterval.
 type ProjectConfigSaveReqPasskeyAppendInterval string
+
+// ProjectConfigSaveReqSignupFlow defines model for ProjectConfigSaveReq.SignupFlow.
+type ProjectConfigSaveReqSignupFlow string
 
 // ProjectConfigWebhookTestReq defines model for projectConfigWebhookTestReq.
 type ProjectConfigWebhookTestReq struct {
@@ -1457,6 +1491,9 @@ type RequestLog struct {
 	// Request Request JSON data
 	Request string `json:"request"`
 
+	// RequestHeaders Request headers
+	RequestHeaders map[string]string `json:"requestHeaders"`
+
 	// RequestID Unique ID of request, you can provide your own while making the request, if not the ID will be randomly generated on server side
 	RequestID externalRef0.RequestID `json:"requestID"`
 
@@ -1517,6 +1554,9 @@ type RequestLogsListRsp struct {
 type SessionConfig struct {
 	Active *bool `json:"active,omitempty"`
 
+	// AppType Application type
+	AppType externalRef0.AppType `json:"appType"`
+
 	// Created Timestamp of when the entity was created in yyyy-MM-dd'T'HH:mm:ss format
 	Created             externalRef0.Created            `json:"created"`
 	JwtAudience         string                          `json:"jwtAudience"`
@@ -1562,7 +1602,10 @@ type SessionConfigGetRsp struct {
 
 // SessionConfigUpdateReq defines model for sessionConfigUpdateReq.
 type SessionConfigUpdateReq struct {
-	Active              *bool                                     `json:"active,omitempty"`
+	Active *bool `json:"active,omitempty"`
+
+	// AppType Application type
+	AppType             externalRef0.AppType                      `json:"appType"`
 	ClientInfo          *externalRef0.ClientInfo                  `json:"clientInfo,omitempty"`
 	LongInactivityUnit  *SessionConfigUpdateReqLongInactivityUnit `json:"longInactivityUnit,omitempty"`
 	LongInactivityValue *int                                      `json:"longInactivityValue,omitempty"`
@@ -2000,6 +2043,7 @@ type User struct {
 	Created  externalRef0.Created `json:"created"`
 	FullName string               `json:"fullName"`
 	Name     string               `json:"name"`
+	Status   string               `json:"status"`
 
 	// Updated Timestamp of when the entity was last updated in yyyy-MM-dd'T'HH:mm:ss format
 	Updated externalRef0.Updated `json:"updated"`
@@ -2331,7 +2375,11 @@ type UserUpdateReq struct {
 
 	// RequestID Unique ID of request, you can provide your own while making the request, if not the ID will be randomly generated on server side
 	RequestID *externalRef0.RequestID `json:"requestID,omitempty"`
+	Status    *UserUpdateReqStatus    `json:"status,omitempty"`
 }
+
+// UserUpdateReqStatus defines model for UserUpdateReq.Status.
+type UserUpdateReqStatus string
 
 // UserUpdateRsp defines model for userUpdateRsp.
 type UserUpdateRsp struct {
@@ -3028,6 +3076,9 @@ type WebhookLogsListRsp struct {
 	Runtime float32 `json:"runtime"`
 }
 
+// AppType Application type
+type AppType = externalRef0.AppType
+
 // CustomLoginIdentifierID defines model for customLoginIdentifierID.
 type CustomLoginIdentifierID = string
 
@@ -3125,6 +3176,12 @@ type RequestLogGetParams struct {
 
 	// UserAgent Client's user agent
 	UserAgent *UserAgent `form:"userAgent,omitempty" json:"userAgent,omitempty"`
+}
+
+// SessionConfigGetParams defines parameters for SessionConfigGet.
+type SessionConfigGetParams struct {
+	// AppType Application type
+	AppType *AppType `form:"appType,omitempty" json:"appType,omitempty"`
 }
 
 // TrackingAllRequestParams defines parameters for TrackingAllRequest.
@@ -3880,7 +3937,7 @@ type ClientInterface interface {
 	RequestLogGet(ctx context.Context, requestID RequestID, params *RequestLogGetParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// SessionConfigGet request
-	SessionConfigGet(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+	SessionConfigGet(ctx context.Context, params *SessionConfigGetParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// SessionConfigUpdateWithBody request with any body
 	SessionConfigUpdateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -4785,8 +4842,8 @@ func (c *Client) RequestLogGet(ctx context.Context, requestID RequestID, params 
 	return c.Client.Do(req)
 }
 
-func (c *Client) SessionConfigGet(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewSessionConfigGetRequest(c.Server)
+func (c *Client) SessionConfigGet(ctx context.Context, params *SessionConfigGetParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewSessionConfigGetRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -7358,7 +7415,7 @@ func NewRequestLogGetRequest(server string, requestID RequestID, params *Request
 }
 
 // NewSessionConfigGetRequest generates requests for SessionConfigGet
-func NewSessionConfigGetRequest(server string) (*http.Request, error) {
+func NewSessionConfigGetRequest(server string, params *SessionConfigGetParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -7374,6 +7431,28 @@ func NewSessionConfigGetRequest(server string) (*http.Request, error) {
 	queryURL, err := serverURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.AppType != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "appType", runtime.ParamLocationQuery, *params.AppType); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
 	}
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
@@ -11319,7 +11398,7 @@ type ClientWithResponsesInterface interface {
 	RequestLogGetWithResponse(ctx context.Context, requestID RequestID, params *RequestLogGetParams, reqEditors ...RequestEditorFn) (*RequestLogGetResponse, error)
 
 	// SessionConfigGetWithResponse request
-	SessionConfigGetWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*SessionConfigGetResponse, error)
+	SessionConfigGetWithResponse(ctx context.Context, params *SessionConfigGetParams, reqEditors ...RequestEditorFn) (*SessionConfigGetResponse, error)
 
 	// SessionConfigUpdateWithBodyWithResponse request with any body
 	SessionConfigUpdateWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*SessionConfigUpdateResponse, error)
@@ -14020,8 +14099,8 @@ func (c *ClientWithResponses) RequestLogGetWithResponse(ctx context.Context, req
 }
 
 // SessionConfigGetWithResponse request returning *SessionConfigGetResponse
-func (c *ClientWithResponses) SessionConfigGetWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*SessionConfigGetResponse, error) {
-	rsp, err := c.SessionConfigGet(ctx, reqEditors...)
+func (c *ClientWithResponses) SessionConfigGetWithResponse(ctx context.Context, params *SessionConfigGetParams, reqEditors ...RequestEditorFn) (*SessionConfigGetResponse, error) {
+	rsp, err := c.SessionConfigGet(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
