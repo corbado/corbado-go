@@ -14,7 +14,7 @@ The SDK supports Go version 1.18 and above.
 ## Usage
 
 ```
-$ go get github.com/corbado/corbado-go@v0.4.2
+$ go get github.com/corbado/corbado-go@v0.5.0
 ```
 
 Import SDK in your Go files:

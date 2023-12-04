@@ -12,6 +12,9 @@ type Project interface {
 	CreateSecret(ctx context.Context, req api.ProjectSecretCreateReq, editors ...api.RequestEditorFn) (*api.ProjectSecretCreateRsp, error)
 	ConfigGet(ctx context.Context, editors ...api.RequestEditorFn) (*api.ProjectConfigGetRsp, error)
 	ConfigUpdate(ctx context.Context, req api.ProjectConfigSaveReq, editors ...api.RequestEditorFn) error
+	AuthMethodsList(ctx context.Context, req api.AuthMethodsListReq, editors ...api.RequestEditorFn) (*api.AuthMethodsListRsp, error)
+	AndroidAppConfigGet(ctx context.Context, editors ...api.RequestEditorFn) (*api.AndroidAppConfigListRsp, error)
+	IOSAppConfigGet(ctx context.Context, editors ...api.RequestEditorFn) (*api.IOSAppConfigListRsp, error)
 }
 
 type Impl struct {
@@ -71,4 +74,46 @@ func (i *Impl) ConfigUpdate(ctx context.Context, req api.ProjectConfigSaveReq, e
 	}
 
 	return nil
+}
+
+// AuthMethodsList retrieves possible authentication methods for provided username
+func (i *Impl) AuthMethodsList(ctx context.Context, req api.AuthMethodsListReq, editors ...api.RequestEditorFn) (*api.AuthMethodsListRsp, error) {
+	res, err := i.client.AuthMethodsListWithResponse(ctx, req, editors...)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.JSONDefault != nil {
+		return nil, servererror.New(res.JSONDefault)
+	}
+
+	return res.JSON200, nil
+}
+
+// AndroidAppConfigGet retrieves Android App Configurations for a project
+func (i *Impl) AndroidAppConfigGet(ctx context.Context, editors ...api.RequestEditorFn) (*api.AndroidAppConfigListRsp, error) {
+	res, err := i.client.AndroidAppConfigGetWithResponse(ctx, editors...)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.JSONDefault != nil {
+		return nil, servererror.New(res.JSONDefault)
+	}
+
+	return res.JSON200, nil
+}
+
+// IOSAppConfigGet retrieves iOS App Configurations for a project
+func (i *Impl) IOSAppConfigGet(ctx context.Context, editors ...api.RequestEditorFn) (*api.IOSAppConfigListRsp, error) {
+	res, err := i.client.IOSAppConfigGetWithResponse(ctx, editors...)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.JSONDefault != nil {
+		return nil, servererror.New(res.JSONDefault)
+	}
+
+	return res.JSON200, nil
 }

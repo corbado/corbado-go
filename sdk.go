@@ -6,8 +6,10 @@ import (
 	"github.com/corbado/corbado-go/pkg/sdk/assert"
 	"github.com/corbado/corbado-go/pkg/sdk/authtoken"
 	"github.com/corbado/corbado-go/pkg/sdk/config"
+	"github.com/corbado/corbado-go/pkg/sdk/emailcode"
 	"github.com/corbado/corbado-go/pkg/sdk/emaillink"
 	"github.com/corbado/corbado-go/pkg/sdk/entity/api"
+	"github.com/corbado/corbado-go/pkg/sdk/passkey"
 	"github.com/corbado/corbado-go/pkg/sdk/project"
 	"github.com/corbado/corbado-go/pkg/sdk/servererror"
 	"github.com/corbado/corbado-go/pkg/sdk/session"
@@ -17,11 +19,13 @@ import (
 	"github.com/pkg/errors"
 )
 
-const Version = "v0.4.2"
+const Version = "v0.5.0"
 
 type SDK interface {
 	AuthTokens() authtoken.AuthToken
+	EmailCodes() emailcode.EmailCode
 	EmailLinks() emaillink.EmailLink
+	Passkeys() passkey.Passkey
 	Projects() project.Project
 	Sessions() session.Session
 	Templates() template.Template
@@ -34,7 +38,9 @@ type Impl struct {
 	HTTPClient *http.Client
 
 	authTokens authtoken.AuthToken
+	emailCodes emailcode.EmailCode
 	emailLinks emaillink.EmailLink
+	passkeys   passkey.Passkey
 	projects   project.Project
 	sessions   session.Session
 	templates  template.Template
@@ -61,7 +67,17 @@ func NewSDK(config *config.Config) (*Impl, error) {
 		return nil, err
 	}
 
+	emailCodes, err := emailcode.New(client)
+	if err != nil {
+		return nil, err
+	}
+
 	emailLinks, err := emaillink.New(client)
+	if err != nil {
+		return nil, err
+	}
+
+	passkeys, err := passkey.New(client)
 	if err != nil {
 		return nil, err
 	}
@@ -99,7 +115,9 @@ func NewSDK(config *config.Config) (*Impl, error) {
 	return &Impl{
 		client:     client,
 		authTokens: authTokens,
+		emailCodes: emailCodes,
 		emailLinks: emailLinks,
+		passkeys:   passkeys,
 		projects:   projects,
 		sessions:   sessions,
 		templates:  templates,
@@ -114,6 +132,11 @@ func (i *Impl) AuthTokens() authtoken.AuthToken {
 	return i.authTokens
 }
 
+// EmailCodes returns email codes client
+func (i *Impl) EmailCodes() emailcode.EmailCode {
+	return i.emailCodes
+}
+
 // EmailLinks returns email links client
 func (i *Impl) EmailLinks() emaillink.EmailLink {
 	return i.emailLinks
@@ -122,6 +145,11 @@ func (i *Impl) EmailLinks() emaillink.EmailLink {
 // Validations returns validation client
 func (i *Impl) Validations() validation.Validation {
 	return i.validation
+}
+
+// Passkeys returns passkeys client
+func (i *Impl) Passkeys() passkey.Passkey {
+	return i.passkeys
 }
 
 // Projects returns projects client

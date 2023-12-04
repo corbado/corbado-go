@@ -14,6 +14,7 @@ import (
 	"github.com/corbado/corbado-go/pkg/sdk/config"
 	"github.com/corbado/corbado-go/pkg/sdk/entity"
 	"github.com/corbado/corbado-go/pkg/sdk/entity/api"
+	"github.com/corbado/corbado-go/pkg/sdk/servererror"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/pkg/errors"
 )
@@ -21,6 +22,9 @@ import (
 type Session interface {
 	ValidateShortSessionValue(shortSession string) (*entity.User, error)
 	GetCurrentUser(shortSession string) (*entity.User, error)
+	ConfigGet(ctx context.Context, editors ...api.RequestEditorFn) (*api.SessionConfigGetRsp, error)
+	LongSessionRevoke(ctx context.Context, sessionID string, req api.LongSessionRevokeReq, editors ...api.RequestEditorFn) error
+	LongSessionGet(ctx context.Context, sessionID string, editors ...api.RequestEditorFn) (*api.LongSessionGetRsp, error)
 }
 
 type Impl struct {
@@ -125,4 +129,46 @@ func (i *Impl) GetCurrentUser(shortSession string) (*entity.User, error) {
 	}
 
 	return entity.NewGuestUser(), nil
+}
+
+// ConfigGet retrieves session config by projectID inferred from authentication
+func (i *Impl) ConfigGet(ctx context.Context, editors ...api.RequestEditorFn) (*api.SessionConfigGetRsp, error) {
+	res, err := i.client.SessionConfigGetWithResponse(ctx, editors...)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.JSONDefault != nil {
+		return nil, servererror.New(res.JSONDefault)
+	}
+
+	return res.JSON200, nil
+}
+
+// LongSessionRevoke revokes an active long session by sessionID
+func (i *Impl) LongSessionRevoke(ctx context.Context, sessionID string, req api.LongSessionRevokeReq, editors ...api.RequestEditorFn) error {
+	res, err := i.client.LongSessionRevokeWithResponse(ctx, sessionID, req, editors...)
+	if err != nil {
+		return err
+	}
+
+	if res.JSONDefault != nil {
+		return servererror.New(res.JSONDefault)
+	}
+
+	return nil
+}
+
+// LongSessionGet gets a long session by sessionID
+func (i *Impl) LongSessionGet(ctx context.Context, sessionID string, editors ...api.RequestEditorFn) (*api.LongSessionGetRsp, error) {
+	res, err := i.client.LongSessionGetWithResponse(ctx, sessionID, editors...)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.JSONDefault != nil {
+		return nil, servererror.New(res.JSONDefault)
+	}
+
+	return res.JSON200, nil
 }
