@@ -82,7 +82,7 @@ func (s *SDKHelpers) GetClientInfo(req *http.Request) (*common.ClientInfo, error
 		return nil, err
 	}
 
-	return util.ClientInfo(ip, req.UserAgent()), nil
+	return util.ClientInfo(req.UserAgent(), ip), nil
 }
 
 func (s *SDKHelpers) GetRemoteAddress(req *http.Request) (string, error) {
