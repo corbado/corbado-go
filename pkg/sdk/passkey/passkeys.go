@@ -17,6 +17,7 @@ type Passkey interface {
 	AssociateStart(ctx context.Context, req api.WebAuthnAssociateStartReq, editors ...api.RequestEditorFn) (*api.WebAuthnAssociateStartRsp, error)
 	CredentialList(ctx context.Context, params *api.WebAuthnCredentialListParams, editors ...api.RequestEditorFn) (*api.WebAuthnCredentialListRsp, error)
 	CredentialUpdate(ctx context.Context, credentialID string, req api.WebAuthnCredentialReq, editors ...api.RequestEditorFn) (*api.WebAuthnCredentialRsp, error)
+	CredentialExists(ctx context.Context, req api.WebAuthnCredentialExistsReq, editors ...api.RequestEditorFn) (*api.WebAuthnCredentialExistsRsp, error)
 	CredentialDelete(ctx context.Context, userID string, credentialID string, req api.EmptyReq, editors ...api.RequestEditorFn) error
 }
 
