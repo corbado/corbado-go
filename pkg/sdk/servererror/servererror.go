@@ -17,6 +17,7 @@ type ServerError struct {
 	Links      []string `json:"links"`
 	Type       string   `json:"type"`
 	Validation *ValidationErrors
+	Data       *map[string]any
 
 	HTTPStatusCode int32              `json:"httpStatusCode"`
 	Message        string             `json:"message"`
@@ -35,6 +36,7 @@ func New(cause *common.ErrorRsp) *ServerError {
 		Links:      cause.Error.Links,
 		Type:       cause.Error.Type,
 		Validation: cause.Error.Validation,
+		Data:       cause.Data,
 
 		HTTPStatusCode: cause.HttpStatusCode,
 		Message:        cause.Message,
