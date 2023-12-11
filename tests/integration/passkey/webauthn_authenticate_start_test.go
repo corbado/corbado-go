@@ -18,7 +18,6 @@ import (
 func TestWebAuthnAuthenticateStart_ValidationError(t *testing.T) {
 	rsp, err := integration.SDK(t).Passkeys().AuthenticateStart(context.TODO(), api.WebAuthnAuthenticateStartReq{
 		Username:   "",
-		Origin:     "https://some.site.com",
 		ClientInfo: *util.ClientInfo("foobar", "127.0.0.1"),
 	})
 	require.Nil(t, rsp)

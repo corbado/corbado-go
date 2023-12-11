@@ -92,9 +92,10 @@ const (
 
 // Defines values for ProjectConfigBackendLanguage.
 const (
-	ProjectConfigBackendLanguageGo         ProjectConfigBackendLanguage = "go"
-	ProjectConfigBackendLanguageJavascript ProjectConfigBackendLanguage = "javascript"
-	ProjectConfigBackendLanguagePhp        ProjectConfigBackendLanguage = "php"
+	ProjectConfigBackendLanguageGo           ProjectConfigBackendLanguage = "go"
+	ProjectConfigBackendLanguageJavascript   ProjectConfigBackendLanguage = "javascript"
+	ProjectConfigBackendLanguageNotSpecified ProjectConfigBackendLanguage = "not_specified"
+	ProjectConfigBackendLanguagePhp          ProjectConfigBackendLanguage = "php"
 )
 
 // Defines values for ProjectConfigEnvironment.
@@ -105,9 +106,10 @@ const (
 
 // Defines values for ProjectConfigFrontendFramework.
 const (
-	ProjectConfigFrontendFrameworkReact     ProjectConfigFrontendFramework = "react"
-	ProjectConfigFrontendFrameworkVanillajs ProjectConfigFrontendFramework = "vanillajs"
-	ProjectConfigFrontendFrameworkVuejs     ProjectConfigFrontendFramework = "vuejs"
+	ProjectConfigFrontendFrameworkNotSpecified ProjectConfigFrontendFramework = "not_specified"
+	ProjectConfigFrontendFrameworkReact        ProjectConfigFrontendFramework = "react"
+	ProjectConfigFrontendFrameworkVanillajs    ProjectConfigFrontendFramework = "vanillajs"
+	ProjectConfigFrontendFrameworkVuejs        ProjectConfigFrontendFramework = "vuejs"
 )
 
 // Defines values for ProjectConfigLoginFlow.
@@ -117,13 +119,14 @@ const (
 
 // Defines values for ProjectConfigPasskeyAppendInterval.
 const (
-	ProjectConfigPasskeyAppendIntervalN0d ProjectConfigPasskeyAppendInterval = "0d"
-	ProjectConfigPasskeyAppendIntervalN1d ProjectConfigPasskeyAppendInterval = "1d"
-	ProjectConfigPasskeyAppendIntervalN1m ProjectConfigPasskeyAppendInterval = "1m"
-	ProjectConfigPasskeyAppendIntervalN1w ProjectConfigPasskeyAppendInterval = "1w"
-	ProjectConfigPasskeyAppendIntervalN3d ProjectConfigPasskeyAppendInterval = "3d"
-	ProjectConfigPasskeyAppendIntervalN3m ProjectConfigPasskeyAppendInterval = "3m"
-	ProjectConfigPasskeyAppendIntervalN3w ProjectConfigPasskeyAppendInterval = "3w"
+	ProjectConfigPasskeyAppendIntervalN0d          ProjectConfigPasskeyAppendInterval = "0d"
+	ProjectConfigPasskeyAppendIntervalN1d          ProjectConfigPasskeyAppendInterval = "1d"
+	ProjectConfigPasskeyAppendIntervalN1m          ProjectConfigPasskeyAppendInterval = "1m"
+	ProjectConfigPasskeyAppendIntervalN1w          ProjectConfigPasskeyAppendInterval = "1w"
+	ProjectConfigPasskeyAppendIntervalN3d          ProjectConfigPasskeyAppendInterval = "3d"
+	ProjectConfigPasskeyAppendIntervalN3m          ProjectConfigPasskeyAppendInterval = "3m"
+	ProjectConfigPasskeyAppendIntervalN3w          ProjectConfigPasskeyAppendInterval = "3w"
+	ProjectConfigPasskeyAppendIntervalNotSpecified ProjectConfigPasskeyAppendInterval = "not_specified"
 )
 
 // Defines values for ProjectConfigSignupFlow.
@@ -140,9 +143,9 @@ const (
 
 // Defines values for ProjectConfigSaveReqBackendLanguage.
 const (
-	ProjectConfigSaveReqBackendLanguageGo         ProjectConfigSaveReqBackendLanguage = "go"
-	ProjectConfigSaveReqBackendLanguageJavascript ProjectConfigSaveReqBackendLanguage = "javascript"
-	ProjectConfigSaveReqBackendLanguagePhp        ProjectConfigSaveReqBackendLanguage = "php"
+	Go         ProjectConfigSaveReqBackendLanguage = "go"
+	Javascript ProjectConfigSaveReqBackendLanguage = "javascript"
+	Php        ProjectConfigSaveReqBackendLanguage = "php"
 )
 
 // Defines values for ProjectConfigSaveReqEnvironment.
@@ -159,9 +162,9 @@ const (
 
 // Defines values for ProjectConfigSaveReqFrontendFramework.
 const (
-	ProjectConfigSaveReqFrontendFrameworkReact     ProjectConfigSaveReqFrontendFramework = "react"
-	ProjectConfigSaveReqFrontendFrameworkVanillajs ProjectConfigSaveReqFrontendFramework = "vanillajs"
-	ProjectConfigSaveReqFrontendFrameworkVuejs     ProjectConfigSaveReqFrontendFramework = "vuejs"
+	React     ProjectConfigSaveReqFrontendFramework = "react"
+	Vanillajs ProjectConfigSaveReqFrontendFramework = "vanillajs"
+	Vuejs     ProjectConfigSaveReqFrontendFramework = "vuejs"
 )
 
 // Defines values for ProjectConfigSaveReqLoginFlow.
@@ -1114,33 +1117,6 @@ type LongSessionRevokeReq struct {
 	RequestID *externalRef0.RequestID `json:"requestID,omitempty"`
 }
 
-// Origin External application address including protocol and port when not 80 or 443
-type Origin = string
-
-// OriginAllowedReq defines model for originAllowedReq.
-type OriginAllowedReq struct {
-	ClientInfo *externalRef0.ClientInfo `json:"clientInfo,omitempty"`
-	Origin     string                   `json:"origin"`
-
-	// RequestID Unique ID of request, you can provide your own while making the request, if not the ID will be randomly generated on server side
-	RequestID *externalRef0.RequestID `json:"requestID,omitempty"`
-}
-
-// OriginAllowedRsp defines model for originAllowedRsp.
-type OriginAllowedRsp struct {
-	Allowed bool `json:"allowed"`
-
-	// HttpStatusCode HTTP status code of operation
-	HttpStatusCode int32  `json:"httpStatusCode"`
-	Message        string `json:"message"`
-
-	// RequestData Data about the request itself, can be used for debugging
-	RequestData externalRef0.RequestData `json:"requestData"`
-
-	// Runtime Runtime in seconds for this request
-	Runtime float32 `json:"runtime"`
-}
-
 // PhoneNumber defines model for phoneNumber.
 type PhoneNumber struct {
 	// ID ID of the phone number
@@ -1169,59 +1145,59 @@ type PhoneNumberValidationResultValidationCode string
 
 // ProjectConfig defines model for projectConfig.
 type ProjectConfig struct {
-	AllowIPStickiness     *bool `json:"allowIPStickiness,omitempty"`
-	AllowUserRegistration *bool `json:"allowUserRegistration,omitempty"`
+	AllowIPStickiness     bool `json:"allowIPStickiness"`
+	AllowUserRegistration bool `json:"allowUserRegistration"`
 
 	// AppType Application type
-	AppType                *externalRef0.AppType         `json:"appType,omitempty"`
-	ApplicationUrl         string                        `json:"applicationUrl"`
-	AuthSuccessRedirectUrl *string                       `json:"authSuccessRedirectUrl,omitempty"`
-	AutoDetectLanguage     bool                          `json:"autoDetectLanguage"`
-	BackendAPIUrl          string                        `json:"backendAPIUrl"`
-	BackendLanguage        *ProjectConfigBackendLanguage `json:"backendLanguage,omitempty"`
-	CliSecret              *string                       `json:"cliSecret,omitempty"`
+	AppType                externalRef0.AppType         `json:"appType"`
+	ApplicationUrl         string                       `json:"applicationUrl"`
+	AuthSuccessRedirectUrl string                       `json:"authSuccessRedirectUrl"`
+	AutoDetectLanguage     bool                         `json:"autoDetectLanguage"`
+	BackendAPIUrl          string                       `json:"backendAPIUrl"`
+	BackendLanguage        ProjectConfigBackendLanguage `json:"backendLanguage"`
+	CliSecret              string                       `json:"cliSecret"`
 
 	// Created Timestamp of when the entity was created in yyyy-MM-dd'T'HH:mm:ss format
-	Created                            externalRef0.Created                `json:"created"`
-	Domain                             *string                             `json:"domain,omitempty"`
-	DoubleOptIn                        bool                                `json:"doubleOptIn"`
-	EmailFrom                          string                              `json:"emailFrom"`
-	Environment                        *ProjectConfigEnvironment           `json:"environment,omitempty"`
-	ExternalApplicationPassword        *string                             `json:"externalApplicationPassword,omitempty"`
-	ExternalApplicationProtocolVersion *string                             `json:"externalApplicationProtocolVersion,omitempty"`
-	ExternalApplicationUsername        *string                             `json:"externalApplicationUsername,omitempty"`
-	ExternalName                       string                              `json:"externalName"`
-	FallbackLanguage                   string                              `json:"fallbackLanguage"`
-	FrontendAPIUrl                     string                              `json:"frontendAPIUrl"`
-	FrontendFramework                  *ProjectConfigFrontendFramework     `json:"frontendFramework,omitempty"`
-	HasExistingUsers                   bool                                `json:"hasExistingUsers"`
-	HasGeneratedSession                bool                                `json:"hasGeneratedSession"`
-	HasStartedUsingPasskeys            bool                                `json:"hasStartedUsingPasskeys"`
-	HasStartedUsingSessions            bool                                `json:"hasStartedUsingSessions"`
-	HasVerifiedSession                 bool                                `json:"hasVerifiedSession"`
-	IntegrationModeAPI                 bool                                `json:"integrationModeAPI"`
-	IntegrationModeHosted              bool                                `json:"integrationModeHosted"`
-	IntegrationModeWebComponent        bool                                `json:"integrationModeWebComponent"`
-	LegacyAuthMethodsUrl               *string                             `json:"legacyAuthMethodsUrl,omitempty"`
-	LoginFlow                          ProjectConfigLoginFlow              `json:"loginFlow"`
-	LoginFlowOptions                   map[string]interface{}              `json:"loginFlowOptions"`
-	PasskeyAppendInterval              *ProjectConfigPasskeyAppendInterval `json:"passkeyAppendInterval,omitempty"`
-	PasswordResetUrl                   *string                             `json:"passwordResetUrl,omitempty"`
-	PasswordVerifyUrl                  *string                             `json:"passwordVerifyUrl,omitempty"`
-	ProductKey                         *string                             `json:"productKey,omitempty"`
+	Created                            externalRef0.Created               `json:"created"`
+	Domain                             string                             `json:"domain"`
+	DoubleOptIn                        bool                               `json:"doubleOptIn"`
+	EmailFrom                          string                             `json:"emailFrom"`
+	Environment                        ProjectConfigEnvironment           `json:"environment"`
+	ExternalApplicationPassword        string                             `json:"externalApplicationPassword"`
+	ExternalApplicationProtocolVersion string                             `json:"externalApplicationProtocolVersion"`
+	ExternalApplicationUsername        string                             `json:"externalApplicationUsername"`
+	ExternalName                       string                             `json:"externalName"`
+	FallbackLanguage                   string                             `json:"fallbackLanguage"`
+	FrontendAPIUrl                     string                             `json:"frontendAPIUrl"`
+	FrontendFramework                  ProjectConfigFrontendFramework     `json:"frontendFramework"`
+	HasExistingUsers                   bool                               `json:"hasExistingUsers"`
+	HasGeneratedSession                bool                               `json:"hasGeneratedSession"`
+	HasStartedUsingPasskeys            bool                               `json:"hasStartedUsingPasskeys"`
+	HasStartedUsingSessions            bool                               `json:"hasStartedUsingSessions"`
+	HasVerifiedSession                 bool                               `json:"hasVerifiedSession"`
+	IntegrationModeAPI                 bool                               `json:"integrationModeAPI"`
+	IntegrationModeHosted              bool                               `json:"integrationModeHosted"`
+	IntegrationModeWebComponent        bool                               `json:"integrationModeWebComponent"`
+	LegacyAuthMethodsUrl               string                             `json:"legacyAuthMethodsUrl"`
+	LoginFlow                          ProjectConfigLoginFlow             `json:"loginFlow"`
+	LoginFlowOptions                   map[string]interface{}             `json:"loginFlowOptions"`
+	PasskeyAppendInterval              ProjectConfigPasskeyAppendInterval `json:"passkeyAppendInterval"`
+	PasswordResetUrl                   string                             `json:"passwordResetUrl"`
+	PasswordVerifyUrl                  string                             `json:"passwordVerifyUrl"`
+	ProductKey                         string                             `json:"productKey"`
 
 	// ProjectID ID of project
 	ProjectID         externalRef0.ProjectID  `json:"projectID"`
 	SignupFlow        ProjectConfigSignupFlow `json:"signupFlow"`
 	SignupFlowOptions map[string]interface{}  `json:"signupFlowOptions"`
 	SmsFrom           string                  `json:"smsFrom"`
-	SmtpHost          *string                 `json:"smtpHost,omitempty"`
-	SmtpPassword      *string                 `json:"smtpPassword,omitempty"`
-	SmtpPort          *int                    `json:"smtpPort,omitempty"`
-	SmtpUseCustom     *bool                   `json:"smtpUseCustom,omitempty"`
-	SmtpUsername      *string                 `json:"smtpUsername,omitempty"`
+	SmtpHost          string                  `json:"smtpHost"`
+	SmtpPassword      string                  `json:"smtpPassword"`
+	SmtpPort          int                     `json:"smtpPort"`
+	SmtpUseCustom     bool                    `json:"smtpUseCustom"`
+	SmtpUsername      string                  `json:"smtpUsername"`
 	Status            ProjectConfigStatus     `json:"status"`
-	SupportEmail      *string                 `json:"supportEmail,omitempty"`
+	SupportEmail      string                  `json:"supportEmail"`
 
 	// Updated Timestamp of when the entity was last updated in yyyy-MM-dd'T'HH:mm:ss format
 	Updated                    externalRef0.Updated `json:"updated"`
@@ -1230,12 +1206,12 @@ type ProjectConfig struct {
 	WebComponentDebug          bool                 `json:"webComponentDebug"`
 	WebauthnRPID               string               `json:"webauthnRPID"`
 	WebhookActions             []string             `json:"webhookActions"`
-	WebhookPassword            *string              `json:"webhookPassword,omitempty"`
-	WebhookTestInvalidUsername *string              `json:"webhookTestInvalidUsername,omitempty"`
-	WebhookTestValidPassword   *string              `json:"webhookTestValidPassword,omitempty"`
-	WebhookTestValidUsername   *string              `json:"webhookTestValidUsername,omitempty"`
-	WebhookURL                 *string              `json:"webhookURL,omitempty"`
-	WebhookUsername            *string              `json:"webhookUsername,omitempty"`
+	WebhookPassword            string               `json:"webhookPassword"`
+	WebhookTestInvalidUsername string               `json:"webhookTestInvalidUsername"`
+	WebhookTestValidPassword   string               `json:"webhookTestValidPassword"`
+	WebhookTestValidUsername   string               `json:"webhookTestValidUsername"`
+	WebhookURL                 string               `json:"webhookURL"`
+	WebhookUsername            string               `json:"webhookUsername"`
 }
 
 // ProjectConfigBackendLanguage defines model for ProjectConfig.BackendLanguage.
@@ -2482,9 +2458,6 @@ type WebAuthnAssociateStartReq struct {
 	AssociationToken string                   `json:"associationToken"`
 	ClientInfo       *externalRef0.ClientInfo `json:"clientInfo,omitempty"`
 
-	// Origin External application address including protocol and port when not 80 or 443
-	Origin Origin `json:"origin"`
-
 	// RequestID Unique ID of request, you can provide your own while making the request, if not the ID will be randomly generated on server side
 	RequestID *externalRef0.RequestID `json:"requestID,omitempty"`
 }
@@ -2545,9 +2518,6 @@ type WebAuthnAuthenticateFinishRspStatus string
 // WebAuthnAuthenticateStartReq defines model for webAuthnAuthenticateStartReq.
 type WebAuthnAuthenticateStartReq struct {
 	ClientInfo externalRef0.ClientInfo `json:"clientInfo"`
-
-	// Origin External application address including protocol and port when not 80 or 443
-	Origin Origin `json:"origin"`
 
 	// RequestID Unique ID of request, you can provide your own while making the request, if not the ID will be randomly generated on server side
 	RequestID *externalRef0.RequestID `json:"requestID,omitempty"`
@@ -2739,9 +2709,6 @@ type WebAuthnCredentialRspStatus string
 type WebAuthnFinishReq struct {
 	ClientInfo externalRef0.ClientInfo `json:"clientInfo"`
 
-	// Origin External application address including protocol and port when not 80 or 443
-	Origin Origin `json:"origin"`
-
 	// PublicKeyCredential Contains JSON payload data for Passkeys (Biometrics) login finish challenge
 	PublicKeyCredential string `json:"publicKeyCredential"`
 
@@ -2752,9 +2719,6 @@ type WebAuthnFinishReq struct {
 // WebAuthnMediationStartReq defines model for webAuthnMediationStartReq.
 type WebAuthnMediationStartReq struct {
 	ClientInfo externalRef0.ClientInfo `json:"clientInfo"`
-
-	// Origin External application address including protocol and port when not 80 or 443
-	Origin Origin `json:"origin"`
 
 	// RequestID Unique ID of request, you can provide your own while making the request, if not the ID will be randomly generated on server side
 	RequestID *externalRef0.RequestID `json:"requestID,omitempty"`
@@ -2816,9 +2780,6 @@ type WebAuthnRegisterStartReq struct {
 
 	// CredentialStatus Sets credential status into active and pending. Pending status dont allow a login until the credential gets confirmed by an api call.
 	CredentialStatus *WebAuthnRegisterStartReqCredentialStatus `json:"credentialStatus,omitempty"`
-
-	// Origin External application address including protocol and port when not 80 or 443
-	Origin Origin `json:"origin"`
 
 	// RequestID Unique ID of request, you can provide your own while making the request, if not the ID will be randomly generated on server side
 	RequestID *externalRef0.RequestID `json:"requestID,omitempty"`
@@ -3604,9 +3565,6 @@ type IOSAppConfigPutJSONRequestBody = IOSAppConfigUpdateReq
 // LongSessionRevokeJSONRequestBody defines body for LongSessionRevoke for application/json ContentType.
 type LongSessionRevokeJSONRequestBody = LongSessionRevokeReq
 
-// OriginAllowedJSONRequestBody defines body for OriginAllowed for application/json ContentType.
-type OriginAllowedJSONRequestBody = OriginAllowedReq
-
 // ProjectConfigSaveJSONRequestBody defines body for ProjectConfigSave for application/json ContentType.
 type ProjectConfigSaveJSONRequestBody = ProjectConfigSaveReq
 
@@ -3893,11 +3851,6 @@ type ClientInterface interface {
 	LongSessionRevokeWithBody(ctx context.Context, sessionID externalRef0.SessionID, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	LongSessionRevoke(ctx context.Context, sessionID externalRef0.SessionID, body LongSessionRevokeJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// OriginAllowedWithBody request with any body
-	OriginAllowedWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	OriginAllowed(ctx context.Context, body OriginAllowedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ProjectConfigGet request
 	ProjectConfigGet(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -4640,30 +4593,6 @@ func (c *Client) LongSessionRevokeWithBody(ctx context.Context, sessionID extern
 
 func (c *Client) LongSessionRevoke(ctx context.Context, sessionID externalRef0.SessionID, body LongSessionRevokeJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewLongSessionRevokeRequest(c.Server, sessionID, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) OriginAllowedWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewOriginAllowedRequestWithBody(c.Server, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) OriginAllowed(ctx context.Context, body OriginAllowedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewOriginAllowedRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -6893,46 +6822,6 @@ func NewLongSessionRevokeRequestWithBody(server string, sessionID externalRef0.S
 	}
 
 	operationPath := fmt.Sprintf("/v1/longSessions/%s/revoke", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("PUT", queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewOriginAllowedRequest calls the generic OriginAllowed builder with application/json body
-func NewOriginAllowedRequest(server string, body OriginAllowedJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewOriginAllowedRequestWithBody(server, "application/json", bodyReader)
-}
-
-// NewOriginAllowedRequestWithBody generates requests for OriginAllowed with any type of body
-func NewOriginAllowedRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/v1/origin/allowed")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -11355,11 +11244,6 @@ type ClientWithResponsesInterface interface {
 
 	LongSessionRevokeWithResponse(ctx context.Context, sessionID externalRef0.SessionID, body LongSessionRevokeJSONRequestBody, reqEditors ...RequestEditorFn) (*LongSessionRevokeResponse, error)
 
-	// OriginAllowedWithBodyWithResponse request with any body
-	OriginAllowedWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*OriginAllowedResponse, error)
-
-	OriginAllowedWithResponse(ctx context.Context, body OriginAllowedJSONRequestBody, reqEditors ...RequestEditorFn) (*OriginAllowedResponse, error)
-
 	// ProjectConfigGetWithResponse request
 	ProjectConfigGetWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ProjectConfigGetResponse, error)
 
@@ -12164,29 +12048,6 @@ func (r LongSessionRevokeResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r LongSessionRevokeResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type OriginAllowedResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *OriginAllowedRsp
-	JSONDefault  *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r OriginAllowedResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r OriginAllowedResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -13960,23 +13821,6 @@ func (c *ClientWithResponses) LongSessionRevokeWithResponse(ctx context.Context,
 	return ParseLongSessionRevokeResponse(rsp)
 }
 
-// OriginAllowedWithBodyWithResponse request with arbitrary body returning *OriginAllowedResponse
-func (c *ClientWithResponses) OriginAllowedWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*OriginAllowedResponse, error) {
-	rsp, err := c.OriginAllowedWithBody(ctx, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseOriginAllowedResponse(rsp)
-}
-
-func (c *ClientWithResponses) OriginAllowedWithResponse(ctx context.Context, body OriginAllowedJSONRequestBody, reqEditors ...RequestEditorFn) (*OriginAllowedResponse, error) {
-	rsp, err := c.OriginAllowed(ctx, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseOriginAllowedResponse(rsp)
-}
-
 // ProjectConfigGetWithResponse request returning *ProjectConfigGetResponse
 func (c *ClientWithResponses) ProjectConfigGetWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ProjectConfigGetResponse, error) {
 	rsp, err := c.ProjectConfigGet(ctx, reqEditors...)
@@ -15591,39 +15435,6 @@ func ParseLongSessionRevokeResponse(rsp *http.Response) (*LongSessionRevokeRespo
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest N200
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSONDefault = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseOriginAllowedResponse parses an HTTP response from a OriginAllowedWithResponse call
-func ParseOriginAllowedResponse(rsp *http.Response) (*OriginAllowedResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &OriginAllowedResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest OriginAllowedRsp
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
