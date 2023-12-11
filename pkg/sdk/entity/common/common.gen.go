@@ -9,6 +9,7 @@ const (
 
 // Defines values for AppType.
 const (
+	Empty  AppType = "empty"
 	Native AppType = "native"
 	Web    AppType = "web"
 )

@@ -17,7 +17,6 @@ import (
 
 func TestWebAuthnAuthenticateFinish_ValidationError(t *testing.T) {
 	rsp, err := integration.SDK(t).Passkeys().AuthenticateFinish(context.TODO(), api.WebAuthnFinishReq{
-		Origin:     "https://some.site.com",
 		ClientInfo: *util.ClientInfo("foobar", "127.0.0.1"),
 	})
 	require.Nil(t, rsp)

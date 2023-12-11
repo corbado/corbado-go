@@ -18,7 +18,6 @@ import (
 func TestWebAuthnRegisterStart_ValidationError(t *testing.T) {
 	rsp, err := integration.SDK(t).Passkeys().RegisterStart(context.TODO(), api.WebAuthnRegisterStartReq{
 		Username:   "",
-		Origin:     "https://some.site.com",
 		ClientInfo: *util.ClientInfo("foobar", "127.0.0.1"),
 	})
 	require.Nil(t, rsp)
@@ -33,7 +32,6 @@ func TestWebAuthnRegisterStart_Success(t *testing.T) {
 	rsp, err := integration.SDK(t).Passkeys().RegisterStart(context.TODO(), api.WebAuthnRegisterStartReq{
 		Username:     integration.CreateRandomTestEmail(t),
 		UserFullName: util.Ptr(integration.CreateRandomTestName(t)),
-		Origin:       "https://some.site.com",
 		ClientInfo:   *util.ClientInfo("foobar", "127.0.0.1"),
 	})
 

@@ -16,21 +16,17 @@ import (
 )
 
 func TestWebAuthnMediationStart_ValidationError(t *testing.T) {
-	rsp, err := integration.SDK(t).Passkeys().MediationStart(context.TODO(), api.WebAuthnMediationStartReq{
-		Origin:     "",
-		ClientInfo: *util.ClientInfo("foobar", "127.0.0.1"),
-	})
+	rsp, err := integration.SDK(t).Passkeys().MediationStart(context.TODO(), api.WebAuthnMediationStartReq{})
 	require.Nil(t, rsp)
 	require.NotNil(t, err)
 	serverErr := corbado.AsServerError(err)
 	require.NotNil(t, serverErr)
 
-	assert.Equal(t, "origin: cannot be blank", servererror.GetValidationMessage(serverErr.Validation))
+	assert.Contains(t, servererror.GetValidationMessage(serverErr.Validation), "userAgent: cannot be blank")
 }
 
 func TestWebAuthnMediationStart_Success(t *testing.T) {
 	rsp, err := integration.SDK(t).Passkeys().MediationStart(context.TODO(), api.WebAuthnMediationStartReq{
-		Origin:     "https://some.site.com",
 		ClientInfo: *util.ClientInfo("foobar", "127.0.0.1"),
 	})
 
