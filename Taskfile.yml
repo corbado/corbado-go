@@ -28,9 +28,9 @@ tasks:
       - ./Dockerfile
     method: checksum
 
-  generate-openapi-entities:
+  generate-openapi:
     deps:
       - docker-build
-    desc: Generates OpenAPI entities
+    desc: Generates OpenAPI entities and clients
     cmds:
-      - docker run -it -v $(pwd):/app corbado-go:latest scripts/generate-openapi-entities.sh pkg/sdk/entity
+      - docker run -it -v $(pwd):/app corbado-go:latest scripts/generate-openapi.sh pkg/sdk/entity/api

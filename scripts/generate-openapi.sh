@@ -2,7 +2,7 @@
 
 if [ $# -ne 1 ]; then
     echo "USAGE: <output path>"
-    echo "EXAMPLE: pkg/sdk/entity"
+    echo "EXAMPLE: pkg/sdk/entity/api"
 
     exit 1
 fi
@@ -10,12 +10,10 @@ fi
 path=$1
 
 # download OpenAPI specs
-curl -s -O https://api.corbado.com/docs/api/openapi/common.yml
 curl -s -O https://api.corbado.com/docs/api/openapi/backend_api_public.yml
 
-# generate Go entities
-./scripts/generate-openapi-entities-go.sh ${path}
+# generate Go entities and clients
+oapi-codegen -package api -generate "types,client" backend_api_public.yml > ${path}/api.gen.go
 
 # remove OpenAPI specs
-rm common.yml
 rm backend_api_public.yml
