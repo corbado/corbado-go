@@ -19,3 +19,18 @@ tasks:
     desc: Runs Golang integration tests
     cmds:
       - go test -tags=integration ./tests/integration/...
+
+  docker-build:
+    desc: Builds Docker image
+    cmds:
+      - docker build -t corbado-go:latest .
+    sources:
+      - ./Dockerfile
+    method: checksum
+
+  generate-openapi:
+    deps:
+      - docker-build
+    desc: Generates OpenAPI entities and clients
+    cmds:
+      - docker run -it -v $(pwd):/app corbado-go:latest scripts/generate-openapi.sh pkg/sdk/entity/api
