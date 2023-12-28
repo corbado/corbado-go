@@ -15,7 +15,7 @@ import (
 )
 
 func TestEmailLinkSend(t *testing.T) {
-	rsp, err := integration.SDK(t).EmailLinks().Send(context.TODO(), api.EmailLinkSendReq{
+	rsp, err := integration.SDK(t).EmailMagicLinks().Send(context.TODO(), api.EmailLinkSendReq{
 		Email:             integration.CreateRandomTestEmail(t),
 		Redirect:          "https://some.site.com/authenticate",
 		TemplateName:      util.Ptr("default"),

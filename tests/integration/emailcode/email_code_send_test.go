@@ -15,7 +15,7 @@ import (
 )
 
 func TestEmailCodeSend(t *testing.T) {
-	rsp, err := integration.SDK(t).EmailCodes().Send(context.TODO(), api.EmailCodeSendReq{
+	rsp, err := integration.SDK(t).EmailOTPs().Send(context.TODO(), api.EmailCodeSendReq{
 		Email:             integration.CreateRandomTestEmail(t),
 		TemplateName:      util.Ptr("default"),
 		Create:            true,

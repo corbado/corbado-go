@@ -23,8 +23,8 @@ const Version = "v0.6.0"
 
 type SDK interface {
 	AuthTokens() authtoken.AuthToken
-	EmailCodes() emailotp.EmailOTP
-	EmailLinks() emailmagiclink.EmailMagicLink
+	EmailOTPs() emailotp.EmailOTP
+	EmailMagicLinks() emailmagiclink.EmailMagicLink
 	Passkeys() passkey.Passkey
 	Projects() project.Project
 	Sessions() session.Session
@@ -37,15 +37,15 @@ type Impl struct {
 	client     *api.ClientWithResponses
 	HTTPClient *http.Client
 
-	authTokens authtoken.AuthToken
-	emailCodes emailotp.EmailOTP
-	emailLinks emailmagiclink.EmailMagicLink
-	passkeys   passkey.Passkey
-	projects   project.Project
-	sessions   session.Session
-	templates  template.Template
-	validation validation.Validation
-	users      user.User
+	authTokens      authtoken.AuthToken
+	emailOTPs       emailotp.EmailOTP
+	emailMagicLinks emailmagiclink.EmailMagicLink
+	passkeys        passkey.Passkey
+	projects        project.Project
+	sessions        session.Session
+	templates       template.Template
+	validation      validation.Validation
+	users           user.User
 }
 
 var _ SDK = &Impl{}
@@ -122,17 +122,17 @@ func NewSDK(config *Configuration) (*Impl, error) {
 	}
 
 	return &Impl{
-		client:     client,
-		authTokens: authTokens,
-		emailCodes: emailCodes,
-		emailLinks: emailLinks,
-		passkeys:   passkeys,
-		projects:   projects,
-		sessions:   sessions,
-		templates:  templates,
-		users:      users,
-		validation: validation,
-		HTTPClient: httpClient,
+		client:          client,
+		authTokens:      authTokens,
+		emailOTPs:       emailCodes,
+		emailMagicLinks: emailLinks,
+		passkeys:        passkeys,
+		projects:        projects,
+		sessions:        sessions,
+		templates:       templates,
+		users:           users,
+		validation:      validation,
+		HTTPClient:      httpClient,
 	}, nil
 }
 
@@ -141,14 +141,14 @@ func (i *Impl) AuthTokens() authtoken.AuthToken {
 	return i.authTokens
 }
 
-// EmailCodes returns email codes client
-func (i *Impl) EmailCodes() emailotp.EmailOTP {
-	return i.emailCodes
+// EmailOTPs returns email OTPs client
+func (i *Impl) EmailOTPs() emailotp.EmailOTP {
+	return i.emailOTPs
 }
 
-// EmailLinks returns email links client
-func (i *Impl) EmailLinks() emailmagiclink.EmailMagicLink {
-	return i.emailLinks
+// EmailMagicLinks returns email magic links client
+func (i *Impl) EmailMagicLinks() emailmagiclink.EmailMagicLink {
+	return i.emailMagicLinks
 }
 
 // Validations returns validation client
