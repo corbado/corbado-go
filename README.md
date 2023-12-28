@@ -62,7 +62,7 @@ The Corbado Go SDK provides the following services:
 To use a specific service, such as `sessions`, invoke it as shown below:
 
 ```Go
-user, err := sdk->sessions()->GetCurrentUser()
+user, err := sdk.Sessions().GetCurrentUser()
 if err != nil {
     // handle error
 }
@@ -72,17 +72,31 @@ if err != nil {
 
 ### Error handling
 
-The Corbado PHP SDK throws exceptions for all errors. The following exceptions are thrown:
-
-- `AssertException` for failed assertions (client side)
-- `ConfigurationException` for configuration errors (client side)
-- `ServerException` for server errors (server side)
-- `StandardException` for everything else (client side)
-
-If the Backend API returns a HTTP status code other than 200, the Corbado PHP SDK throws a `ServerException`. The `ServerException`class provides convenient methods to access all important data:
+The Corbado Go SDK uses Go standard error handling (error interface). If the Backend API returns a HTTP status code other than 200, the Corbado Go SDK returns a `ServerError` error (which implements the error interface):
 
 ```Go
-TODO
+// Try to get non-existing user with ID 'usr-123456789'
+user, err := sdk.Users().Get(context.Background(), "user-123456789")
+if err != nil {
+    if serverErr := corbado.AsServerError(err); serverErr != nil {
+        // Show HTTP status code (404 in this case) 
+        fmt.Println(serverErr.HTTPStatusCode)
+
+        // Show request ID (can be used in developer panel to look up the full request
+        // and response, see https://app.corbado.com/app/logs/requests)
+        fmt.Println(serverErr.RequestData.RequestID)
+
+        // Show runtime of request in seconds (server side)
+        fmt.Println(serverErr.Runtime)
+
+        // Show validation error messages (server side validation in case of HTTP
+        // status code 400 (Bad Request))
+        fmt.Printf("%+v\n", serverErr.Validation)
+    return
+    } else {
+        // Handle other errors
+    }
+}
 ```
 
 ## :speech_balloon: Support & Feedback

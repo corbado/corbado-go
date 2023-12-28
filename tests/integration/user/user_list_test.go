@@ -30,7 +30,7 @@ func TestUserList_ValidationError(t *testing.T) {
 }
 
 func TestUserList_Success(t *testing.T) {
-	// send email link first so that we have at least one user
+	// send email magic link first so that we have at least one user
 	_, err := integration.SDK(t).EmailMagicLinks().Send(context.TODO(), api.EmailLinkSendReq{
 		Email:             integration.CreateRandomTestEmail(t),
 		Redirect:          "https://some.site.com/authenticate",
