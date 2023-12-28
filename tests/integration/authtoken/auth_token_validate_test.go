@@ -8,13 +8,14 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
 	"github.com/corbado/corbado-go"
 	"github.com/corbado/corbado-go/pkg/sdk/entity/api"
 	"github.com/corbado/corbado-go/pkg/sdk/servererror"
-	"github.com/corbado/corbado-go/pkg/sdk/util"
+	"github.com/corbado/corbado-go/pkg/util"
 	"github.com/corbado/corbado-go/tests/integration"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestAuthTokenValidate_ValidationError(t *testing.T) {

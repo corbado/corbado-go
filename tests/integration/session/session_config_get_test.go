@@ -7,14 +7,15 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/corbado/corbado-go"
-	"github.com/corbado/corbado-go/tests/integration"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/corbado/corbado-go"
+	"github.com/corbado/corbado-go/tests/integration"
 )
 
 func TestSessionConfigGet_AuthError(t *testing.T) {
-	config, err := corbado.NewConfig("pro-12345678", "wrongsecret")
+	config, err := corbado.NewConfiguration("pro-12345678", "wrongsecret")
 	require.NoError(t, err)
 	config.BackendAPI = integration.GetBackendAPI(t)
 

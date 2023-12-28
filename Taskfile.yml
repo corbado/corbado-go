@@ -2,7 +2,7 @@ version: '3'
 
 tasks:
   lint:
-    desc: Runs Golang linters
+    desc: Runs linters
     cmds:
       - GOFLAGS="-buildvcs=false" golangci-lint run --timeout=5m
     sources:
@@ -10,15 +10,15 @@ tasks:
       - ./.golangci.yml
     method: checksum
 
-  unit-test:
-    desc: Runs Golang unit tests
+  unittests:
+    desc: Runs unit tests
     cmds:
       - go test -v ./...
 
-  integration-test:
-    desc: Runs Golang integration tests
+  integrationtests:
+    desc: Runs integration tests
     cmds:
-      - go test -tags=integration ./tests/integration/...
+      - go test -tags=integration -count=1 ./tests/integration/...
 
   docker-build:
     desc: Builds Docker image

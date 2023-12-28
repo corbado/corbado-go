@@ -10,13 +10,14 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/corbado/corbado-go"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
+
+	"github.com/corbado/corbado-go"
 )
 
 func SDK(t *testing.T) corbado.SDK {
-	config, err := corbado.NewConfig(GetProjectID(t), GetAPISecret(t))
+	config, err := corbado.NewConfiguration(GetProjectID(t), GetAPISecret(t))
 	require.NoError(t, err)
 	config.BackendAPI = GetBackendAPI(t)
 

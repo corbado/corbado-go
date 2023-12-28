@@ -7,16 +7,17 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"time"
 
 	"github.com/MicahParks/keyfunc"
+	"github.com/golang-jwt/jwt/v4"
+	"github.com/pkg/errors"
+
+	"github.com/corbado/corbado-go/pkg/assert"
 	"github.com/corbado/corbado-go/pkg/logger"
-	"github.com/corbado/corbado-go/pkg/sdk/assert"
-	"github.com/corbado/corbado-go/pkg/sdk/config"
 	"github.com/corbado/corbado-go/pkg/sdk/entity"
 	"github.com/corbado/corbado-go/pkg/sdk/entity/api"
 	"github.com/corbado/corbado-go/pkg/sdk/servererror"
-	"github.com/golang-jwt/jwt/v4"
-	"github.com/pkg/errors"
 )
 
 type Session interface {
@@ -29,14 +30,23 @@ type Session interface {
 
 type Impl struct {
 	client *api.ClientWithResponses
-	config *config.Config
+	config *Config
 	jwks   *keyfunc.JWKS
+}
+
+type Config struct {
+	ProjectID            string
+	FrontendAPI          string
+	JWTIssuer            string
+	JWKSRefreshInterval  time.Duration
+	JWKSRefreshRateLimit time.Duration
+	JWKSRefreshTimeout   time.Duration
 }
 
 var _ Session = &Impl{}
 
 // New returns new user client
-func New(client *api.ClientWithResponses, config *config.Config) (*Impl, error) {
+func New(client *api.ClientWithResponses, config *Config) (*Impl, error) {
 	if err := assert.NotNil(client, config); err != nil {
 		return nil, err
 	}
@@ -47,7 +57,7 @@ func New(client *api.ClientWithResponses, config *config.Config) (*Impl, error) 
 	}, nil
 }
 
-func newJWKS(config *config.Config) (*keyfunc.JWKS, error) {
+func newJWKS(config *Config) (*keyfunc.JWKS, error) {
 	options := keyfunc.Options{
 		RequestFactory: func(ctx context.Context, urlAddress string) (*http.Request, error) {
 			address, err := url.Parse(urlAddress)

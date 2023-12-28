@@ -3,9 +3,10 @@ package corbado
 import (
 	"net/http"
 
-	"github.com/corbado/corbado-go/pkg/sdk/assert"
+	"github.com/pkg/errors"
+
+	"github.com/corbado/corbado-go/pkg/assert"
 	"github.com/corbado/corbado-go/pkg/sdk/authtoken"
-	"github.com/corbado/corbado-go/pkg/sdk/config"
 	"github.com/corbado/corbado-go/pkg/sdk/emailcode"
 	"github.com/corbado/corbado-go/pkg/sdk/emaillink"
 	"github.com/corbado/corbado-go/pkg/sdk/entity/api"
@@ -16,7 +17,6 @@ import (
 	"github.com/corbado/corbado-go/pkg/sdk/template"
 	"github.com/corbado/corbado-go/pkg/sdk/user"
 	"github.com/corbado/corbado-go/pkg/sdk/validation"
-	"github.com/pkg/errors"
 )
 
 const Version = "v0.6.0"
@@ -51,7 +51,7 @@ type Impl struct {
 var _ SDK = &Impl{}
 
 // NewSDK returns new SDK
-func NewSDK(config *config.Config) (*Impl, error) {
+func NewSDK(config *Configuration) (*Impl, error) {
 	if err := assert.NotNil(config); err != nil {
 		return nil, err
 	}
@@ -87,7 +87,16 @@ func NewSDK(config *config.Config) (*Impl, error) {
 		return nil, err
 	}
 
-	sessions, err := session.New(client, config)
+	sessionConfig := &session.Config{
+		ProjectID:            config.ProjectID,
+		FrontendAPI:          config.FrontendAPI,
+		JWTIssuer:            config.JWTIssuer,
+		JWKSRefreshInterval:  config.JWKSRefreshInterval,
+		JWKSRefreshRateLimit: config.JWKSRefreshRateLimit,
+		JWKSRefreshTimeout:   config.JWKSRefreshTimeout,
+	}
+
+	sessions, err := session.New(client, sessionConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -189,16 +198,4 @@ func AsServerError(err error) *servererror.ServerError {
 	}
 
 	return serverError
-}
-
-// NewConfig returns new config with sane defaults
-// this is a convenience function for config.NewConfig to avoid import cycles
-func NewConfig(projectID string, apiSecret string) (*config.Config, error) {
-	return config.NewConfig(projectID, apiSecret)
-}
-
-// MustNewConfig returns new config and panics if projectID or apiSecret are not specified/empty
-// this is a convenience function for config.NewConfig to avoid import cycles
-func MustNewConfig(projectID string, apiSecret string) *config.Config {
-	return config.MustNewConfig(projectID, apiSecret)
 }
