@@ -1,4 +1,4 @@
-package emaillink
+package emailmagiclink
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"github.com/corbado/corbado-go/pkg/servererror"
 )
 
-type EmailLink interface {
+type EmailMagicLink interface {
 	Send(ctx context.Context, req api.EmailLinkSendReq, editors ...api.RequestEditorFn) (*api.EmailLinkSendRsp, error)
 	Validate(ctx context.Context, emailLinkID common.EmailLinkID, req api.EmailLinksValidateReq, editors ...api.RequestEditorFn) (*api.EmailLinkValidateRsp, error)
 	Get(ctx context.Context, emailLinkID common.EmailLinkID, editors ...api.RequestEditorFn) (*api.EmailLinkGetRsp, error)
@@ -19,9 +19,9 @@ type Impl struct {
 	client *api.ClientWithResponses
 }
 
-var _ EmailLink = &Impl{}
+var _ EmailMagicLink = &Impl{}
 
-// New returns new email link client
+// New returns new email magic link client
 func New(client *api.ClientWithResponses) (*Impl, error) {
 	if err := assert.NotNil(client); err != nil {
 		return nil, err
@@ -32,7 +32,7 @@ func New(client *api.ClientWithResponses) (*Impl, error) {
 	}, nil
 }
 
-// Send sends email link email to given email address
+// Send sends email magic link email to given email address
 func (i *Impl) Send(ctx context.Context, req api.EmailLinkSendReq, editors ...api.RequestEditorFn) (*api.EmailLinkSendRsp, error) {
 	res, err := i.client.EmailLinkSendWithResponse(ctx, req, editors...)
 	if err != nil {
@@ -46,7 +46,7 @@ func (i *Impl) Send(ctx context.Context, req api.EmailLinkSendReq, editors ...ap
 	return res.JSON200, nil
 }
 
-// Validate validates email link token
+// Validate validates email magic link token
 func (i *Impl) Validate(ctx context.Context, emailLinkID common.EmailLinkID, req api.EmailLinksValidateReq, editors ...api.RequestEditorFn) (*api.EmailLinkValidateRsp, error) {
 	res, err := i.client.EmailLinkValidateWithResponse(ctx, emailLinkID, req, editors...)
 	if err != nil {
@@ -60,7 +60,7 @@ func (i *Impl) Validate(ctx context.Context, emailLinkID common.EmailLinkID, req
 	return res.JSON200, nil
 }
 
-// Get gets email link
+// Get gets email magic link
 func (i *Impl) Get(ctx context.Context, emailLinkID common.EmailLinkID, editors ...api.RequestEditorFn) (*api.EmailLinkGetRsp, error) {
 	res, err := i.client.EmailLinkGetWithResponse(ctx, emailLinkID, editors...)
 	if err != nil {

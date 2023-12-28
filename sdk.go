@@ -9,8 +9,8 @@ import (
 	"github.com/corbado/corbado-go/pkg/generated/api"
 	"github.com/corbado/corbado-go/pkg/servererror"
 	"github.com/corbado/corbado-go/pkg/services/authtoken"
-	"github.com/corbado/corbado-go/pkg/services/emailcode"
-	"github.com/corbado/corbado-go/pkg/services/emaillink"
+	"github.com/corbado/corbado-go/pkg/services/emailmagiclink"
+	"github.com/corbado/corbado-go/pkg/services/emailotp"
 	"github.com/corbado/corbado-go/pkg/services/passkey"
 	"github.com/corbado/corbado-go/pkg/services/project"
 	"github.com/corbado/corbado-go/pkg/services/session"
@@ -23,8 +23,8 @@ const Version = "v0.6.0"
 
 type SDK interface {
 	AuthTokens() authtoken.AuthToken
-	EmailCodes() emailcode.EmailCode
-	EmailLinks() emaillink.EmailLink
+	EmailCodes() emailotp.EmailOTP
+	EmailLinks() emailmagiclink.EmailMagicLink
 	Passkeys() passkey.Passkey
 	Projects() project.Project
 	Sessions() session.Session
@@ -38,8 +38,8 @@ type Impl struct {
 	HTTPClient *http.Client
 
 	authTokens authtoken.AuthToken
-	emailCodes emailcode.EmailCode
-	emailLinks emaillink.EmailLink
+	emailCodes emailotp.EmailOTP
+	emailLinks emailmagiclink.EmailMagicLink
 	passkeys   passkey.Passkey
 	projects   project.Project
 	sessions   session.Session
@@ -67,12 +67,12 @@ func NewSDK(config *Configuration) (*Impl, error) {
 		return nil, err
 	}
 
-	emailCodes, err := emailcode.New(client)
+	emailCodes, err := emailotp.New(client)
 	if err != nil {
 		return nil, err
 	}
 
-	emailLinks, err := emaillink.New(client)
+	emailLinks, err := emailmagiclink.New(client)
 	if err != nil {
 		return nil, err
 	}
@@ -142,12 +142,12 @@ func (i *Impl) AuthTokens() authtoken.AuthToken {
 }
 
 // EmailCodes returns email codes client
-func (i *Impl) EmailCodes() emailcode.EmailCode {
+func (i *Impl) EmailCodes() emailotp.EmailOTP {
 	return i.emailCodes
 }
 
 // EmailLinks returns email links client
-func (i *Impl) EmailLinks() emaillink.EmailLink {
+func (i *Impl) EmailLinks() emailmagiclink.EmailMagicLink {
 	return i.emailLinks
 }
 
