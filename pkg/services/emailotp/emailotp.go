@@ -32,7 +32,7 @@ func New(client *api.ClientWithResponses) (*Impl, error) {
 	}, nil
 }
 
-// Send sends email OTP email to given email address
+// Send sends OTP email to given email address
 func (i *Impl) Send(ctx context.Context, req api.EmailCodeSendReq, editors ...api.RequestEditorFn) (*api.EmailCodeSendRsp, error) {
 	res, err := i.client.EmailCodeSendWithResponse(ctx, req, editors...)
 	if err != nil {
@@ -46,7 +46,7 @@ func (i *Impl) Send(ctx context.Context, req api.EmailCodeSendReq, editors ...ap
 	return res.JSON200, nil
 }
 
-// Validate validates email OTP token
+// Validate validates email OTP
 func (i *Impl) Validate(ctx context.Context, emailCodeID common.EmailCodeID, req api.EmailCodeValidateReq, editors ...api.RequestEditorFn) (*api.EmailCodeValidateRsp, error) {
 	res, err := i.client.EmailCodeValidateWithResponse(ctx, emailCodeID, req, editors...)
 	if err != nil {

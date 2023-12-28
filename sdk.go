@@ -14,6 +14,7 @@ import (
 	"github.com/corbado/corbado-go/pkg/services/passkey"
 	"github.com/corbado/corbado-go/pkg/services/project"
 	"github.com/corbado/corbado-go/pkg/services/session"
+	"github.com/corbado/corbado-go/pkg/services/smsotp"
 	"github.com/corbado/corbado-go/pkg/services/template"
 	"github.com/corbado/corbado-go/pkg/services/user"
 	"github.com/corbado/corbado-go/pkg/services/validation"
@@ -31,6 +32,7 @@ type SDK interface {
 	Templates() template.Template
 	Users() user.User
 	Validations() validation.Validation
+	SmsOTPs() smsotp.SmsOTP
 }
 
 type Impl struct {
@@ -46,6 +48,7 @@ type Impl struct {
 	templates       template.Template
 	validations     validation.Validation
 	users           user.User
+	smsOTPs         smsotp.SmsOTP
 }
 
 var _ SDK = &Impl{}
@@ -106,12 +109,17 @@ func NewSDK(config *Configuration) (*Impl, error) {
 		return nil, err
 	}
 
+	validations, err := validation.New(client)
+	if err != nil {
+		return nil, err
+	}
+
 	users, err := user.New(client)
 	if err != nil {
 		return nil, err
 	}
 
-	validations, err := validation.New(client)
+	smsOTPs, err := smsotp.New(client)
 	if err != nil {
 		return nil, err
 	}
@@ -132,6 +140,7 @@ func NewSDK(config *Configuration) (*Impl, error) {
 		templates:       templates,
 		users:           users,
 		validations:     validations,
+		smsOTPs:         smsOTPs,
 		HTTPClient:      httpClient,
 	}, nil
 }
@@ -179,6 +188,11 @@ func (i *Impl) Templates() template.Template {
 // Users returns users client
 func (i *Impl) Users() user.User {
 	return i.users
+}
+
+// SmsOTPs returns sms OTPs client
+func (i *Impl) SmsOTPs() smsotp.SmsOTP {
+	return i.smsOTPs
 }
 
 // IsServerError checks if given error is a ServerError
