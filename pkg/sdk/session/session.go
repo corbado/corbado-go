@@ -17,7 +17,7 @@ import (
 	"github.com/corbado/corbado-go/pkg/logger"
 	"github.com/corbado/corbado-go/pkg/sdk/entity"
 	"github.com/corbado/corbado-go/pkg/sdk/entity/api"
-	"github.com/corbado/corbado-go/pkg/sdk/servererror"
+	"github.com/corbado/corbado-go/pkg/servererror"
 )
 
 type Session interface {

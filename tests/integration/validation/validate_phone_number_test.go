@@ -6,12 +6,13 @@ import (
 	"context"
 	"testing"
 
-	"github.com/corbado/corbado-go"
-	"github.com/corbado/corbado-go/pkg/sdk/entity/api"
-	"github.com/corbado/corbado-go/pkg/sdk/servererror"
-	"github.com/corbado/corbado-go/tests/integration"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/corbado/corbado-go"
+	"github.com/corbado/corbado-go/pkg/sdk/entity/api"
+	"github.com/corbado/corbado-go/pkg/servererror"
+	"github.com/corbado/corbado-go/tests/integration"
 )
 
 func TestValidatePhoneNumber_ValidationError(t *testing.T) {

@@ -6,7 +6,7 @@ import (
 	"github.com/corbado/corbado-go/pkg/assert"
 	"github.com/corbado/corbado-go/pkg/sdk/entity/api"
 	"github.com/corbado/corbado-go/pkg/sdk/entity/common"
-	"github.com/corbado/corbado-go/pkg/sdk/servererror"
+	"github.com/corbado/corbado-go/pkg/servererror"
 )
 
 type User interface {

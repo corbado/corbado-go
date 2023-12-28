@@ -12,11 +12,11 @@ import (
 	"github.com/corbado/corbado-go/pkg/sdk/entity/api"
 	"github.com/corbado/corbado-go/pkg/sdk/passkey"
 	"github.com/corbado/corbado-go/pkg/sdk/project"
-	"github.com/corbado/corbado-go/pkg/sdk/servererror"
 	"github.com/corbado/corbado-go/pkg/sdk/session"
 	"github.com/corbado/corbado-go/pkg/sdk/template"
 	"github.com/corbado/corbado-go/pkg/sdk/user"
 	"github.com/corbado/corbado-go/pkg/sdk/validation"
+	"github.com/corbado/corbado-go/pkg/servererror"
 )
 
 const Version = "v0.6.0"
