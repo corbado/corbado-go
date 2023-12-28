@@ -44,7 +44,7 @@ type Impl struct {
 	projects        project.Project
 	sessions        session.Session
 	templates       template.Template
-	validation      validation.Validation
+	validations     validation.Validation
 	users           user.User
 }
 
@@ -111,7 +111,7 @@ func NewSDK(config *Configuration) (*Impl, error) {
 		return nil, err
 	}
 
-	validation, err := validation.New(client)
+	validations, err := validation.New(client)
 	if err != nil {
 		return nil, err
 	}
@@ -131,7 +131,7 @@ func NewSDK(config *Configuration) (*Impl, error) {
 		sessions:        sessions,
 		templates:       templates,
 		users:           users,
-		validation:      validation,
+		validations:     validations,
 		HTTPClient:      httpClient,
 	}, nil
 }
@@ -153,7 +153,7 @@ func (i *Impl) EmailMagicLinks() emailmagiclink.EmailMagicLink {
 
 // Validations returns validation client
 func (i *Impl) Validations() validation.Validation {
-	return i.validation
+	return i.validations
 }
 
 // Passkeys returns passkeys client

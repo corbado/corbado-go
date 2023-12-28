@@ -14,7 +14,7 @@ import (
 	"github.com/corbado/corbado-go/tests/integration"
 )
 
-func TestEmailLinkSend(t *testing.T) {
+func TestEmailMagicLinkSend(t *testing.T) {
 	rsp, err := integration.SDK(t).EmailMagicLinks().Send(context.TODO(), api.EmailLinkSendReq{
 		Email:             integration.CreateRandomTestEmail(t),
 		Redirect:          "https://some.site.com/authenticate",

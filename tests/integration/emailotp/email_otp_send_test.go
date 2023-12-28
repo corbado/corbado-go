@@ -14,7 +14,7 @@ import (
 	"github.com/corbado/corbado-go/tests/integration"
 )
 
-func TestEmailCodeSend(t *testing.T) {
+func TestEmailOTPSend(t *testing.T) {
 	rsp, err := integration.SDK(t).EmailOTPs().Send(context.TODO(), api.EmailCodeSendReq{
 		Email:             integration.CreateRandomTestEmail(t),
 		TemplateName:      util.Ptr("default"),
