@@ -13,8 +13,9 @@ import (
 	"net/url"
 	"strings"
 
-	externalRef0 "github.com/corbado/corbado-go/pkg/sdk/entity/common"
 	"github.com/oapi-codegen/runtime"
+
+	externalRef0 "github.com/corbado/corbado-go/pkg/generated/common"
 )
 
 const (
@@ -358,8 +359,8 @@ type AndroidAppConfigItem struct {
 type AndroidAppConfigListRsp struct {
 	// HttpStatusCode HTTP status code of operation
 	HttpStatusCode int32               `json:"httpStatusCode"`
-	Message        string              `json:"message"`
-	Paging         externalRef0.Paging `json:"paging"`
+	Message string              `json:"message"`
+	Paging  externalRef0.Paging `json:"paging"`
 
 	// RequestData Data about the request itself, can be used for debugging
 	RequestData externalRef0.RequestData `json:"requestData"`
@@ -829,9 +830,9 @@ type EmailLinksValidateReq struct {
 
 // EmailTemplateCreateReq defines model for emailTemplateCreateReq.
 type EmailTemplateCreateReq struct {
-	Action                   *string                    `json:"action,omitempty"`
-	ClientInfo               *externalRef0.ClientInfo   `json:"clientInfo,omitempty"`
-	HtmlColorBackgroundInner string                     `json:"htmlColorBackgroundInner"`
+	Action                   *string                  `json:"action,omitempty"`
+	ClientInfo               *externalRef0.ClientInfo `json:"clientInfo,omitempty"`
+	HtmlColorBackgroundInner string                   `json:"htmlColorBackgroundInner"`
 	HtmlColorBackgroundOuter string                     `json:"htmlColorBackgroundOuter"`
 	HtmlColorButton          string                     `json:"htmlColorButton"`
 	HtmlColorButtonFont      string                     `json:"htmlColorButtonFont"`
@@ -839,15 +840,15 @@ type EmailTemplateCreateReq struct {
 	HtmlTextBody             string                     `json:"htmlTextBody"`
 	HtmlTextButton           string                     `json:"htmlTextButton"`
 	HtmlTextTitle            string                     `json:"htmlTextTitle"`
-	IsDefault                bool                       `json:"isDefault"`
-	Lang                     EmailTemplateCreateReqLang `json:"lang"`
-	Name                     string                     `json:"name"`
+	IsDefault bool                       `json:"isDefault"`
+	Lang      EmailTemplateCreateReqLang `json:"lang"`
+	Name      string                     `json:"name"`
 	PlainTextBody            string                     `json:"plainTextBody"`
 
 	// RequestID Unique ID of request, you can provide your own while making the request, if not the ID will be randomly generated on server side
-	RequestID *externalRef0.RequestID    `json:"requestID,omitempty"`
-	Subject   string                     `json:"subject"`
-	Type      EmailTemplateCreateReqType `json:"type"`
+	RequestID *externalRef0.RequestID `json:"requestID,omitempty"`
+	Subject string                    `json:"subject"`
+	Type    EmailTemplateCreateReqType `json:"type"`
 }
 
 // EmailTemplateCreateReqLang defines model for EmailTemplateCreateReq.Lang.
@@ -952,8 +953,8 @@ type IOSAppConfigItem struct {
 type IOSAppConfigListRsp struct {
 	// HttpStatusCode HTTP status code of operation
 	HttpStatusCode int32               `json:"httpStatusCode"`
-	Message        string              `json:"message"`
-	Paging         externalRef0.Paging `json:"paging"`
+	Message string              `json:"message"`
+	Paging  externalRef0.Paging `json:"paging"`
 
 	// RequestData Data about the request itself, can be used for debugging
 	RequestData externalRef0.RequestData `json:"requestData"`
@@ -1149,28 +1150,28 @@ type ProjectConfig struct {
 	AllowUserRegistration bool `json:"allowUserRegistration"`
 
 	// AppType Application type
-	AppType                externalRef0.AppType         `json:"appType"`
-	ApplicationUrl         string                       `json:"applicationUrl"`
+	AppType        externalRef0.AppType `json:"appType"`
+	ApplicationUrl string               `json:"applicationUrl"`
 	AuthSuccessRedirectUrl string                       `json:"authSuccessRedirectUrl"`
 	AutoDetectLanguage     bool                         `json:"autoDetectLanguage"`
-	BackendAPIUrl          string                       `json:"backendAPIUrl"`
-	BackendLanguage        ProjectConfigBackendLanguage `json:"backendLanguage"`
-	CliSecret              string                       `json:"cliSecret"`
+	BackendAPIUrl   string                       `json:"backendAPIUrl"`
+	BackendLanguage ProjectConfigBackendLanguage `json:"backendLanguage"`
+	CliSecret       string                       `json:"cliSecret"`
 
 	// Created Timestamp of when the entity was created in yyyy-MM-dd'T'HH:mm:ss format
-	Created                            externalRef0.Created               `json:"created"`
-	Domain                             string                             `json:"domain"`
+	Created externalRef0.Created `json:"created"`
+	Domain  string               `json:"domain"`
 	DoubleOptIn                        bool                               `json:"doubleOptIn"`
-	EmailFrom                          string                             `json:"emailFrom"`
-	Environment                        ProjectConfigEnvironment           `json:"environment"`
-	ExternalApplicationPassword        string                             `json:"externalApplicationPassword"`
+	EmailFrom                   string                             `json:"emailFrom"`
+	Environment                 ProjectConfigEnvironment           `json:"environment"`
+	ExternalApplicationPassword string                             `json:"externalApplicationPassword"`
 	ExternalApplicationProtocolVersion string                             `json:"externalApplicationProtocolVersion"`
 	ExternalApplicationUsername        string                             `json:"externalApplicationUsername"`
 	ExternalName                       string                             `json:"externalName"`
 	FallbackLanguage                   string                             `json:"fallbackLanguage"`
-	FrontendAPIUrl                     string                             `json:"frontendAPIUrl"`
-	FrontendFramework                  ProjectConfigFrontendFramework     `json:"frontendFramework"`
-	HasExistingUsers                   bool                               `json:"hasExistingUsers"`
+	FrontendAPIUrl              string                             `json:"frontendAPIUrl"`
+	FrontendFramework           ProjectConfigFrontendFramework     `json:"frontendFramework"`
+	HasExistingUsers            bool                               `json:"hasExistingUsers"`
 	HasGeneratedSession                bool                               `json:"hasGeneratedSession"`
 	HasStartedUsingPasskeys            bool                               `json:"hasStartedUsingPasskeys"`
 	HasStartedUsingSessions            bool                               `json:"hasStartedUsingSessions"`
@@ -1178,17 +1179,17 @@ type ProjectConfig struct {
 	IntegrationModeAPI                 bool                               `json:"integrationModeAPI"`
 	IntegrationModeHosted              bool                               `json:"integrationModeHosted"`
 	IntegrationModeWebComponent        bool                               `json:"integrationModeWebComponent"`
-	LegacyAuthMethodsUrl               string                             `json:"legacyAuthMethodsUrl"`
-	LoginFlow                          ProjectConfigLoginFlow             `json:"loginFlow"`
-	LoginFlowOptions                   map[string]interface{}             `json:"loginFlowOptions"`
-	PasskeyAppendInterval              ProjectConfigPasskeyAppendInterval `json:"passkeyAppendInterval"`
-	PasswordResetUrl                   string                             `json:"passwordResetUrl"`
+	LegacyAuthMethodsUrl        string                             `json:"legacyAuthMethodsUrl"`
+	LoginFlow                   ProjectConfigLoginFlow             `json:"loginFlow"`
+	LoginFlowOptions            map[string]interface{}             `json:"loginFlowOptions"`
+	PasskeyAppendInterval       ProjectConfigPasskeyAppendInterval `json:"passkeyAppendInterval"`
+	PasswordResetUrl            string                             `json:"passwordResetUrl"`
 	PasswordVerifyUrl                  string                             `json:"passwordVerifyUrl"`
 	ProductKey                         string                             `json:"productKey"`
 
 	// ProjectID ID of project
-	ProjectID         externalRef0.ProjectID  `json:"projectID"`
-	SignupFlow        ProjectConfigSignupFlow `json:"signupFlow"`
+	ProjectID  externalRef0.ProjectID  `json:"projectID"`
+	SignupFlow ProjectConfigSignupFlow `json:"signupFlow"`
 	SignupFlowOptions map[string]interface{}  `json:"signupFlowOptions"`
 	SmsFrom           string                  `json:"smsFrom"`
 	SmtpHost          string                  `json:"smtpHost"`
@@ -1200,8 +1201,8 @@ type ProjectConfig struct {
 	SupportEmail      string                  `json:"supportEmail"`
 
 	// Updated Timestamp of when the entity was last updated in yyyy-MM-dd'T'HH:mm:ss format
-	Updated                    externalRef0.Updated `json:"updated"`
-	UseCli                     bool                 `json:"useCli"`
+	Updated externalRef0.Updated `json:"updated"`
+	UseCli  bool                 `json:"useCli"`
 	UserFullNameRequired       bool                 `json:"userFullNameRequired"`
 	WebComponentDebug          bool                 `json:"webComponentDebug"`
 	WebauthnRPID               string               `json:"webauthnRPID"`
@@ -1427,8 +1428,8 @@ type ProjectSecretItem struct {
 type ProjectSecretListRsp struct {
 	// HttpStatusCode HTTP status code of operation
 	HttpStatusCode int32               `json:"httpStatusCode"`
-	Message        string              `json:"message"`
-	Paging         externalRef0.Paging `json:"paging"`
+	Message string              `json:"message"`
+	Paging  externalRef0.Paging `json:"paging"`
 
 	// RequestData Data about the request itself, can be used for debugging
 	RequestData externalRef0.RequestData `json:"requestData"`
@@ -1534,18 +1535,18 @@ type SessionConfig struct {
 	AppType externalRef0.AppType `json:"appType"`
 
 	// Created Timestamp of when the entity was created in yyyy-MM-dd'T'HH:mm:ss format
-	Created             externalRef0.Created            `json:"created"`
-	JwtAudience         string                          `json:"jwtAudience"`
+	Created     externalRef0.Created `json:"created"`
+	JwtAudience string               `json:"jwtAudience"`
 	LongInactivityUnit  SessionConfigLongInactivityUnit `json:"longInactivityUnit"`
 	LongInactivityValue int                             `json:"longInactivityValue"`
 	LongLifetimeUnit    SessionConfigLongLifetimeUnit   `json:"longLifetimeUnit"`
 	LongLifetimeValue   int                             `json:"longLifetimeValue"`
 
 	// ProjectID ID of project
-	ProjectID            externalRef0.ProjectID           `json:"projectID"`
-	ShortCookieDomain    string                           `json:"shortCookieDomain"`
-	ShortCookieSameSite  SessionConfigShortCookieSameSite `json:"shortCookieSameSite"`
-	ShortCookieSecure    bool                             `json:"shortCookieSecure"`
+	ProjectID         externalRef0.ProjectID `json:"projectID"`
+	ShortCookieDomain string                 `json:"shortCookieDomain"`
+	ShortCookieSameSite SessionConfigShortCookieSameSite `json:"shortCookieSameSite"`
+	ShortCookieSecure   bool                             `json:"shortCookieSecure"`
 	ShortLifetimeMinutes int                              `json:"shortLifetimeMinutes"`
 
 	// Updated Timestamp of when the entity was last updated in yyyy-MM-dd'T'HH:mm:ss format
@@ -1581,16 +1582,16 @@ type SessionConfigUpdateReq struct {
 	Active *bool `json:"active,omitempty"`
 
 	// AppType Application type
-	AppType             externalRef0.AppType                      `json:"appType"`
-	ClientInfo          *externalRef0.ClientInfo                  `json:"clientInfo,omitempty"`
-	LongInactivityUnit  *SessionConfigUpdateReqLongInactivityUnit `json:"longInactivityUnit,omitempty"`
+	AppType            externalRef0.AppType                      `json:"appType"`
+	ClientInfo         *externalRef0.ClientInfo                  `json:"clientInfo,omitempty"`
+	LongInactivityUnit *SessionConfigUpdateReqLongInactivityUnit `json:"longInactivityUnit,omitempty"`
 	LongInactivityValue *int                                      `json:"longInactivityValue,omitempty"`
 	LongLifetimeUnit    *SessionConfigUpdateReqLongLifetimeUnit   `json:"longLifetimeUnit,omitempty"`
 	LongLifetimeValue   *int                                      `json:"longLifetimeValue,omitempty"`
 
 	// RequestID Unique ID of request, you can provide your own while making the request, if not the ID will be randomly generated on server side
-	RequestID            *externalRef0.RequestID                    `json:"requestID,omitempty"`
-	ShortCookieDomain    *string                                    `json:"shortCookieDomain,omitempty"`
+	RequestID            *externalRef0.RequestID `json:"requestID,omitempty"`
+	ShortCookieDomain    *string                 `json:"shortCookieDomain,omitempty"`
 	ShortCookieSameSite  *SessionConfigUpdateReqShortCookieSameSite `json:"shortCookieSameSite,omitempty"`
 	ShortCookieSecure    *bool                                      `json:"shortCookieSecure,omitempty"`
 	ShortLifetimeMinutes *int                                       `json:"shortLifetimeMinutes,omitempty"`
@@ -1737,8 +1738,8 @@ type SmsTemplateCreateReq struct {
 	Name       string                   `json:"name"`
 
 	// RequestID Unique ID of request, you can provide your own while making the request, if not the ID will be randomly generated on server side
-	RequestID *externalRef0.RequestID  `json:"requestID,omitempty"`
-	TextPlain string                   `json:"textPlain"`
+	RequestID *externalRef0.RequestID `json:"requestID,omitempty"`
+	TextPlain string                  `json:"textPlain"`
 	Type      SmsTemplateCreateReqType `json:"type"`
 }
 
@@ -1901,9 +1902,9 @@ type TrackingEnumsGetRsp struct {
 type TrackingOSDetailedStats struct {
 	Cnt           int                               `json:"cnt"`
 	ConditionalUi int                               `json:"conditional_ui"`
-	OsName        string                            `json:"osName"`
-	OsPlatform    TrackingOSDetailedStatsOsPlatform `json:"osPlatform"`
-	OsVersion     string                            `json:"osVersion"`
+	OsName     string                            `json:"osName"`
+	OsPlatform TrackingOSDetailedStatsOsPlatform `json:"osPlatform"`
+	OsVersion  string                            `json:"osVersion"`
 	Platform      int                               `json:"platform"`
 	TimePoint     string                            `json:"timePoint"`
 	Webauthn      int                               `json:"webauthn"`
@@ -1972,8 +1973,8 @@ type TrackingRawListRow struct {
 type TrackingRawListRsp struct {
 	// HttpStatusCode HTTP status code of operation
 	HttpStatusCode int32               `json:"httpStatusCode"`
-	Message        string              `json:"message"`
-	Paging         externalRef0.Paging `json:"paging"`
+	Message string              `json:"message"`
+	Paging  externalRef0.Paging `json:"paging"`
 
 	// RequestData Data about the request itself, can be used for debugging
 	RequestData externalRef0.RequestData `json:"requestData"`
@@ -2166,8 +2167,8 @@ type UserDeviceListRsp struct {
 
 	// HttpStatusCode HTTP status code of operation
 	HttpStatusCode int32               `json:"httpStatusCode"`
-	Message        string              `json:"message"`
-	Paging         externalRef0.Paging `json:"paging"`
+	Message string              `json:"message"`
+	Paging  externalRef0.Paging `json:"paging"`
 
 	// RequestData Data about the request itself, can be used for debugging
 	RequestData externalRef0.RequestData `json:"requestData"`
@@ -2663,8 +2664,8 @@ type WebAuthnCredentialItemRspTransport string
 type WebAuthnCredentialListRsp struct {
 	// HttpStatusCode HTTP status code of operation
 	HttpStatusCode int32               `json:"httpStatusCode"`
-	Message        string              `json:"message"`
-	Paging         externalRef0.Paging `json:"paging"`
+	Message string              `json:"message"`
+	Paging  externalRef0.Paging `json:"paging"`
 
 	// RequestData Data about the request itself, can be used for debugging
 	RequestData externalRef0.RequestData    `json:"requestData"`
@@ -2923,8 +2924,8 @@ type WebauthnSettingItem struct {
 type WebauthnSettingListRsp struct {
 	// HttpStatusCode HTTP status code of operation
 	HttpStatusCode int32               `json:"httpStatusCode"`
-	Message        string              `json:"message"`
-	Paging         externalRef0.Paging `json:"paging"`
+	Message string              `json:"message"`
+	Paging  externalRef0.Paging `json:"paging"`
 
 	// RequestData Data about the request itself, can be used for debugging
 	RequestData externalRef0.RequestData `json:"requestData"`

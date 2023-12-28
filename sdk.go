@@ -6,7 +6,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/corbado/corbado-go/pkg/assert"
-	"github.com/corbado/corbado-go/pkg/sdk/entity/api"
+	"github.com/corbado/corbado-go/pkg/generated/api"
 	"github.com/corbado/corbado-go/pkg/servererror"
 	"github.com/corbado/corbado-go/pkg/services/authtoken"
 	"github.com/corbado/corbado-go/pkg/services/emailcode"

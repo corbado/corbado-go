@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/corbado/corbado-go/pkg/sdk/entity/common"
+	"github.com/corbado/corbado-go/pkg/generated/common"
 )
 
 type ValidationErrors = []struct {

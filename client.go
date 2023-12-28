@@ -11,8 +11,8 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/corbado/corbado-go/pkg/assert"
+	"github.com/corbado/corbado-go/pkg/generated/api"
 	"github.com/corbado/corbado-go/pkg/logger"
-	"github.com/corbado/corbado-go/pkg/sdk/entity/api"
 )
 
 func newClient(config *Configuration) (*api.ClientWithResponses, error) {

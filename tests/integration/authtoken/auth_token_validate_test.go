@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/corbado/corbado-go"
-	"github.com/corbado/corbado-go/pkg/sdk/entity/api"
+	"github.com/corbado/corbado-go/pkg/generated/api"
 	"github.com/corbado/corbado-go/pkg/servererror"
 	"github.com/corbado/corbado-go/pkg/util"
 	"github.com/corbado/corbado-go/tests/integration"

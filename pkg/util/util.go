@@ -1,7 +1,7 @@
 package util
 
 import (
-	"github.com/corbado/corbado-go/pkg/sdk/entity/common"
+	"github.com/corbado/corbado-go/pkg/generated/common"
 )
 
 // Ptr returns a pointer to provided value
