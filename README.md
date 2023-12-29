@@ -35,19 +35,19 @@ To create a Corbado Go SDK instance you need to provide your `Project ID` and `A
 package main
 
 import (
-	"github.com/corbado/corbado-go"
+    "github.com/corbado/corbado-go"
 )
 
 func main() {
-	configuration, err := corbado.NewConfiguration("<Project ID>", "<API secret>")
-	if err != nil {
-		panic(err)
-	}
+    configuration, err := corbado.NewConfiguration("<Project ID>", "<API secret>")
+    if err != nil {
+        panic(err)
+    }
 
-	sdk, err := corbado.NewSDK(configuration)
-	if err != nil {
-		panic(err)
-	}
+    sdk, err := corbado.NewSDK(configuration)
+    if err != nil {
+        panic(err)
+    }
 }
 ```
 
