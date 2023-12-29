@@ -2,11 +2,7 @@ name: tests
 
 on:
   push:
-    branches:
-      - 'main'
-  pull_request:
-    branches:
-      - 'main'
+    branches: '*''
 
 concurrency:
   group: ${{ github.ref }}
