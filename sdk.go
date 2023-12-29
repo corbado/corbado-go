@@ -20,7 +20,7 @@ import (
 	"github.com/corbado/corbado-go/pkg/services/validation"
 )
 
-const Version = "v0.6.0"
+const Version = "1.0.0"
 
 type SDK interface {
 	AuthTokens() authtoken.AuthToken
