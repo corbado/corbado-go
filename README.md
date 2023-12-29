@@ -86,49 +86,49 @@ The Corbado Go SDK uses Go standard error handling (error interface). If the Bac
 package main
 
 import (
-	"context"
-	"fmt"
+    "context"
+    "fmt"
 
-	"github.com/corbado/corbado-go"
+    "github.com/corbado/corbado-go"
 )
 
 func main() {
-	configuration, err := corbado.NewConfiguration("<Project ID>", "<API secret>")
-	if err != nil {
-		panic(err)
-	}
+    configuration, err := corbado.NewConfiguration("<Project ID>", "<API secret>")
+    if err != nil {
+        panic(err)
+    }
 
-	sdk, err := corbado.NewSDK(configuration)
-	if err != nil {
-		panic(err)
-	}
+    sdk, err := corbado.NewSDK(configuration)
+    if err != nil {
+        panic(err)
+    }
 
-	// Try to get non-existing user with ID 'usr-123456789'
-	user, err := sdk.Users().Get(context.Background(), "usr-123456789", nil)
-	if err != nil {
-		if serverErr := corbado.AsServerError(err); serverErr != nil {
-			// Show HTTP status code (404 in this case)
-			fmt.Println(serverErr.HTTPStatusCode)
+    // Try to get non-existing user with ID 'usr-123456789'
+    user, err := sdk.Users().Get(context.Background(), "usr-123456789", nil)
+    if err != nil {
+        if serverErr := corbado.AsServerError(err); serverErr != nil {
+            // Show HTTP status code (404 in this case)
+            fmt.Println(serverErr.HTTPStatusCode)
 
-			// Show request ID (can be used in developer panel to look up the full request
-			// and response, see https://app.corbado.com/app/logs/requests)
-			fmt.Println(serverErr.RequestData.RequestID)
+            // Show request ID (can be used in developer panel to look up the full request
+            // and response, see https://app.corbado.com/app/logs/requests)
+            fmt.Println(serverErr.RequestData.RequestID)
 
-			// Show runtime of request in seconds (server side)
-			fmt.Println(serverErr.Runtime)
+            // Show runtime of request in seconds (server side)
+            fmt.Println(serverErr.Runtime)
 
-			// Show validation error messages (server side validation in case of HTTP
-			// status code 400 (Bad Request))
-			fmt.Printf("%+v\n", serverErr.Validation)
-		} else {
-			// Handle other errors
-			panic(err)
-		}
+            // Show validation error messages (server side validation in case of HTTP
+            // status code 400 (Bad Request))
+            fmt.Printf("%+v\n", serverErr.Validation)
+        } else {
+            // Handle other errors
+            panic(err)
+        }
 
-		return
-	}
+        return
+    }
 
-	fmt.Println(user.Data.ID)
+    fmt.Println(user.Data.ID)
 }
 
 ```
