@@ -32,14 +32,22 @@ go get github.com/corbado/corbado-go@v0.6.0
 To create a Corbado Go SDK instance you need to provide your `Project ID` and `API secret` which can be found at the [Developer Panel](https://app.corbado.com).
 
 ```Go
-configuration, err := corbado.NewConfiguration("<Project ID>", "<API secret>")
-if err != nil {
-    // handle error
-}
+package main
 
-sdk, err := corbado.NewSDK(configuration)
-if err != nil {
-    // handle error
+import (
+	"github.com/corbado/corbado-go"
+)
+
+func main() {
+	configuration, err := corbado.NewConfiguration("<Project ID>", "<API secret>")
+	if err != nil {
+		panic(err)
+	}
+
+	sdk, err := corbado.NewSDK(configuration)
+	if err != nil {
+		panic(err)
+	}
 }
 ```
 
@@ -51,20 +59,20 @@ A list of examples can be found in the integration tests [here](tests/integratio
 
 The Corbado Go SDK provides the following services:
 
-- `emailMagicLinks` for managing email magic links ([examples](tests/integration/emailmagiclink))
-- `emailOTPs` for managing email OTPs ([examples](tests/integration/emailotp))
-- `smsOTPs` for managing SMS OTPs ([examples](tests/integration/smsotp))
-- `sessions` for managing sessions
-- `users` for managing users ([examples](tests/integration/user))
-- `authTokens` for managing authentication tokens needed for own session management ([examples](tests/integration/authtoken))
-- `validations` for validating email addresses and phone numbers ([examples](tests/integration/validation))
+- `EmailMagicLinks` for managing email magic links ([examples](tests/integration/emailmagiclink))
+- `EmailOTPs` for managing email OTPs ([examples](tests/integration/emailotp))
+- `SmsOTPs` for managing SMS OTPs ([examples](tests/integration/smsotp))
+- `Sessions` for managing sessions
+- `Users` for managing users ([examples](tests/integration/user))
+- `AuthTokens` for managing authentication tokens needed for own session management ([examples](tests/integration/authtoken))
+- `Validations` for validating email addresses and phone numbers ([examples](tests/integration/validation))
 
-To use a specific service, such as `sessions`, invoke it as shown below:
+To use a specific service, such as `Users`, invoke it as shown below:
 
 ```Go
-user, err := sdk.Sessions().GetCurrentUser()
+users, err := sdk.Users().List(context.Background(), nil)
 if err != nil {
-    // handle error
+    panic(err)
 }
 ``` 
 
@@ -75,28 +83,54 @@ if err != nil {
 The Corbado Go SDK uses Go standard error handling (error interface). If the Backend API returns a HTTP status code other than 200, the Corbado Go SDK returns a `ServerError` error (which implements the error interface):
 
 ```Go
-// Try to get non-existing user with ID 'usr-123456789'
-user, err := sdk.Users().Get(context.Background(), "user-123456789")
-if err != nil {
-    if serverErr := corbado.AsServerError(err); serverErr != nil {
-        // Show HTTP status code (404 in this case) 
-        fmt.Println(serverErr.HTTPStatusCode)
+package main
 
-        // Show request ID (can be used in developer panel to look up the full request
-        // and response, see https://app.corbado.com/app/logs/requests)
-        fmt.Println(serverErr.RequestData.RequestID)
+import (
+	"context"
+	"fmt"
 
-        // Show runtime of request in seconds (server side)
-        fmt.Println(serverErr.Runtime)
+	"github.com/corbado/corbado-go"
+)
 
-        // Show validation error messages (server side validation in case of HTTP
-        // status code 400 (Bad Request))
-        fmt.Printf("%+v\n", serverErr.Validation)
-    return
-    } else {
-        // Handle other errors
-    }
+func main() {
+	configuration, err := corbado.NewConfiguration("<Project ID>", "<API secret>")
+	if err != nil {
+		panic(err)
+	}
+
+	sdk, err := corbado.NewSDK(configuration)
+	if err != nil {
+		panic(err)
+	}
+
+	// Try to get non-existing user with ID 'usr-123456789'
+	user, err := sdk.Users().Get(context.Background(), "usr-123456789", nil)
+	if err != nil {
+		if serverErr := corbado.AsServerError(err); serverErr != nil {
+			// Show HTTP status code (404 in this case)
+			fmt.Println(serverErr.HTTPStatusCode)
+
+			// Show request ID (can be used in developer panel to look up the full request
+			// and response, see https://app.corbado.com/app/logs/requests)
+			fmt.Println(serverErr.RequestData.RequestID)
+
+			// Show runtime of request in seconds (server side)
+			fmt.Println(serverErr.Runtime)
+
+			// Show validation error messages (server side validation in case of HTTP
+			// status code 400 (Bad Request))
+			fmt.Printf("%+v\n", serverErr.Validation)
+		} else {
+			// Handle other errors
+			panic(err)
+		}
+
+		return
+	}
+
+	fmt.Println(user.Data.ID)
 }
+
 ```
 
 ## :speech_balloon: Support & Feedback
