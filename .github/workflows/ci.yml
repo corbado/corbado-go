@@ -9,11 +9,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  unit-test:
+  unittests:
     uses: "./.github/workflows/ci_unit_test.yml"
     secrets: inherit
 
-  integration-test:
+  integrationtests:
     uses: "./.github/workflows/ci_integration_test.yml"
     secrets: inherit
 
