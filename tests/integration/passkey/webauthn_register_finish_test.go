@@ -20,10 +20,11 @@ func TestWebAuthnRegisterFinish_ValidationError(t *testing.T) {
 	rsp, err := integration.SDK(t).Passkeys().RegisterFinish(context.TODO(), api.WebAuthnFinishReq{
 		ClientInfo: *util.ClientInfo("foobar", "127.0.0.1"),
 	})
+
 	require.Nil(t, rsp)
 	require.NotNil(t, err)
+
 	serverErr := corbado.AsServerError(err)
 	require.NotNil(t, serverErr)
-
 	assert.Equal(t, "publicKeyCredential: cannot be blank", servererror.GetValidationMessage(serverErr.Validation))
 }

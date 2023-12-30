@@ -17,15 +17,15 @@ import (
 )
 
 func TestUserList_ValidationError(t *testing.T) {
-	usersRsp, err := integration.SDK(t).Users().List(context.TODO(), &api.UserListParams{
+	rsp, err := integration.SDK(t).Users().List(context.TODO(), &api.UserListParams{
 		Sort: util.Ptr("foo:bar"),
 	})
 
-	require.Nil(t, usersRsp)
+	require.Nil(t, rsp)
 	require.NotNil(t, err)
+
 	serverErr := corbado.AsServerError(err)
 	require.NotNil(t, serverErr)
-
 	assert.Equal(t, "sort: Invalid order direction 'bar'", servererror.GetValidationMessage(serverErr.Validation))
 }
 

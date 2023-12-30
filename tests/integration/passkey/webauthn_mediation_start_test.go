@@ -20,9 +20,9 @@ func TestWebAuthnMediationStart_ValidationError(t *testing.T) {
 	rsp, err := integration.SDK(t).Passkeys().MediationStart(context.TODO(), api.WebAuthnMediationStartReq{})
 	require.Nil(t, rsp)
 	require.NotNil(t, err)
+
 	serverErr := corbado.AsServerError(err)
 	require.NotNil(t, serverErr)
-
 	assert.Contains(t, servererror.GetValidationMessage(serverErr.Validation), "userAgent: cannot be blank")
 }
 

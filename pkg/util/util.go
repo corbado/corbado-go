@@ -18,6 +18,7 @@ func RequestID(requestID string) *common.RequestID {
 	return nil
 }
 
+// ClientInfo returns client info based on provided user agent and remote address
 func ClientInfo(userAgent string, remoteAddress string) *common.ClientInfo {
 	if userAgent == "" && remoteAddress == "" {
 		return nil

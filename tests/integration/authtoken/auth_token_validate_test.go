@@ -26,9 +26,9 @@ func TestAuthTokenValidate_ValidationError(t *testing.T) {
 
 	require.Nil(t, rsp)
 	require.NotNil(t, err)
+
 	serverErr := corbado.AsServerError(err)
 	require.NotNil(t, serverErr)
-
 	assert.Equal(t, "token: the length must be exactly 64", servererror.GetValidationMessage(serverErr.Validation))
 }
 
@@ -40,9 +40,9 @@ func TestAuthTokenValidate_NotExists(t *testing.T) {
 
 	require.Nil(t, rsp)
 	require.NotNil(t, err)
+
 	serverErr := corbado.AsServerError(err)
 	require.NotNil(t, serverErr)
-
 	assert.Equal(t, int32(http.StatusNotFound), serverErr.HTTPStatusCode)
 	require.NotNil(t, serverErr.Details)
 	assert.Equal(t, "Session doesn't exist", *serverErr.Details)

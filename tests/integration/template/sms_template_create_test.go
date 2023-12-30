@@ -22,11 +22,12 @@ func TestSMSTemplateCreate_ValidationError(t *testing.T) {
 		TextPlain: "",
 		Type:      api.SmsTemplateCreateReqTypeSmsCode,
 	})
+
 	require.Nil(t, rsp)
 	require.NotNil(t, err)
+
 	serverErr := corbado.AsServerError(err)
 	require.NotNil(t, serverErr)
-
 	assert.Equal(t, "textPlain: cannot be blank", servererror.GetValidationMessage(serverErr.Validation))
 }
 

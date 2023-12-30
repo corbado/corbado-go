@@ -20,10 +20,11 @@ func TestWebAuthnAssociateStart_ValidationError(t *testing.T) {
 	rsp, err := integration.SDK(t).Passkeys().AssociateStart(context.TODO(), api.WebAuthnAssociateStartReq{
 		ClientInfo: util.ClientInfo("foobar", "127.0.0.1"),
 	})
+
 	require.Nil(t, rsp)
 	require.NotNil(t, err)
+
 	serverErr := corbado.AsServerError(err)
 	require.NotNil(t, serverErr)
-
 	assert.Equal(t, "associationToken: cannot be blank", servererror.GetValidationMessage(serverErr.Validation))
 }

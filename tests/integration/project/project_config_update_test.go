@@ -22,9 +22,9 @@ func TestProjectConfigUpdate_ValidationError(t *testing.T) {
 	})
 
 	require.NotNil(t, err)
+
 	serverErr := corbado.AsServerError(err)
 	require.NotNil(t, serverErr)
-
 	assert.Equal(t, "externalName: the length must be between 2 and 255", servererror.GetValidationMessage(serverErr.Validation))
 }
 

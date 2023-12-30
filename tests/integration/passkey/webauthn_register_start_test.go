@@ -21,11 +21,12 @@ func TestWebAuthnRegisterStart_ValidationError(t *testing.T) {
 		Username:   "",
 		ClientInfo: *util.ClientInfo("foobar", "127.0.0.1"),
 	})
+
 	require.Nil(t, rsp)
 	require.NotNil(t, err)
+
 	serverErr := corbado.AsServerError(err)
 	require.NotNil(t, serverErr)
-
 	assert.Equal(t, "username: cannot be blank", servererror.GetValidationMessage(serverErr.Validation))
 }
 

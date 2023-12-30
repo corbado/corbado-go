@@ -19,11 +19,12 @@ func TestValidateEmail_ValidationError(t *testing.T) {
 	rsp, err := integration.SDK(t).Validations().ValidateEmail(context.TODO(), api.ValidateEmailReq{
 		Email: "",
 	})
+
 	require.Nil(t, rsp)
 	require.NotNil(t, err)
+
 	serverErr := corbado.AsServerError(err)
 	require.NotNil(t, serverErr)
-
 	assert.Equal(t, "email: cannot be blank", servererror.GetValidationMessage(serverErr.Validation))
 }
 

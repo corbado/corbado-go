@@ -22,8 +22,8 @@ func TestWebAuthnCredentialUpdate_ValidationError(t *testing.T) {
 
 	require.Nil(t, rsp)
 	require.NotNil(t, err)
+
 	serverErr := corbado.AsServerError(err)
 	require.NotNil(t, serverErr)
-
 	assert.Equal(t, "credentialID: does not exist", servererror.GetValidationMessage(serverErr.Validation))
 }

@@ -32,11 +32,12 @@ func TestEmailTemplateCreate_ValidationError(t *testing.T) {
 		HtmlColorButtonFont:      "#ffffff",
 		IsDefault:                false,
 	})
+
 	require.Nil(t, rsp)
 	require.NotNil(t, err)
+
 	serverErr := corbado.AsServerError(err)
 	require.NotNil(t, serverErr)
-
 	assert.Equal(t, "lang: must be in a valid format", servererror.GetValidationMessage(serverErr.Validation))
 }
 
@@ -57,8 +58,8 @@ func TestEmailTemplateCreate_Success(t *testing.T) {
 		HtmlColorButtonFont:      "#ffffff",
 		IsDefault:                false,
 	})
+
 	require.Nil(t, err)
 	require.NotNil(t, rsp)
-
 	assert.NotEmpty(t, rsp.Data.EmailTemplateID)
 }

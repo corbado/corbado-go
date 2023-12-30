@@ -23,15 +23,14 @@ func TestWebAuthnCredentialList_ValidationError(t *testing.T) {
 
 	require.Nil(t, rsp)
 	require.NotNil(t, err)
+
 	serverErr := corbado.AsServerError(err)
 	require.NotNil(t, serverErr)
-
 	assert.Equal(t, "sort: Invalid order direction 'bar'", servererror.GetValidationMessage(serverErr.Validation))
 }
 
 func TestWebAuthnCredentialList_Success(t *testing.T) {
 	rsp, err := integration.SDK(t).Passkeys().CredentialList(context.TODO(), nil)
 	require.NoError(t, err)
-
 	assert.True(t, len(rsp.Rows) == 0)
 }
