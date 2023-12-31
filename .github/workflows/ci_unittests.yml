@@ -4,7 +4,7 @@ on:
   workflow_call:
 
 jobs:
-  test:
+  unittests:
     runs-on: ubuntu-latest
 
     strategy:
