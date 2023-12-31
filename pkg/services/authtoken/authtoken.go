@@ -3,6 +3,8 @@ package authtoken
 import (
 	"context"
 
+	"github.com/pkg/errors"
+
 	"github.com/corbado/corbado-go/pkg/assert"
 	"github.com/corbado/corbado-go/pkg/generated/api"
 	"github.com/corbado/corbado-go/pkg/servererror"
@@ -32,7 +34,7 @@ func New(client *api.ClientWithResponses) (*Impl, error) {
 func (i *Impl) Validate(ctx context.Context, req api.AuthTokenValidateReq, editors ...api.RequestEditorFn) (*api.AuthTokenValidateRsp, error) {
 	res, err := i.client.AuthTokenValidateWithResponse(ctx, req, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {

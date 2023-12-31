@@ -3,6 +3,8 @@ package emailotp
 import (
 	"context"
 
+	"github.com/pkg/errors"
+
 	"github.com/corbado/corbado-go/pkg/assert"
 	"github.com/corbado/corbado-go/pkg/generated/api"
 	"github.com/corbado/corbado-go/pkg/generated/common"
@@ -36,7 +38,7 @@ func New(client *api.ClientWithResponses) (*Impl, error) {
 func (i *Impl) Send(ctx context.Context, req api.EmailCodeSendReq, editors ...api.RequestEditorFn) (*api.EmailCodeSendRsp, error) {
 	res, err := i.client.EmailCodeSendWithResponse(ctx, req, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {
@@ -50,7 +52,7 @@ func (i *Impl) Send(ctx context.Context, req api.EmailCodeSendReq, editors ...ap
 func (i *Impl) Validate(ctx context.Context, emailCodeID common.EmailCodeID, req api.EmailCodeValidateReq, editors ...api.RequestEditorFn) (*api.EmailCodeValidateRsp, error) {
 	res, err := i.client.EmailCodeValidateWithResponse(ctx, emailCodeID, req, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {
@@ -64,7 +66,7 @@ func (i *Impl) Validate(ctx context.Context, emailCodeID common.EmailCodeID, req
 func (i *Impl) Get(ctx context.Context, emailCodeID common.EmailCodeID, editors ...api.RequestEditorFn) (*api.EmailCodeGetRsp, error) {
 	res, err := i.client.EmailCodeGetWithResponse(ctx, emailCodeID, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {

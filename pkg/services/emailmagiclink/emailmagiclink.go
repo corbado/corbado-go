@@ -3,6 +3,8 @@ package emailmagiclink
 import (
 	"context"
 
+	"github.com/pkg/errors"
+
 	"github.com/corbado/corbado-go/pkg/assert"
 	"github.com/corbado/corbado-go/pkg/generated/api"
 	"github.com/corbado/corbado-go/pkg/generated/common"
@@ -36,7 +38,7 @@ func New(client *api.ClientWithResponses) (*Impl, error) {
 func (i *Impl) Send(ctx context.Context, req api.EmailLinkSendReq, editors ...api.RequestEditorFn) (*api.EmailLinkSendRsp, error) {
 	res, err := i.client.EmailLinkSendWithResponse(ctx, req, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {
@@ -50,7 +52,7 @@ func (i *Impl) Send(ctx context.Context, req api.EmailLinkSendReq, editors ...ap
 func (i *Impl) Validate(ctx context.Context, emailLinkID common.EmailLinkID, req api.EmailLinksValidateReq, editors ...api.RequestEditorFn) (*api.EmailLinkValidateRsp, error) {
 	res, err := i.client.EmailLinkValidateWithResponse(ctx, emailLinkID, req, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {
@@ -64,7 +66,7 @@ func (i *Impl) Validate(ctx context.Context, emailLinkID common.EmailLinkID, req
 func (i *Impl) Get(ctx context.Context, emailLinkID common.EmailLinkID, editors ...api.RequestEditorFn) (*api.EmailLinkGetRsp, error) {
 	res, err := i.client.EmailLinkGetWithResponse(ctx, emailLinkID, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {

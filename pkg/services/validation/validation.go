@@ -3,6 +3,8 @@ package validation
 import (
 	"context"
 
+	"github.com/pkg/errors"
+
 	"github.com/corbado/corbado-go/pkg/assert"
 	"github.com/corbado/corbado-go/pkg/generated/api"
 	"github.com/corbado/corbado-go/pkg/servererror"
@@ -34,7 +36,7 @@ func New(client *api.ClientWithResponses) (*Impl, error) {
 func (i *Impl) ValidateEmail(ctx context.Context, req api.ValidateEmailReq, editors ...api.RequestEditorFn) (*api.ValidateEmailRsp, error) {
 	res, err := i.client.ValidateEmailWithResponse(ctx, req, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {
@@ -48,7 +50,7 @@ func (i *Impl) ValidateEmail(ctx context.Context, req api.ValidateEmailReq, edit
 func (i *Impl) ValidatePhoneNumber(ctx context.Context, req api.ValidatePhoneNumberReq, editors ...api.RequestEditorFn) (*api.ValidatePhoneNumberRsp, error) {
 	res, err := i.client.ValidatePhoneNumberWithResponse(ctx, req, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {

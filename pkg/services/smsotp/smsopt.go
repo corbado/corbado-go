@@ -3,6 +3,8 @@ package smsotp
 import (
 	"context"
 
+	"github.com/pkg/errors"
+
 	"github.com/corbado/corbado-go/pkg/assert"
 	"github.com/corbado/corbado-go/pkg/generated/api"
 	"github.com/corbado/corbado-go/pkg/servererror"
@@ -34,7 +36,7 @@ func New(client *api.ClientWithResponses) (*Impl, error) {
 func (i *Impl) Send(ctx context.Context, req api.SmsCodeSendReq, editors ...api.RequestEditorFn) (*api.SmsCodeSendRsp, error) {
 	res, err := i.client.SmsCodeSendWithResponse(ctx, req, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {
@@ -48,7 +50,7 @@ func (i *Impl) Send(ctx context.Context, req api.SmsCodeSendReq, editors ...api.
 func (i *Impl) Validate(ctx context.Context, smsCodeID api.SmsCodeID, req api.SmsCodeValidateReq, editors ...api.RequestEditorFn) (*api.SmsCodeValidateRsp, error) {
 	res, err := i.client.SmsCodeValidateWithResponse(ctx, smsCodeID, req, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {

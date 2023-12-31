@@ -3,6 +3,8 @@ package user
 import (
 	"context"
 
+	"github.com/pkg/errors"
+
 	"github.com/corbado/corbado-go/pkg/assert"
 	"github.com/corbado/corbado-go/pkg/generated/api"
 	"github.com/corbado/corbado-go/pkg/generated/common"
@@ -38,7 +40,7 @@ func New(client *api.ClientWithResponses) (*Impl, error) {
 func (i *Impl) List(ctx context.Context, params *api.UserListParams, editors ...api.RequestEditorFn) (*api.UserListRsp, error) {
 	res, err := i.client.UserListWithResponse(ctx, params, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {
@@ -52,7 +54,7 @@ func (i *Impl) List(ctx context.Context, params *api.UserListParams, editors ...
 func (i *Impl) Create(ctx context.Context, req api.UserCreateReq, editors ...api.RequestEditorFn) (*api.UserCreateRsp, error) {
 	res, err := i.client.UserCreateWithResponse(ctx, req, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {
@@ -66,7 +68,7 @@ func (i *Impl) Create(ctx context.Context, req api.UserCreateReq, editors ...api
 func (i *Impl) Update(ctx context.Context, userID common.UserID, req api.UserUpdateReq, editors ...api.RequestEditorFn) (*api.UserUpdateRsp, error) {
 	res, err := i.client.UserUpdateWithResponse(ctx, userID, req, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {
@@ -80,7 +82,7 @@ func (i *Impl) Update(ctx context.Context, userID common.UserID, req api.UserUpd
 func (i *Impl) Get(ctx context.Context, userID common.UserID, params *api.UserGetParams, editors ...api.RequestEditorFn) (*api.UserGetRsp, error) {
 	res, err := i.client.UserGetWithResponse(ctx, userID, params, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {
@@ -94,7 +96,7 @@ func (i *Impl) Get(ctx context.Context, userID common.UserID, params *api.UserGe
 func (i *Impl) Delete(ctx context.Context, userID common.UserID, req api.UserDeleteReq, editors ...api.RequestEditorFn) (*common.GenericRsp, error) {
 	res, err := i.client.UserDeleteWithResponse(ctx, userID, req, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {

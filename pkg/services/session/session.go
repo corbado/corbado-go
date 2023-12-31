@@ -145,7 +145,7 @@ func (i *Impl) GetCurrentUser(shortSession string) (*entities.User, error) {
 func (i *Impl) ConfigGet(ctx context.Context, params *api.SessionConfigGetParams, editors ...api.RequestEditorFn) (*api.SessionConfigGetRsp, error) {
 	res, err := i.client.SessionConfigGetWithResponse(ctx, params, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {
@@ -159,7 +159,7 @@ func (i *Impl) ConfigGet(ctx context.Context, params *api.SessionConfigGetParams
 func (i *Impl) LongSessionRevoke(ctx context.Context, sessionID string, req api.LongSessionRevokeReq, editors ...api.RequestEditorFn) error {
 	res, err := i.client.LongSessionRevokeWithResponse(ctx, sessionID, req, editors...)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {
@@ -173,7 +173,7 @@ func (i *Impl) LongSessionRevoke(ctx context.Context, sessionID string, req api.
 func (i *Impl) LongSessionGet(ctx context.Context, sessionID string, editors ...api.RequestEditorFn) (*api.LongSessionGetRsp, error) {
 	res, err := i.client.LongSessionGetWithResponse(ctx, sessionID, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {

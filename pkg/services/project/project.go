@@ -3,6 +3,8 @@ package project
 import (
 	"context"
 
+	"github.com/pkg/errors"
+
 	"github.com/corbado/corbado-go/pkg/assert"
 	"github.com/corbado/corbado-go/pkg/generated/api"
 	"github.com/corbado/corbado-go/pkg/servererror"
@@ -38,7 +40,7 @@ func New(client *api.ClientWithResponses) (*Impl, error) {
 func (i *Impl) CreateSecret(ctx context.Context, req api.ProjectSecretCreateReq, editors ...api.RequestEditorFn) (*api.ProjectSecretCreateRsp, error) {
 	res, err := i.client.ProjectSecretCreateWithResponse(ctx, req, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {
@@ -52,7 +54,7 @@ func (i *Impl) CreateSecret(ctx context.Context, req api.ProjectSecretCreateReq,
 func (i *Impl) ConfigGet(ctx context.Context, editors ...api.RequestEditorFn) (*api.ProjectConfigGetRsp, error) {
 	res, err := i.client.ProjectConfigGetWithResponse(ctx, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {
@@ -66,7 +68,7 @@ func (i *Impl) ConfigGet(ctx context.Context, editors ...api.RequestEditorFn) (*
 func (i *Impl) ConfigUpdate(ctx context.Context, req api.ProjectConfigSaveReq, editors ...api.RequestEditorFn) error {
 	res, err := i.client.ProjectConfigSaveWithResponse(ctx, req, editors...)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {
@@ -80,7 +82,7 @@ func (i *Impl) ConfigUpdate(ctx context.Context, req api.ProjectConfigSaveReq, e
 func (i *Impl) AuthMethodsList(ctx context.Context, req api.AuthMethodsListReq, editors ...api.RequestEditorFn) (*api.AuthMethodsListRsp, error) {
 	res, err := i.client.AuthMethodsListWithResponse(ctx, req, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {
@@ -94,7 +96,7 @@ func (i *Impl) AuthMethodsList(ctx context.Context, req api.AuthMethodsListReq, 
 func (i *Impl) AndroidAppConfigGet(ctx context.Context, editors ...api.RequestEditorFn) (*api.AndroidAppConfigListRsp, error) {
 	res, err := i.client.AndroidAppConfigGetWithResponse(ctx, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {
@@ -108,7 +110,7 @@ func (i *Impl) AndroidAppConfigGet(ctx context.Context, editors ...api.RequestEd
 func (i *Impl) IOSAppConfigGet(ctx context.Context, editors ...api.RequestEditorFn) (*api.IOSAppConfigListRsp, error) {
 	res, err := i.client.IOSAppConfigGetWithResponse(ctx, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {

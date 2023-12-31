@@ -3,6 +3,8 @@ package passkey
 import (
 	"context"
 
+	"github.com/pkg/errors"
+
 	"github.com/corbado/corbado-go/pkg/assert"
 	"github.com/corbado/corbado-go/pkg/generated/api"
 	"github.com/corbado/corbado-go/pkg/servererror"
@@ -42,7 +44,7 @@ func New(client *api.ClientWithResponses) (*Impl, error) {
 func (i *Impl) CreateSecret(ctx context.Context, req api.ProjectSecretCreateReq, editors ...api.RequestEditorFn) (*api.ProjectSecretCreateRsp, error) {
 	res, err := i.client.ProjectSecretCreateWithResponse(ctx, req, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {
@@ -56,7 +58,7 @@ func (i *Impl) CreateSecret(ctx context.Context, req api.ProjectSecretCreateReq,
 func (i *Impl) RegisterStart(ctx context.Context, req api.WebAuthnRegisterStartReq, editors ...api.RequestEditorFn) (*api.WebAuthnRegisterStartRsp, error) {
 	res, err := i.client.WebAuthnRegisterStartWithResponse(ctx, req, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {
@@ -70,7 +72,7 @@ func (i *Impl) RegisterStart(ctx context.Context, req api.WebAuthnRegisterStartR
 func (i *Impl) RegisterFinish(ctx context.Context, req api.WebAuthnFinishReq, editors ...api.RequestEditorFn) (*api.WebAuthnRegisterFinishRsp, error) {
 	res, err := i.client.WebAuthnRegisterFinishWithResponse(ctx, req, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {
@@ -84,7 +86,7 @@ func (i *Impl) RegisterFinish(ctx context.Context, req api.WebAuthnFinishReq, ed
 func (i *Impl) AuthenticateStart(ctx context.Context, req api.WebAuthnAuthenticateStartReq, editors ...api.RequestEditorFn) (*api.WebAuthnAuthenticateStartRsp, error) {
 	res, err := i.client.WebAuthnAuthenticateStartWithResponse(ctx, req, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {
@@ -98,7 +100,7 @@ func (i *Impl) AuthenticateStart(ctx context.Context, req api.WebAuthnAuthentica
 func (i *Impl) AuthenticateFinish(ctx context.Context, req api.WebAuthnFinishReq, editors ...api.RequestEditorFn) (*api.WebAuthnAuthenticateFinishRsp, error) {
 	res, err := i.client.WebAuthnAuthenticateFinishWithResponse(ctx, req, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {
@@ -112,7 +114,7 @@ func (i *Impl) AuthenticateFinish(ctx context.Context, req api.WebAuthnFinishReq
 func (i *Impl) MediationStart(ctx context.Context, req api.WebAuthnMediationStartReq, editors ...api.RequestEditorFn) (*api.WebAuthnMediationStartRsp, error) {
 	res, err := i.client.WebAuthnMediationStartWithResponse(ctx, req, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {
@@ -126,7 +128,7 @@ func (i *Impl) MediationStart(ctx context.Context, req api.WebAuthnMediationStar
 func (i *Impl) AssociateStart(ctx context.Context, req api.WebAuthnAssociateStartReq, editors ...api.RequestEditorFn) (*api.WebAuthnAssociateStartRsp, error) {
 	res, err := i.client.WebAuthnAssociateStartWithResponse(ctx, req, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {
@@ -140,7 +142,7 @@ func (i *Impl) AssociateStart(ctx context.Context, req api.WebAuthnAssociateStar
 func (i *Impl) CredentialList(ctx context.Context, params *api.WebAuthnCredentialListParams, editors ...api.RequestEditorFn) (*api.WebAuthnCredentialListRsp, error) {
 	res, err := i.client.WebAuthnCredentialListWithResponse(ctx, params, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {
@@ -154,7 +156,7 @@ func (i *Impl) CredentialList(ctx context.Context, params *api.WebAuthnCredentia
 func (i *Impl) CredentialUpdate(ctx context.Context, credentialID string, req api.WebAuthnCredentialReq, editors ...api.RequestEditorFn) (*api.WebAuthnCredentialRsp, error) {
 	res, err := i.client.WebAuthnCredentialUpdateWithResponse(ctx, credentialID, req, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {
@@ -168,7 +170,7 @@ func (i *Impl) CredentialUpdate(ctx context.Context, credentialID string, req ap
 func (i *Impl) CredentialExists(ctx context.Context, req api.WebAuthnCredentialExistsReq, editors ...api.RequestEditorFn) (*api.WebAuthnCredentialExistsRsp, error) {
 	res, err := i.client.WebAuthnCredentialExistsWithResponse(ctx, req, editors...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {
@@ -182,7 +184,7 @@ func (i *Impl) CredentialExists(ctx context.Context, req api.WebAuthnCredentialE
 func (i *Impl) CredentialDelete(ctx context.Context, userID string, credentialID string, req api.EmptyReq, editors ...api.RequestEditorFn) error {
 	res, err := i.client.WebAuthnCredentialDeleteWithResponse(ctx, userID, credentialID, req, editors...)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	if res.JSONDefault != nil {
