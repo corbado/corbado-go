@@ -23,5 +23,6 @@ jobs:
         with:
           go-version: ${{ matrix.go }}
           cache: true
-
-      - run: go test ./...
+          
+      - name: Run unit tests
+        run: go test ./...
