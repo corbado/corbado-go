@@ -3,17 +3,18 @@
 package integration
 
 import (
+	"context"
 	"crypto/rand"
 	"math/big"
 	"os"
-	"runtime"
-	"strings"
 	"testing"
 
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
 
 	"github.com/corbado/corbado-go"
+	"github.com/corbado/corbado-go/pkg/generated/api"
+	"github.com/corbado/corbado-go/pkg/util"
 )
 
 func SDK(t *testing.T) corbado.SDK {
@@ -25,15 +26,6 @@ func SDK(t *testing.T) corbado.SDK {
 	require.NoError(t, err)
 
 	return sdk
-}
-
-func getEnv(t *testing.T, name string) string {
-	env := os.Getenv(name)
-	if env == "" {
-		t.Fatalf("Missing env variable %s", name)
-	}
-
-	return env
 }
 
 func GetProjectID(t *testing.T) string {
@@ -69,6 +61,16 @@ func CreateRandomTestName(t *testing.T) string {
 	return value
 }
 
+func CreateUser(t *testing.T) string {
+	rsp, err := SDK(t).Users().Create(context.TODO(), api.UserCreateReq{
+		Name:  CreateRandomTestName(t),
+		Email: util.Ptr(CreateRandomTestEmail(t)),
+	})
+	require.NoError(t, err)
+
+	return rsp.Data.UserID
+}
+
 func generateString(length int) (string, error) {
 	// Removed I, 1, 0 and O because of risk of confusion
 	const letters = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijklmnopwrstuvwxyz23456789"
@@ -102,16 +104,11 @@ func generateNumber(length int) (string, error) {
 	return string(res), nil
 }
 
-func getFunctionName() string {
-	pc := make([]uintptr, 15)
-	n := runtime.Callers(3, pc)
+func getEnv(t *testing.T, name string) string {
+	env := os.Getenv(name)
+	if env == "" {
+		t.Fatalf("Missing env variable %s", name)
+	}
 
-	frames := runtime.CallersFrames(pc[:n])
-	frame, _ := frames.Next()
-
-	functionName := frame.Function
-	functionName = functionName[strings.LastIndex(functionName, ".")+1:]
-	functionName = functionName[5:]
-
-	return functionName
+	return env
 }
