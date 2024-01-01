@@ -8,12 +8,12 @@ import (
 )
 
 func main() {
-	configuration, err := corbado.NewConfiguration("pro-12345678", "yoursecret")
+	config, err := corbado.NewConfig("pro-12345678", "yoursecret")
 	if err != nil {
 		panic(err)
 	}
 
-	sdk, err := corbado.NewSDK(configuration)
+	sdk, err := corbado.NewSDK(config)
 	if err != nil {
 		panic(err)
 	}

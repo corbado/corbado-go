@@ -24,15 +24,15 @@ const Version = "1.0.0"
 
 type SDK interface {
 	AuthTokens() authtoken.AuthToken
-	EmailOTPs() emailotp.EmailOTP
 	EmailMagicLinks() emailmagiclink.EmailMagicLink
+	EmailOTPs() emailotp.EmailOTP
 	Passkeys() passkey.Passkey
 	Projects() project.Project
 	Sessions() session.Session
+	SmsOTPs() smsotp.SmsOTP
 	Templates() template.Template
 	Users() user.User
 	Validations() validation.Validation
-	SmsOTPs() smsotp.SmsOTP
 }
 
 type Impl struct {
@@ -40,21 +40,21 @@ type Impl struct {
 	HTTPClient *http.Client
 
 	authTokens      authtoken.AuthToken
-	emailOTPs       emailotp.EmailOTP
 	emailMagicLinks emailmagiclink.EmailMagicLink
+	emailOTPs       emailotp.EmailOTP
 	passkeys        passkey.Passkey
 	projects        project.Project
 	sessions        session.Session
-	templates       template.Template
-	validations     validation.Validation
-	users           user.User
 	smsOTPs         smsotp.SmsOTP
+	templates       template.Template
+	users           user.User
+	validations     validation.Validation
 }
 
 var _ SDK = &Impl{}
 
 // NewSDK returns new SDK
-func NewSDK(config *Configuration) (*Impl, error) {
+func NewSDK(config *Config) (*Impl, error) {
 	if err := assert.NotNil(config); err != nil {
 		return nil, err
 	}
@@ -70,12 +70,12 @@ func NewSDK(config *Configuration) (*Impl, error) {
 		return nil, err
 	}
 
-	emailCodes, err := emailotp.New(client)
+	emailMagicLinks, err := emailmagiclink.New(client)
 	if err != nil {
 		return nil, err
 	}
 
-	emailLinks, err := emailmagiclink.New(client)
+	emailOTPs, err := emailotp.New(client)
 	if err != nil {
 		return nil, err
 	}
@@ -104,12 +104,12 @@ func NewSDK(config *Configuration) (*Impl, error) {
 		return nil, err
 	}
 
-	templates, err := template.New(client)
+	smsOTPs, err := smsotp.New(client)
 	if err != nil {
 		return nil, err
 	}
 
-	validations, err := validation.New(client)
+	templates, err := template.New(client)
 	if err != nil {
 		return nil, err
 	}
@@ -119,7 +119,7 @@ func NewSDK(config *Configuration) (*Impl, error) {
 		return nil, err
 	}
 
-	smsOTPs, err := smsotp.New(client)
+	validations, err := validation.New(client)
 	if err != nil {
 		return nil, err
 	}
@@ -132,15 +132,15 @@ func NewSDK(config *Configuration) (*Impl, error) {
 	return &Impl{
 		client:          client,
 		authTokens:      authTokens,
-		emailOTPs:       emailCodes,
-		emailMagicLinks: emailLinks,
+		emailMagicLinks: emailMagicLinks,
+		emailOTPs:       emailOTPs,
 		passkeys:        passkeys,
 		projects:        projects,
 		sessions:        sessions,
+		smsOTPs:         smsOTPs,
 		templates:       templates,
 		users:           users,
 		validations:     validations,
-		smsOTPs:         smsOTPs,
 		HTTPClient:      httpClient,
 	}, nil
 }
@@ -150,19 +150,14 @@ func (i *Impl) AuthTokens() authtoken.AuthToken {
 	return i.authTokens
 }
 
-// EmailOTPs returns email OTPs client
-func (i *Impl) EmailOTPs() emailotp.EmailOTP {
-	return i.emailOTPs
-}
-
 // EmailMagicLinks returns email magic links client
 func (i *Impl) EmailMagicLinks() emailmagiclink.EmailMagicLink {
 	return i.emailMagicLinks
 }
 
-// Validations returns validation client
-func (i *Impl) Validations() validation.Validation {
-	return i.validations
+// EmailOTPs returns email OTPs client
+func (i *Impl) EmailOTPs() emailotp.EmailOTP {
+	return i.emailOTPs
 }
 
 // Passkeys returns passkeys client
@@ -180,6 +175,11 @@ func (i *Impl) Sessions() session.Session {
 	return i.sessions
 }
 
+// SmsOTPs returns sms OTPs client
+func (i *Impl) SmsOTPs() smsotp.SmsOTP {
+	return i.smsOTPs
+}
+
 // Templates returns templates client
 func (i *Impl) Templates() template.Template {
 	return i.templates
@@ -190,9 +190,9 @@ func (i *Impl) Users() user.User {
 	return i.users
 }
 
-// SmsOTPs returns sms OTPs client
-func (i *Impl) SmsOTPs() smsotp.SmsOTP {
-	return i.smsOTPs
+// Validations returns validation client
+func (i *Impl) Validations() validation.Validation {
+	return i.validations
 }
 
 // IsServerError checks if given error is a ServerError

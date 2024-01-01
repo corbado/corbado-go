@@ -39,12 +39,12 @@ import (
 )
 
 func main() {
-    configuration, err := corbado.NewConfiguration("<Project ID>", "<API secret>")
+    config, err := corbado.NewConfig("<Project ID>", "<API secret>")
     if err != nil {
         panic(err)
     }
 
-    sdk, err := corbado.NewSDK(configuration)
+    sdk, err := corbado.NewSDK(config)
     if err != nil {
         panic(err)
     }
@@ -93,12 +93,12 @@ import (
 )
 
 func main() {
-    configuration, err := corbado.NewConfiguration("<Project ID>", "<API secret>")
+    config, err := corbado.NewConfig("<Project ID>", "<API secret>")
     if err != nil {
         panic(err)
     }
 
-    sdk, err := corbado.NewSDK(configuration)
+    sdk, err := corbado.NewSDK(config)
     if err != nil {
         panic(err)
     }

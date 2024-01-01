@@ -13,10 +13,10 @@ import (
 )
 
 type SDKHelpers struct {
-	config *corbado.Configuration
+	config *corbado.Config
 }
 
-func NewSDKHelpers(config *corbado.Configuration) (*SDKHelpers, error) {
+func NewSDKHelpers(config *corbado.Config) (*SDKHelpers, error) {
 	if err := assert.NotNil(config); err != nil {
 		return nil, err
 	}

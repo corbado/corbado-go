@@ -12,18 +12,18 @@ func TestNewConfig_Success(t *testing.T) {
 	projectID := "pro-12345678"
 	secret := "mysupersecret"
 
-	cfg, err := NewConfiguration(projectID, secret)
+	cfg, err := NewConfig(projectID, secret)
 	require.NoError(t, err)
 
 	assert.Equal(t, projectID, cfg.ProjectID)
 	assert.Equal(t, secret, cfg.APISecret)
-	assert.Equal(t, fmt.Sprintf(configurationDefaultFrontendAPI, projectID), cfg.FrontendAPI)
-	assert.Equal(t, configurationDefaultBackendAPI, cfg.BackendAPI)
-	assert.Equal(t, configurationDefaultShortSessionCookieName, cfg.ShortSessionCookieName)
-	assert.Equal(t, configurationDefaultCacheMaxAge, cfg.CacheMaxAge)
-	assert.Equal(t, configurationDefaultJWKSRefreshInterval, cfg.JWKSRefreshInterval)
-	assert.Equal(t, configurationDefaultJWKSRefreshRateLimit, cfg.JWKSRefreshRateLimit)
-	assert.Equal(t, configurationDefaultJWKSRefreshTimeout, cfg.JWKSRefreshTimeout)
+	assert.Equal(t, fmt.Sprintf(configDefaultFrontendAPI, projectID), cfg.FrontendAPI)
+	assert.Equal(t, configDefaultBackendAPI, cfg.BackendAPI)
+	assert.Equal(t, configDefaultShortSessionCookieName, cfg.ShortSessionCookieName)
+	assert.Equal(t, configDefaultCacheMaxAge, cfg.CacheMaxAge)
+	assert.Equal(t, configDefaultJWKSRefreshInterval, cfg.JWKSRefreshInterval)
+	assert.Equal(t, configDefaultJWKSRefreshRateLimit, cfg.JWKSRefreshRateLimit)
+	assert.Equal(t, configDefaultJWKSRefreshTimeout, cfg.JWKSRefreshTimeout)
 }
 
 func TestNewConfig_Failure(t *testing.T) {
@@ -47,7 +47,7 @@ func TestNewConfig_Failure(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			cfg, err := NewConfiguration(test.projectID, test.secret)
+			cfg, err := NewConfig(test.projectID, test.secret)
 			assert.Nil(t, cfg)
 			assert.ErrorContains(t, err, "given value '' is too short")
 		})

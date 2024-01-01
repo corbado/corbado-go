@@ -15,7 +15,7 @@ import (
 )
 
 func TestSessionConfigGet_AuthError(t *testing.T) {
-	config, err := corbado.NewConfiguration("pro-12345678", "wrongsecret")
+	config, err := corbado.NewConfig("pro-12345678", "wrongsecret")
 	require.NoError(t, err)
 
 	config.BackendAPI = integration.GetBackendAPI(t)

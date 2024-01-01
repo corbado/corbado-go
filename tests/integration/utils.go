@@ -18,7 +18,7 @@ import (
 )
 
 func SDK(t *testing.T) corbado.SDK {
-	config, err := corbado.NewConfiguration(GetProjectID(t), GetAPISecret(t))
+	config, err := corbado.NewConfig(GetProjectID(t), GetAPISecret(t))
 	require.NoError(t, err)
 	config.BackendAPI = GetBackendAPI(t)
 

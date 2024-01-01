@@ -15,7 +15,7 @@ import (
 	"github.com/corbado/corbado-go/pkg/logger"
 )
 
-func newClient(config *Configuration) (*api.ClientWithResponses, error) {
+func newClient(config *Config) (*api.ClientWithResponses, error) {
 	if err := assert.NotNil(config); err != nil {
 		return nil, err
 	}
