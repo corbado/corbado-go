@@ -59,12 +59,12 @@ A list of examples can be found in the integration tests [here](tests/integratio
 
 The Corbado Go SDK provides the following services:
 
+- `AuthTokens` for managing authentication tokens needed for own session management ([examples](tests/integration/authtoken))
 - `EmailMagicLinks` for managing email magic links ([examples](tests/integration/emailmagiclink))
 - `EmailOTPs` for managing email OTPs ([examples](tests/integration/emailotp))
-- `SmsOTPs` for managing SMS OTPs ([examples](tests/integration/smsotp))
 - `Sessions` for managing sessions
+- `SmsOTPs` for managing SMS OTPs ([examples](tests/integration/smsotp))
 - `Users` for managing users ([examples](tests/integration/user))
-- `AuthTokens` for managing authentication tokens needed for own session management ([examples](tests/integration/authtoken))
 - `Validations` for validating email addresses and phone numbers ([examples](tests/integration/validation))
 
 To use a specific service, such as `Users`, invoke it as shown below:
