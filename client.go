@@ -3,9 +3,10 @@ package corbado
 import (
 	"bytes"
 	"context"
-	"fmt"
+	"encoding/json"
 	"io"
 	"net/http"
+	"runtime"
 
 	"github.com/deepmap/oapi-codegen/pkg/securityprovider"
 	"github.com/pkg/errors"
@@ -26,7 +27,7 @@ func newClient(config *Config) (*api.ClientWithResponses, error) {
 	}
 
 	extraOptions := []api.ClientOption{
-		api.WithRequestEditorFn(newSDKVersionHeaderEditorFn),
+		api.WithRequestEditorFn(newSDKHeaderEditorFn),
 		api.WithRequestEditorFn(basicAuth.Intercept),
 	}
 
@@ -113,8 +114,23 @@ func NewLoggingClientOption() api.ClientOption {
 	}
 }
 
-func newSDKVersionHeaderEditorFn(_ context.Context, req *http.Request) error {
-	req.Header.Set("X-Corbado-SDK-Version", fmt.Sprintf("Go SDK %s", Version))
+func newSDKHeaderEditorFn(_ context.Context, req *http.Request) error {
+	sdk := struct {
+		Name            string `json:"name"`
+		SdkVersion      string `json:"sdkVersion"`
+		LanguageVersion string `json:"languageVersion"`
+	}{
+		Name:            "Go SDK",
+		SdkVersion:      Version,
+		LanguageVersion: runtime.Version(),
+	}
+
+	marshaled, err := json.Marshal(sdk)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	req.Header.Set("X-Corbado-SDK", string(marshaled))
 
 	return nil
 }
