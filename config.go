@@ -3,7 +3,10 @@ package corbado
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"time"
+
+	"github.com/pkg/errors"
 
 	"github.com/corbado/corbado-go/pkg/assert"
 	"github.com/corbado/corbado-go/pkg/generated/api"
@@ -50,8 +53,8 @@ func NewConfig(projectID string, apiSecret string) (*Config, error) {
 	return &Config{
 		ProjectID:              projectID,
 		APISecret:              apiSecret,
-		BackendAPI:             configDefaultBackendAPI,
 		FrontendAPI:            fmt.Sprintf(configDefaultFrontendAPI, projectID),
+		BackendAPI:             configDefaultBackendAPI,
 		ShortSessionCookieName: configDefaultShortSessionCookieName,
 		CacheMaxAge:            configDefaultCacheMaxAge,
 		JWKSRefreshInterval:    configDefaultJWKSRefreshInterval,
@@ -68,4 +71,59 @@ func MustNewConfig(projectID string, apiSecret string) *Config {
 	}
 
 	return config
+}
+
+// NewConfigEnv returns new config with values from env variables (CORBADO_PROJECT_ID and CORBADO_API_SECRET)
+func NewConfigEnv() (*Config, error) {
+	projectID := os.Getenv("CORBADO_PROJECT_ID")
+	if projectID == "" {
+		return nil, errors.Errorf("Missing env variable CORBADO_PROJECT_ID")
+	}
+
+	apiSecret := os.Getenv("CORBADO_API_SECRET")
+	if apiSecret == "" {
+		return nil, errors.Errorf("Missing env variable CORBADO_API_SECRET")
+	}
+
+	return NewConfig(projectID, apiSecret)
+}
+
+func (c *Config) validate() error {
+	if err := assert.ValidProjectID(c.ProjectID); err != nil {
+		return errors.WithMessage(err, "Invalid ProjectID given")
+	}
+
+	if err := assert.ValidAPISecret(c.APISecret); err != nil {
+		return errors.WithMessage(err, "Invalid APISecret given")
+	}
+
+	if err := assert.ValidAPIEndpoint(c.FrontendAPI); err != nil {
+		return errors.WithMessage(err, "Invalid FrontendAPI given")
+	}
+
+	if err := assert.ValidAPIEndpoint(c.BackendAPI); err != nil {
+		return errors.WithMessage(err, "Invalid BackendAPI given")
+	}
+
+	if err := assert.StringNotEmpty(c.ShortSessionCookieName); err != nil {
+		return errors.WithMessage(err, "Invalid ShortSessionCookieName given")
+	}
+
+	if err := assert.DurationNotEmpty(c.CacheMaxAge); err != nil {
+		return errors.WithMessage(err, "Invalid CacheMaxAge given")
+	}
+
+	if err := assert.DurationNotEmpty(c.JWKSRefreshInterval); err != nil {
+		return errors.WithMessage(err, "Invalid JWKSRefreshInterval given")
+	}
+
+	if err := assert.DurationNotEmpty(c.JWKSRefreshRateLimit); err != nil {
+		return errors.WithMessage(err, "Invalid JWKSRefreshRateLimit given")
+	}
+
+	if err := assert.DurationNotEmpty(c.JWKSRefreshTimeout); err != nil {
+		return errors.WithMessage(err, "Invalid JWKSRefreshTimeout given")
+	}
+
+	return nil
 }

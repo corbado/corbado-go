@@ -3,11 +3,9 @@ package session
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"net/url"
-	"time"
 
 	"github.com/MicahParks/keyfunc"
 	"github.com/golang-jwt/jwt/v4"
@@ -34,20 +32,15 @@ type Impl struct {
 	jwks   *keyfunc.JWKS
 }
 
-type Config struct {
-	ProjectID            string
-	FrontendAPI          string
-	JWTIssuer            string
-	JWKSRefreshInterval  time.Duration
-	JWKSRefreshRateLimit time.Duration
-	JWKSRefreshTimeout   time.Duration
-}
-
 var _ Session = &Impl{}
 
 // New returns new user client
 func New(client *api.ClientWithResponses, config *Config) (*Impl, error) {
 	if err := assert.NotNil(client, config); err != nil {
+		return nil, err
+	}
+
+	if err := config.validate(); err != nil {
 		return nil, err
 	}
 
@@ -92,7 +85,7 @@ func newJWKS(config *Config) (*keyfunc.JWKS, error) {
 		RefreshUnknownKID: true,
 	}
 
-	return keyfunc.Get(fmt.Sprintf("%s/.well-known/jwks", config.FrontendAPI), options)
+	return keyfunc.Get(config.JwksURI, options)
 }
 
 func (i *Impl) ValidateShortSessionValue(shortSession string) (*entities.User, error) {
@@ -115,8 +108,8 @@ func (i *Impl) ValidateShortSessionValue(shortSession string) (*entities.User, e
 	}
 
 	claims := token.Claims.(*entities.Claims)
-	if i.config.JWTIssuer != "" && claims.Issuer != i.config.JWTIssuer {
-		return nil, errors.Errorf("JWT issuer mismatch (configured for Frontend API: '%s', actual JWT: '%s')", i.config.JWTIssuer, claims.Issuer)
+	if claims.Issuer != i.config.JWTIssuer {
+		return nil, errors.Errorf("JWT issuer mismatch (configured: '%s', actual JWT: '%s')", i.config.JWTIssuer, claims.Issuer)
 	}
 
 	return &entities.User{

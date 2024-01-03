@@ -66,6 +66,10 @@ func (s *SDKHelpers) getShortSessionValueFromAuthHeader(req *http.Request) (stri
 	}
 
 	authHeader := req.Header.Get("Authorization")
+	if len(authHeader) < 8 {
+		return "", nil
+	}
+
 	if !strings.HasPrefix(authHeader, "Bearer ") {
 		return "", nil
 	}

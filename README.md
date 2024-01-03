@@ -53,7 +53,9 @@ func main() {
 
 ### Examples
 
-A list of examples can be found in the integration tests [here](tests/integration).
+A list of examples can be found in the [examples](/examples) directory. [Integration tests](tests/integration) are good examples as well.
+
+@todo: Update PHP README.md
 
 ## :hammer_and_wrench: Services
 
@@ -62,7 +64,7 @@ The Corbado Go SDK provides the following services:
 - `AuthTokens` for managing authentication tokens needed for own session management ([examples](tests/integration/authtoken))
 - `EmailMagicLinks` for managing email magic links ([examples](tests/integration/emailmagiclink))
 - `EmailOTPs` for managing email OTPs ([examples](tests/integration/emailotp))
-- `Sessions` for managing sessions
+- `Sessions` for managing sessions ([examples](examples/sessionstdlib))
 - `SmsOTPs` for managing SMS OTPs ([examples](tests/integration/smsotp))
 - `Users` for managing users ([examples](tests/integration/user))
 - `Validations` for validating email addresses and phone numbers ([examples](tests/integration/validation))

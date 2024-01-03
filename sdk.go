@@ -1,6 +1,7 @@
 package corbado
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/pkg/errors"
@@ -59,6 +60,10 @@ func NewSDK(config *Config) (*Impl, error) {
 		return nil, err
 	}
 
+	if err := config.validate(); err != nil {
+		return nil, err
+	}
+
 	client, err := newClient(config)
 	if err != nil {
 		return nil, err
@@ -92,8 +97,8 @@ func NewSDK(config *Config) (*Impl, error) {
 
 	sessionConfig := &session.Config{
 		ProjectID:            config.ProjectID,
-		FrontendAPI:          config.FrontendAPI,
-		JWTIssuer:            config.JWTIssuer,
+		JWTIssuer:            config.FrontendAPI,
+		JwksURI:              fmt.Sprintf("%s/.well-known/jwks", config.FrontendAPI),
 		JWKSRefreshInterval:  config.JWKSRefreshInterval,
 		JWKSRefreshRateLimit: config.JWKSRefreshRateLimit,
 		JWKSRefreshTimeout:   config.JWKSRefreshTimeout,
