@@ -72,8 +72,8 @@ func MustNewConfig(projectID string, apiSecret string) *Config {
 	return config
 }
 
-// NewConfigEnv returns new config with values from env variables (CORBADO_PROJECT_ID and CORBADO_API_SECRET)
-func NewConfigEnv() (*Config, error) {
+// NewConfigFromEnv returns new config with values from env variables (CORBADO_PROJECT_ID and CORBADO_API_SECRET)
+func NewConfigFromEnv() (*Config, error) {
 	projectID := os.Getenv("CORBADO_PROJECT_ID")
 	if projectID == "" {
 		return nil, errors.Errorf("Missing env variable CORBADO_PROJECT_ID")
