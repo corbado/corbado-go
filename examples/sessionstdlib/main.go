@@ -38,9 +38,12 @@ func main() {
 		}
 
 		if user.Authenticated {
-			fmt.Fprintf(w, "Hello %s!", user.Name)
+			// User is authenticated
+			fmt.Fprint(w, "User is authenticated!")
 		} else {
-			fmt.Fprintf(w, "Hello guest!")
+			// User is not authenticated, redirect to login
+			// page for example
+			http.Redirect(w, r, "/login", http.StatusFound)
 		}
 	})
 
