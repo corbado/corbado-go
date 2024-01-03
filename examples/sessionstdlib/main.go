@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
@@ -40,6 +41,20 @@ func main() {
 		if user.Authenticated {
 			// User is authenticated
 			fmt.Fprint(w, "User is authenticated!")
+
+			fmt.Fprintf(w, "User ID: %s\n", user.ID)
+			fmt.Fprintf(w, "User full name: %s\n", user.Name)
+			fmt.Fprintf(w, "User email: %s\n", user.Email)
+			fmt.Fprintf(w, "User phone number: %s\n", user.PhoneNumber)
+
+			rsp, err := sdk.Users().Get(context.Background(), user.ID, nil)
+			if err != nil {
+				panic(err)
+			}
+
+			fmt.Fprintf(w, "User created: %s\n", rsp.Data.Created)
+			fmt.Fprintf(w, "User updated: %s\n", rsp.Data.Updated)
+			fmt.Fprintf(w, "User status: %s\n", rsp.Data.Status)
 		} else {
 			// User is not authenticated, redirect to login
 			// page for example
