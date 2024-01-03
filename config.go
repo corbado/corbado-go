@@ -19,7 +19,6 @@ type Config struct {
 	BackendAPI             string
 	ShortSessionCookieName string
 	CacheMaxAge            time.Duration
-	JWTIssuer              string
 
 	JWKSRefreshInterval  time.Duration
 	JWKSRefreshRateLimit time.Duration
