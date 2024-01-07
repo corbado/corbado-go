@@ -12,15 +12,15 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/corbado/corbado-go/internal/assert"
-	"github.com/corbado/corbado-go/internal/entities"
 	"github.com/corbado/corbado-go/internal/logger"
+	entities2 "github.com/corbado/corbado-go/pkg/entities"
 	"github.com/corbado/corbado-go/pkg/generated/api"
 	"github.com/corbado/corbado-go/pkg/servererror"
 )
 
 type Session interface {
-	ValidateShortSessionValue(shortSession string) (*entities.User, error)
-	GetCurrentUser(shortSession string) (*entities.User, error)
+	ValidateShortSessionValue(shortSession string) (*entities2.User, error)
+	GetCurrentUser(shortSession string) (*entities2.User, error)
 	ConfigGet(ctx context.Context, params *api.SessionConfigGetParams, editors ...api.RequestEditorFn) (*api.SessionConfigGetRsp, error)
 	LongSessionRevoke(ctx context.Context, sessionID string, req api.LongSessionRevokeReq, editors ...api.RequestEditorFn) error
 	LongSessionGet(ctx context.Context, sessionID string, editors ...api.RequestEditorFn) (*api.LongSessionGetRsp, error)
@@ -88,7 +88,7 @@ func newJWKS(config *Config) (*keyfunc.JWKS, error) {
 	return keyfunc.Get(config.JwksURI, options)
 }
 
-func (i *Impl) ValidateShortSessionValue(shortSession string) (*entities.User, error) {
+func (i *Impl) ValidateShortSessionValue(shortSession string) (*entities2.User, error) {
 	if shortSession == "" {
 		return nil, nil
 	}
@@ -102,17 +102,17 @@ func (i *Impl) ValidateShortSessionValue(shortSession string) (*entities.User, e
 		i.jwks = jwks
 	}
 
-	token, err := jwt.ParseWithClaims(shortSession, &entities.Claims{}, i.jwks.Keyfunc)
+	token, err := jwt.ParseWithClaims(shortSession, &entities2.Claims{}, i.jwks.Keyfunc)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 
-	claims := token.Claims.(*entities.Claims)
+	claims := token.Claims.(*entities2.Claims)
 	if claims.Issuer != i.config.JWTIssuer {
 		return nil, errors.Errorf("JWT issuer mismatch (configured: '%s', actual JWT: '%s')", i.config.JWTIssuer, claims.Issuer)
 	}
 
-	return &entities.User{
+	return &entities2.User{
 		Authenticated: true,
 		ID:            claims.Subject,
 		Name:          claims.Name,
@@ -121,7 +121,7 @@ func (i *Impl) ValidateShortSessionValue(shortSession string) (*entities.User, e
 	}, nil
 }
 
-func (i *Impl) GetCurrentUser(shortSession string) (*entities.User, error) {
+func (i *Impl) GetCurrentUser(shortSession string) (*entities2.User, error) {
 	usr, err := i.ValidateShortSessionValue(shortSession)
 	if err != nil {
 		return nil, err
@@ -131,7 +131,7 @@ func (i *Impl) GetCurrentUser(shortSession string) (*entities.User, error) {
 		return usr, nil
 	}
 
-	return entities.NewGuestUser(), nil
+	return entities2.NewGuestUser(), nil
 }
 
 // ConfigGet retrieves session config by projectID inferred from authentication
