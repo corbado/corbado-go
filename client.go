@@ -11,9 +11,9 @@ import (
 	"github.com/deepmap/oapi-codegen/pkg/securityprovider"
 	"github.com/pkg/errors"
 
-	"github.com/corbado/corbado-go/pkg/assert"
+	"github.com/corbado/corbado-go/internal/assert"
+	"github.com/corbado/corbado-go/internal/logger"
 	"github.com/corbado/corbado-go/pkg/generated/api"
-	"github.com/corbado/corbado-go/pkg/logger"
 )
 
 func newClient(config *Config) (*api.ClientWithResponses, error) {

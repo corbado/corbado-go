@@ -6,8 +6,9 @@ import (
 
 	"github.com/pkg/errors"
 
+	"github.com/corbado/corbado-go/internal/assert"
+
 	"github.com/corbado/corbado-go"
-	"github.com/corbado/corbado-go/pkg/assert"
 	"github.com/corbado/corbado-go/pkg/generated/common"
 	"github.com/corbado/corbado-go/pkg/util"
 )

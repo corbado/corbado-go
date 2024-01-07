@@ -5,7 +5,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/corbado/corbado-go/pkg/assert"
+	"github.com/corbado/corbado-go/internal/assert"
 )
 
 type Config struct {
