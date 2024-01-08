@@ -8,11 +8,11 @@ import (
 	"net/url"
 
 	"github.com/MicahParks/keyfunc"
+	"github.com/corbado/corbado-go/pkg/logger"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/pkg/errors"
 
 	"github.com/corbado/corbado-go/internal/assert"
-	"github.com/corbado/corbado-go/internal/logger"
 	entities2 "github.com/corbado/corbado-go/pkg/entities"
 	"github.com/corbado/corbado-go/pkg/generated/api"
 	"github.com/corbado/corbado-go/pkg/servererror"
