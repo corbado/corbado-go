@@ -55,8 +55,6 @@ func main() {
 
 A list of examples can be found in the [examples](/examples) directory. [Integration tests](tests/integration) are good examples as well.
 
-@todo: Update PHP README.md
-
 ## :hammer_and_wrench: Services
 
 The Corbado Go SDK provides the following services:
