@@ -4,18 +4,20 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/corbado/corbado-go/pkg/sdk/assert"
-	"github.com/corbado/corbado-go/pkg/sdk/config"
-	"github.com/corbado/corbado-go/pkg/sdk/entity/common"
-	"github.com/corbado/corbado-go/pkg/sdk/util"
 	"github.com/pkg/errors"
+
+	"github.com/corbado/corbado-go/internal/assert"
+
+	"github.com/corbado/corbado-go"
+	"github.com/corbado/corbado-go/pkg/generated/common"
+	"github.com/corbado/corbado-go/pkg/util"
 )
 
 type SDKHelpers struct {
-	config *config.Config
+	config *corbado.Config
 }
 
-func NewSDKHelpers(config *config.Config) (*SDKHelpers, error) {
+func NewSDKHelpers(config *corbado.Config) (*SDKHelpers, error) {
 	if err := assert.NotNil(config); err != nil {
 		return nil, err
 	}
@@ -65,6 +67,10 @@ func (s *SDKHelpers) getShortSessionValueFromAuthHeader(req *http.Request) (stri
 	}
 
 	authHeader := req.Header.Get("Authorization")
+	if len(authHeader) < 8 {
+		return "", nil
+	}
+
 	if !strings.HasPrefix(authHeader, "Bearer ") {
 		return "", nil
 	}

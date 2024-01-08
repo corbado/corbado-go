@@ -8,7 +8,13 @@ import (
 )
 
 func main() {
-	config := corbado.MustNewConfig("pro-12345678", "yoursecret")
+	// NewConfigFromEnv() reads project ID and API secret from CORBADO_PROJECT_ID
+	// and CORBADO_API_SECRET environment variables
+	config, err := corbado.NewConfigFromEnv()
+	if err != nil {
+		panic(err)
+	}
+
 	sdk, err := corbado.NewSDK(config)
 	if err != nil {
 		panic(err)

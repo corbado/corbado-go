@@ -3,16 +3,18 @@
 package integration
 
 import (
+	"context"
 	"crypto/rand"
 	"math/big"
 	"os"
-	"runtime"
-	"strings"
 	"testing"
 
-	"github.com/corbado/corbado-go"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
+
+	"github.com/corbado/corbado-go"
+	"github.com/corbado/corbado-go/pkg/generated/api"
+	"github.com/corbado/corbado-go/pkg/util"
 )
 
 func SDK(t *testing.T) corbado.SDK {
@@ -24,15 +26,6 @@ func SDK(t *testing.T) corbado.SDK {
 	require.NoError(t, err)
 
 	return sdk
-}
-
-func getEnv(t *testing.T, name string) string {
-	env := os.Getenv(name)
-	if env == "" {
-		t.Fatalf("Missing env variable %s", name)
-	}
-
-	return env
 }
 
 func GetProjectID(t *testing.T) string {
@@ -51,14 +44,14 @@ func CreateRandomTestEmail(t *testing.T) string {
 	value, err := generateString(10)
 	require.NoError(t, err)
 
-	return getFunctionName() + value + "@test.de"
+	return "integration-test-" + value + "@corbado.com"
 }
 
 func CreateRandomTestPhoneNumber(t *testing.T) string {
-	value, err := generateNumber(13)
+	value, err := generateNumber(7)
 	require.NoError(t, err)
 
-	return "+49" + value
+	return "+491509" + value
 }
 
 func CreateRandomTestName(t *testing.T) string {
@@ -66,6 +59,16 @@ func CreateRandomTestName(t *testing.T) string {
 	require.NoError(t, err)
 
 	return value
+}
+
+func CreateUser(t *testing.T) string {
+	rsp, err := SDK(t).Users().Create(context.TODO(), api.UserCreateReq{
+		Name:  CreateRandomTestName(t),
+		Email: util.Ptr(CreateRandomTestEmail(t)),
+	})
+	require.NoError(t, err)
+
+	return rsp.Data.UserID
 }
 
 func generateString(length int) (string, error) {
@@ -101,16 +104,11 @@ func generateNumber(length int) (string, error) {
 	return string(res), nil
 }
 
-func getFunctionName() string {
-	pc := make([]uintptr, 15)
-	n := runtime.Callers(3, pc)
+func getEnv(t *testing.T, name string) string {
+	env := os.Getenv(name)
+	if env == "" {
+		t.Fatalf("Missing env variable %s", name)
+	}
 
-	frames := runtime.CallersFrames(pc[:n])
-	frame, _ := frames.Next()
-
-	functionName := frame.Function
-	functionName = functionName[strings.LastIndex(functionName, ".")+1:]
-	functionName = functionName[5:]
-
-	return functionName
+	return env
 }
