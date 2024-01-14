@@ -2,23 +2,19 @@ name: tests
 
 on:
   push:
-    branches:
-      - 'main'
-  pull_request:
-    branches:
-      - 'main'
+    branches: '*'
 
 concurrency:
   group: ${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  unit-test:
-    uses: "./.github/workflows/ci_unit_test.yml"
+  unittests:
+    uses: "./.github/workflows/ci_unittests.yml"
     secrets: inherit
 
-  integration-test:
-    uses: "./.github/workflows/ci_integration_test.yml"
+  integrationtests:
+    uses: "./.github/workflows/ci_integrationtests.yml"
     secrets: inherit
 
   lint:

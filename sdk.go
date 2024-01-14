@@ -1,33 +1,36 @@
 package corbado
 
 import (
+	"fmt"
 	"net/http"
 
-	"github.com/corbado/corbado-go/pkg/sdk/assert"
-	"github.com/corbado/corbado-go/pkg/sdk/authtoken"
-	"github.com/corbado/corbado-go/pkg/sdk/config"
-	"github.com/corbado/corbado-go/pkg/sdk/emailcode"
-	"github.com/corbado/corbado-go/pkg/sdk/emaillink"
-	"github.com/corbado/corbado-go/pkg/sdk/entity/api"
-	"github.com/corbado/corbado-go/pkg/sdk/passkey"
-	"github.com/corbado/corbado-go/pkg/sdk/project"
-	"github.com/corbado/corbado-go/pkg/sdk/servererror"
-	"github.com/corbado/corbado-go/pkg/sdk/session"
-	"github.com/corbado/corbado-go/pkg/sdk/template"
-	"github.com/corbado/corbado-go/pkg/sdk/user"
-	"github.com/corbado/corbado-go/pkg/sdk/validation"
 	"github.com/pkg/errors"
+
+	"github.com/corbado/corbado-go/internal/assert"
+	"github.com/corbado/corbado-go/internal/services/authtoken"
+	"github.com/corbado/corbado-go/internal/services/emailmagiclink"
+	"github.com/corbado/corbado-go/internal/services/emailotp"
+	"github.com/corbado/corbado-go/internal/services/passkey"
+	"github.com/corbado/corbado-go/internal/services/project"
+	"github.com/corbado/corbado-go/internal/services/session"
+	"github.com/corbado/corbado-go/internal/services/smsotp"
+	"github.com/corbado/corbado-go/internal/services/template"
+	"github.com/corbado/corbado-go/internal/services/user"
+	"github.com/corbado/corbado-go/internal/services/validation"
+	"github.com/corbado/corbado-go/pkg/generated/api"
+	"github.com/corbado/corbado-go/pkg/servererror"
 )
 
-const Version = "v0.6.0"
+const Version = "1.0.0"
 
 type SDK interface {
 	AuthTokens() authtoken.AuthToken
-	EmailCodes() emailcode.EmailCode
-	EmailLinks() emaillink.EmailLink
+	EmailMagicLinks() emailmagiclink.EmailMagicLink
+	EmailOTPs() emailotp.EmailOTP
 	Passkeys() passkey.Passkey
 	Projects() project.Project
 	Sessions() session.Session
+	SmsOTPs() smsotp.SmsOTP
 	Templates() template.Template
 	Users() user.User
 	Validations() validation.Validation
@@ -37,22 +40,27 @@ type Impl struct {
 	client     *api.ClientWithResponses
 	HTTPClient *http.Client
 
-	authTokens authtoken.AuthToken
-	emailCodes emailcode.EmailCode
-	emailLinks emaillink.EmailLink
-	passkeys   passkey.Passkey
-	projects   project.Project
-	sessions   session.Session
-	templates  template.Template
-	validation validation.Validation
-	users      user.User
+	authTokens      authtoken.AuthToken
+	emailMagicLinks emailmagiclink.EmailMagicLink
+	emailOTPs       emailotp.EmailOTP
+	passkeys        passkey.Passkey
+	projects        project.Project
+	sessions        session.Session
+	smsOTPs         smsotp.SmsOTP
+	templates       template.Template
+	users           user.User
+	validations     validation.Validation
 }
 
 var _ SDK = &Impl{}
 
 // NewSDK returns new SDK
-func NewSDK(config *config.Config) (*Impl, error) {
+func NewSDK(config *Config) (*Impl, error) {
 	if err := assert.NotNil(config); err != nil {
+		return nil, err
+	}
+
+	if err := config.validate(); err != nil {
 		return nil, err
 	}
 
@@ -67,12 +75,12 @@ func NewSDK(config *config.Config) (*Impl, error) {
 		return nil, err
 	}
 
-	emailCodes, err := emailcode.New(client)
+	emailMagicLinks, err := emailmagiclink.New(client)
 	if err != nil {
 		return nil, err
 	}
 
-	emailLinks, err := emaillink.New(client)
+	emailOTPs, err := emailotp.New(client)
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +95,21 @@ func NewSDK(config *config.Config) (*Impl, error) {
 		return nil, err
 	}
 
-	sessions, err := session.New(client, config)
+	sessionConfig := &session.Config{
+		ProjectID:            config.ProjectID,
+		JWTIssuer:            config.FrontendAPI,
+		JwksURI:              fmt.Sprintf("%s/.well-known/jwks", config.FrontendAPI),
+		JWKSRefreshInterval:  config.JWKSRefreshInterval,
+		JWKSRefreshRateLimit: config.JWKSRefreshRateLimit,
+		JWKSRefreshTimeout:   config.JWKSRefreshTimeout,
+	}
+
+	sessions, err := session.New(client, sessionConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	smsOTPs, err := smsotp.New(client)
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +124,7 @@ func NewSDK(config *config.Config) (*Impl, error) {
 		return nil, err
 	}
 
-	validation, err := validation.New(client)
+	validations, err := validation.New(client)
 	if err != nil {
 		return nil, err
 	}
@@ -113,17 +135,18 @@ func NewSDK(config *config.Config) (*Impl, error) {
 	}
 
 	return &Impl{
-		client:     client,
-		authTokens: authTokens,
-		emailCodes: emailCodes,
-		emailLinks: emailLinks,
-		passkeys:   passkeys,
-		projects:   projects,
-		sessions:   sessions,
-		templates:  templates,
-		users:      users,
-		validation: validation,
-		HTTPClient: httpClient,
+		client:          client,
+		authTokens:      authTokens,
+		emailMagicLinks: emailMagicLinks,
+		emailOTPs:       emailOTPs,
+		passkeys:        passkeys,
+		projects:        projects,
+		sessions:        sessions,
+		smsOTPs:         smsOTPs,
+		templates:       templates,
+		users:           users,
+		validations:     validations,
+		HTTPClient:      httpClient,
 	}, nil
 }
 
@@ -132,19 +155,14 @@ func (i *Impl) AuthTokens() authtoken.AuthToken {
 	return i.authTokens
 }
 
-// EmailCodes returns email codes client
-func (i *Impl) EmailCodes() emailcode.EmailCode {
-	return i.emailCodes
+// EmailMagicLinks returns email magic links client
+func (i *Impl) EmailMagicLinks() emailmagiclink.EmailMagicLink {
+	return i.emailMagicLinks
 }
 
-// EmailLinks returns email links client
-func (i *Impl) EmailLinks() emaillink.EmailLink {
-	return i.emailLinks
-}
-
-// Validations returns validation client
-func (i *Impl) Validations() validation.Validation {
-	return i.validation
+// EmailOTPs returns email OTPs client
+func (i *Impl) EmailOTPs() emailotp.EmailOTP {
+	return i.emailOTPs
 }
 
 // Passkeys returns passkeys client
@@ -162,6 +180,11 @@ func (i *Impl) Sessions() session.Session {
 	return i.sessions
 }
 
+// SmsOTPs returns sms OTPs client
+func (i *Impl) SmsOTPs() smsotp.SmsOTP {
+	return i.smsOTPs
+}
+
 // Templates returns templates client
 func (i *Impl) Templates() template.Template {
 	return i.templates
@@ -170,6 +193,11 @@ func (i *Impl) Templates() template.Template {
 // Users returns users client
 func (i *Impl) Users() user.User {
 	return i.users
+}
+
+// Validations returns validation client
+func (i *Impl) Validations() validation.Validation {
+	return i.validations
 }
 
 // IsServerError checks if given error is a ServerError
@@ -189,16 +217,4 @@ func AsServerError(err error) *servererror.ServerError {
 	}
 
 	return serverError
-}
-
-// NewConfig returns new config with sane defaults
-// this is a convenience function for config.NewConfig to avoid import cycles
-func NewConfig(projectID string, apiSecret string) (*config.Config, error) {
-	return config.NewConfig(projectID, apiSecret)
-}
-
-// MustNewConfig returns new config and panics if projectID or apiSecret are not specified/empty
-// this is a convenience function for config.NewConfig to avoid import cycles
-func MustNewConfig(projectID string, apiSecret string) *config.Config {
-	return config.MustNewConfig(projectID, apiSecret)
 }
