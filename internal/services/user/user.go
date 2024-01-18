@@ -17,6 +17,7 @@ type User interface {
 	Create(ctx context.Context, req api.UserCreateReq, editors ...api.RequestEditorFn) (*api.UserCreateRsp, error)
 	Get(ctx context.Context, userID common.UserID, params *api.UserGetParams, editors ...api.RequestEditorFn) (*api.UserGetRsp, error)
 	Delete(ctx context.Context, userID common.UserID, req api.UserDeleteReq, editors ...api.RequestEditorFn) (*common.GenericRsp, error)
+	Exists(ctx context.Context, req api.UserExistsReq, editors ...api.RequestEditorFn) (*api.UserExistsRsp, error)
 }
 
 type Impl struct {
@@ -95,6 +96,20 @@ func (i *Impl) Get(ctx context.Context, userID common.UserID, params *api.UserGe
 // Delete deletes a user by ID
 func (i *Impl) Delete(ctx context.Context, userID common.UserID, req api.UserDeleteReq, editors ...api.RequestEditorFn) (*common.GenericRsp, error) {
 	res, err := i.client.UserDeleteWithResponse(ctx, userID, req, editors...)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	if res.JSONDefault != nil {
+		return nil, servererror.New(res.JSONDefault)
+	}
+
+	return res.JSON200, nil
+}
+
+// Exists checks if a confirmed user exists for provided login identifier
+func (i *Impl) Exists(ctx context.Context, req api.UserExistsReq, editors ...api.RequestEditorFn) (*api.UserExistsRsp, error) {
+	res, err := i.client.UserExistsWithResponse(ctx, req, editors...)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
