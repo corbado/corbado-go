@@ -44,7 +44,7 @@ func CreateRandomTestEmail(t *testing.T) string {
 	value, err := generateString(10)
 	require.NoError(t, err)
 
-	return "integration-test-" + value + "@corbado.com"
+	return "integration-test+" + value + "@corbado.com"
 }
 
 func CreateRandomTestPhoneNumber(t *testing.T) string {
