@@ -24,8 +24,8 @@ func TestUserExists_ValidationError(t *testing.T) {
 
 	serverErr := corbado.AsServerError(err)
 	require.NotNil(t, serverErr)
-	assert.Contains(t, "loginIdentifier: cannot be blank", servererror.GetValidationMessage(serverErr.Validation))
-	assert.Contains(t, "loginIdentifierType: cannot be blank", servererror.GetValidationMessage(serverErr.Validation))
+	assert.Contains(t, servererror.GetValidationMessage(serverErr.Validation), "loginIdentifier: cannot be blank")
+	assert.Contains(t, servererror.GetValidationMessage(serverErr.Validation), "loginIdentifierType: cannot be blank")
 }
 
 func TestUserExists_Success(t *testing.T) {
