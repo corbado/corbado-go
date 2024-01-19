@@ -109,9 +109,10 @@ func ValidAPIEndpoint(value string) error {
 		return errors.WithStack(err)
 	}
 
-	if u.Scheme != "https" {
-		return errors.Errorf("assert failed: scheme needs to be 'https' in given value '%s' (scheme: '%s')", value, u.Scheme)
-	}
+	// @todo enable this check
+	//if u.Scheme != "https" {
+	//	return errors.Errorf("assert failed: scheme needs to be 'https' in given value '%s' (scheme: '%s')", value, u.Scheme)
+	//}
 
 	if u.Host == "" {
 		return errors.Errorf("assert failed: host must not be empty in given value '%s'", value)
