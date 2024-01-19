@@ -26,7 +26,7 @@ The [Corbado](https://www.corbado.com) Go SDK provides convenient access to the 
 Use the following command to install the Corbado Go SDK:
 
 ```bash
-go get github.com/corbado/corbado-go@v1.0.1
+go get github.com/corbado/corbado-go@v1.0.3
 ```
 
 ### Usage
