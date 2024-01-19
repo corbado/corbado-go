@@ -21,7 +21,7 @@ import (
 	"github.com/corbado/corbado-go/pkg/servererror"
 )
 
-const Version = "1.0.1"
+const Version = "1.0.3"
 
 type SDK interface {
 	AuthTokens() authtoken.AuthToken
