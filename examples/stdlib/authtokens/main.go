@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
@@ -33,7 +34,7 @@ func main() {
 			},
 		}
 
-		response, err := sdk.AuthTokens().Validate(r.Context(), request)
+		response, err := sdk.AuthTokens().Validate(context.Background(), request)
 		if err != nil {
 			if serverErr := corbado.AsServerError(err); serverErr != nil {
 				fmt.Fprintf(w, serverErr.Error())
