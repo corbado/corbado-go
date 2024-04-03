@@ -1053,23 +1053,16 @@ type IOSAppConfigUpdateRsp struct {
 
 // LongSession defines model for longSession.
 type LongSession struct {
-	ID             string `json:"ID"`
-	BrowserName    string `json:"browserName"`
-	BrowserVersion string `json:"browserVersion"`
+	ID string `json:"ID"`
 
 	// Created Timestamp of when the entity was created in yyyy-MM-dd'T'HH:mm:ss format
 	Created externalRef0.Created `json:"created"`
-
-	// DeviceID ID of the device
-	DeviceID externalRef0.DeviceID `json:"deviceID"`
 
 	// Expires Timestamp of when long session expires in yyyy-MM-dd'T'HH:mm:ss format
 	Expires string `json:"expires"`
 
 	// LastAction Timestamp of when last action was done on long session in yyyy-MM-dd'T'HH:mm:ss format
 	LastAction string `json:"lastAction"`
-	OsName     string `json:"osName"`
-	OsVersion  string `json:"osVersion"`
 
 	// Status status values of a long session
 	Status LongSessionStatus `json:"status"`
@@ -1168,6 +1161,7 @@ type ProjectConfig struct {
 	BackendAPIUrl          string                       `json:"backendAPIUrl"`
 	BackendLanguage        ProjectConfigBackendLanguage `json:"backendLanguage"`
 	CliSecret              string                       `json:"cliSecret"`
+	Cname                  string                       `json:"cname"`
 
 	// Created Timestamp of when the entity was created in yyyy-MM-dd'T'HH:mm:ss format
 	Created                            externalRef0.Created               `json:"created"`
@@ -1187,9 +1181,6 @@ type ProjectConfig struct {
 	HasStartedUsingPasskeys            bool                               `json:"hasStartedUsingPasskeys"`
 	HasStartedUsingSessions            bool                               `json:"hasStartedUsingSessions"`
 	HasVerifiedSession                 bool                               `json:"hasVerifiedSession"`
-	IntegrationModeAPI                 bool                               `json:"integrationModeAPI"`
-	IntegrationModeHosted              bool                               `json:"integrationModeHosted"`
-	IntegrationModeWebComponent        bool                               `json:"integrationModeWebComponent"`
 	LegacyAuthMethodsUrl               string                             `json:"legacyAuthMethodsUrl"`
 	LoginFlow                          ProjectConfigLoginFlow             `json:"loginFlow"`
 	LoginFlowOptions                   map[string]interface{}             `json:"loginFlowOptions"`
@@ -1199,17 +1190,18 @@ type ProjectConfig struct {
 	ProductKey                         string                             `json:"productKey"`
 
 	// ProjectID ID of project
-	ProjectID         externalRef0.ProjectID  `json:"projectID"`
-	SignupFlow        ProjectConfigSignupFlow `json:"signupFlow"`
-	SignupFlowOptions map[string]interface{}  `json:"signupFlowOptions"`
-	SmsFrom           string                  `json:"smsFrom"`
-	SmtpHost          string                  `json:"smtpHost"`
-	SmtpPassword      string                  `json:"smtpPassword"`
-	SmtpPort          int                     `json:"smtpPort"`
-	SmtpUseCustom     bool                    `json:"smtpUseCustom"`
-	SmtpUsername      string                  `json:"smtpUsername"`
-	Status            ProjectConfigStatus     `json:"status"`
-	SupportEmail      string                  `json:"supportEmail"`
+	ProjectID             externalRef0.ProjectID  `json:"projectID"`
+	ProjectSubscriptionID string                  `json:"projectSubscriptionID"`
+	SignupFlow            ProjectConfigSignupFlow `json:"signupFlow"`
+	SignupFlowOptions     map[string]interface{}  `json:"signupFlowOptions"`
+	SmsFrom               string                  `json:"smsFrom"`
+	SmtpHost              string                  `json:"smtpHost"`
+	SmtpPassword          string                  `json:"smtpPassword"`
+	SmtpPort              int                     `json:"smtpPort"`
+	SmtpUseCustom         bool                    `json:"smtpUseCustom"`
+	SmtpUsername          string                  `json:"smtpUsername"`
+	Status                ProjectConfigStatus     `json:"status"`
+	SupportEmail          string                  `json:"supportEmail"`
 
 	// Updated Timestamp of when the entity was last updated in yyyy-MM-dd'T'HH:mm:ss format
 	Updated                    externalRef0.Updated `json:"updated"`
@@ -1274,6 +1266,7 @@ type ProjectConfigSaveReq struct {
 	AutoDetectLanguage          *bool                                `json:"autoDetectLanguage,omitempty"`
 	BackendLanguage             *ProjectConfigSaveReqBackendLanguage `json:"backendLanguage,omitempty"`
 	ClientInfo                  *externalRef0.ClientInfo             `json:"clientInfo,omitempty"`
+	Cname                       *string                              `json:"cname,omitempty"`
 	Domain                      *string                              `json:"domain,omitempty"`
 	DoubleOptIn                 *bool                                `json:"doubleOptIn,omitempty"`
 	EmailFrom                   *string                              `json:"emailFrom,omitempty"`
@@ -1291,9 +1284,6 @@ type ProjectConfigSaveReq struct {
 	HasStartedUsingPasskeys            *bool                                                   `json:"hasStartedUsingPasskeys,omitempty"`
 	HasStartedUsingSessions            *bool                                                   `json:"hasStartedUsingSessions,omitempty"`
 	HasVerifiedSession                 *bool                                                   `json:"hasVerifiedSession,omitempty"`
-	IntegrationModeAPI                 *bool                                                   `json:"integrationModeAPI,omitempty"`
-	IntegrationModeHosted              *bool                                                   `json:"integrationModeHosted,omitempty"`
-	IntegrationModeWebComponent        *bool                                                   `json:"integrationModeWebComponent,omitempty"`
 	LegacyAuthMethodsUrl               *string                                                 `json:"legacyAuthMethodsUrl,omitempty"`
 	LoginFlow                          *ProjectConfigSaveReqLoginFlow                          `json:"loginFlow,omitempty"`
 	LoginFlowOptions                   *map[string]interface{}                                 `json:"loginFlowOptions,omitempty"`
@@ -1595,6 +1585,7 @@ type SessionConfigUpdateReq struct {
 	// AppType Application type
 	AppType             externalRef0.AppType                      `json:"appType"`
 	ClientInfo          *externalRef0.ClientInfo                  `json:"clientInfo,omitempty"`
+	JwtAudience         *string                                   `json:"jwtAudience,omitempty"`
 	LongInactivityUnit  *SessionConfigUpdateReqLongInactivityUnit `json:"longInactivityUnit,omitempty"`
 	LongInactivityValue *int                                      `json:"longInactivityValue,omitempty"`
 	LongLifetimeUnit    *SessionConfigUpdateReqLongLifetimeUnit   `json:"longLifetimeUnit,omitempty"`
@@ -3212,6 +3203,18 @@ type TrackingBackupStateGetParams struct {
 
 	// UserAgent Client's user agent
 	UserAgent *externalRef0.UserAgent `form:"userAgent,omitempty" json:"userAgent,omitempty"`
+
+	// Sort Field sorting
+	Sort *externalRef0.Sort `form:"sort,omitempty" json:"sort,omitempty"`
+
+	// Filter Field filtering
+	Filter *externalRef0.Filter `form:"filter[],omitempty" json:"filter[],omitempty"`
+
+	// Page Page number
+	Page *externalRef0.Page `form:"page,omitempty" json:"page,omitempty"`
+
+	// PageSize Number of items per page
+	PageSize *externalRef0.PageSize `form:"pageSize,omitempty" json:"pageSize,omitempty"`
 }
 
 // TrackingBrowserStatsListParams defines parameters for TrackingBrowserStatsList.
@@ -7887,6 +7890,70 @@ func NewTrackingBackupStateGetRequest(server string, params *TrackingBackupState
 		if params.UserAgent != nil {
 
 			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "userAgent", runtime.ParamLocationQuery, *params.UserAgent); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.Sort != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "sort", runtime.ParamLocationQuery, *params.Sort); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.Filter != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "filter[]", runtime.ParamLocationQuery, *params.Filter); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.Page != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "page", runtime.ParamLocationQuery, *params.Page); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.PageSize != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "pageSize", runtime.ParamLocationQuery, *params.PageSize); err != nil {
 				return nil, err
 			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
 				return nil, err

@@ -22,11 +22,24 @@ const (
 	AuthMethodWebauthn    AuthMethod = "webauthn"
 )
 
+// Defines values for LoginIdentifierConfigEnforceVerification.
+const (
+	AtFirstLogin LoginIdentifierConfigEnforceVerification = "at_first_login"
+	None         LoginIdentifierConfigEnforceVerification = "none"
+	Signup       LoginIdentifierConfigEnforceVerification = "signup"
+)
+
 // Defines values for LoginIdentifierType.
 const (
 	LoginIdentifierTypeCustom      LoginIdentifierType = "custom"
 	LoginIdentifierTypeEmail       LoginIdentifierType = "email"
 	LoginIdentifierTypePhoneNumber LoginIdentifierType = "phone_number"
+)
+
+// Defines values for SessionManagement.
+const (
+	SessionManagementCorbado SessionManagement = "SessionManagementCorbado"
+	SessionManagementOwn     SessionManagement = "SessionManagementOwn"
 )
 
 // Defines values for Status.
@@ -78,6 +91,13 @@ type AllTypes struct {
 
 	// P21 Application type
 	P21 *AppType `json:"p21,omitempty"`
+
+	// P22 What session management should be used
+	P22 *SessionManagement `json:"p22,omitempty"`
+
+	// P23 High entropy values from browser
+	P23 *HighEntropyValues     `json:"p23,omitempty"`
+	P24 *LoginIdentifierConfig `json:"p24,omitempty"`
 
 	// P3 generic ID
 	P3 *ID `json:"p3,omitempty"`
@@ -184,7 +204,8 @@ type FullUser struct {
 	Status Status `json:"status"`
 
 	// Updated Timestamp of when the entity was last updated in yyyy-MM-dd'T'HH:mm:ss format
-	Updated Updated `json:"updated"`
+	Updated   Updated        `json:"updated"`
+	Usernames []UserUsername `json:"usernames"`
 }
 
 // GenericRsp defines model for genericRsp.
@@ -199,6 +220,31 @@ type GenericRsp struct {
 	// Runtime Runtime in seconds for this request
 	Runtime float32 `json:"runtime"`
 }
+
+// HighEntropyValues High entropy values from browser
+type HighEntropyValues struct {
+	// Mobile Mobile
+	Mobile bool `json:"mobile"`
+
+	// Platform Platform
+	Platform string `json:"platform"`
+
+	// PlatformVersion Platform version
+	PlatformVersion string `json:"platformVersion"`
+}
+
+// LoginIdentifierConfig defines model for loginIdentifierConfig.
+type LoginIdentifierConfig struct {
+	EnforceVerification LoginIdentifierConfigEnforceVerification `json:"enforceVerification"`
+	Metadata            *map[string]interface{}                  `json:"metadata,omitempty"`
+
+	// Type Login Identifier type
+	Type                 LoginIdentifierType `json:"type"`
+	UseAsLoginIdentifier bool                `json:"useAsLoginIdentifier"`
+}
+
+// LoginIdentifierConfigEnforceVerification defines model for LoginIdentifierConfig.EnforceVerification.
+type LoginIdentifierConfigEnforceVerification string
 
 // LoginIdentifierType Login Identifier type
 type LoginIdentifierType string
@@ -232,6 +278,9 @@ type RequestData struct {
 
 // RequestID Unique ID of request, you can provide your own while making the request, if not the ID will be randomly generated on server side
 type RequestID = string
+
+// SessionManagement What session management should be used
+type SessionManagement string
 
 // Status Generic status that can describe Corbado entities
 type Status string
@@ -272,6 +321,22 @@ type UserPhoneNumber struct {
 
 	// Updated Timestamp of when the entity was last updated in yyyy-MM-dd'T'HH:mm:ss format
 	Updated Updated `json:"updated"`
+}
+
+// UserUsername User's username
+type UserUsername struct {
+	// ID generic ID
+	ID ID `json:"ID"`
+
+	// Created Timestamp of when the entity was created in yyyy-MM-dd'T'HH:mm:ss format
+	Created Created `json:"created"`
+
+	// Status Generic status that can describe Corbado entities
+	Status Status `json:"status"`
+
+	// Updated Timestamp of when the entity was last updated in yyyy-MM-dd'T'HH:mm:ss format
+	Updated  Updated `json:"updated"`
+	Username string  `json:"username"`
 }
 
 // Filter defines model for filter.
