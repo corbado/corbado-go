@@ -1151,6 +1151,7 @@ type PhoneNumberValidationResultValidationCode string
 // ProjectConfig defines model for projectConfig.
 type ProjectConfig struct {
 	AllowIPStickiness     bool `json:"allowIPStickiness"`
+	AllowStaticChallenges bool `json:"allowStaticChallenges"`
 	AllowUserRegistration bool `json:"allowUserRegistration"`
 
 	// AppType Application type
@@ -1257,6 +1258,7 @@ type ProjectConfigGetRsp struct {
 // ProjectConfigSaveReq defines model for projectConfigSaveReq.
 type ProjectConfigSaveReq struct {
 	AllowIPStickiness     *bool `json:"allowIPStickiness,omitempty"`
+	AllowStaticChallenges *bool `json:"allowStaticChallenges,omitempty"`
 	AllowUserRegistration *bool `json:"allowUserRegistration,omitempty"`
 
 	// AppType Application type
