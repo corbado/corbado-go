@@ -42,6 +42,13 @@ const (
 	SessionManagementOwn     SessionManagement = "SessionManagementOwn"
 )
 
+// Defines values for SocialProviderType.
+const (
+	Github    SocialProviderType = "github"
+	Google    SocialProviderType = "google"
+	Microsoft SocialProviderType = "microsoft"
+)
+
 // Defines values for Status.
 const (
 	StatusActive  Status = "active"
@@ -98,6 +105,7 @@ type AllTypes struct {
 	// P23 High entropy values from browser
 	P23 *HighEntropyValues     `json:"p23,omitempty"`
 	P24 *LoginIdentifierConfig `json:"p24,omitempty"`
+	P25 *SocialProviderType    `json:"p25,omitempty"`
 
 	// P3 generic ID
 	P3 *ID `json:"p3,omitempty"`
@@ -281,6 +289,9 @@ type RequestID = string
 
 // SessionManagement What session management should be used
 type SessionManagement string
+
+// SocialProviderType defines model for socialProviderType.
+type SocialProviderType string
 
 // Status Generic status that can describe Corbado entities
 type Status string
