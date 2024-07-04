@@ -1166,7 +1166,6 @@ type ProjectConfig struct {
 
 	// Created Timestamp of when the entity was created in yyyy-MM-dd'T'HH:mm:ss format
 	Created                            externalRef0.Created               `json:"created"`
-	Domain                             string                             `json:"domain"`
 	DoubleOptIn                        bool                               `json:"doubleOptIn"`
 	EmailFrom                          string                             `json:"emailFrom"`
 	Environment                        ProjectConfigEnvironment           `json:"environment"`
@@ -1268,8 +1267,6 @@ type ProjectConfigSaveReq struct {
 	AutoDetectLanguage          *bool                                `json:"autoDetectLanguage,omitempty"`
 	BackendLanguage             *ProjectConfigSaveReqBackendLanguage `json:"backendLanguage,omitempty"`
 	ClientInfo                  *externalRef0.ClientInfo             `json:"clientInfo,omitempty"`
-	Cname                       *string                              `json:"cname,omitempty"`
-	Domain                      *string                              `json:"domain,omitempty"`
 	DoubleOptIn                 *bool                                `json:"doubleOptIn,omitempty"`
 	EmailFrom                   *string                              `json:"emailFrom,omitempty"`
 	Environment                 *ProjectConfigSaveReqEnvironment     `json:"environment,omitempty"`
@@ -1950,6 +1947,74 @@ type TrackingOSStatsListRsp struct {
 	Data struct {
 		Paging externalRef0.Paging `json:"paging"`
 		Stats  []TrackingOSStats   `json:"stats"`
+	} `json:"data"`
+
+	// HttpStatusCode HTTP status code of operation
+	HttpStatusCode int32  `json:"httpStatusCode"`
+	Message        string `json:"message"`
+
+	// RequestData Data about the request itself, can be used for debugging
+	RequestData externalRef0.RequestData `json:"requestData"`
+
+	// Runtime Runtime in seconds for this request
+	Runtime float32 `json:"runtime"`
+}
+
+// TrackingPasskeysAdoptionRsp defines model for trackingPasskeysAdoptionRsp.
+type TrackingPasskeysAdoptionRsp struct {
+	Data struct {
+		TotalUsers        int `json:"totalUsers"`
+		UsersWithPasskeys int `json:"usersWithPasskeys"`
+	} `json:"data"`
+
+	// HttpStatusCode HTTP status code of operation
+	HttpStatusCode int32  `json:"httpStatusCode"`
+	Message        string `json:"message"`
+
+	// RequestData Data about the request itself, can be used for debugging
+	RequestData externalRef0.RequestData `json:"requestData"`
+
+	// Runtime Runtime in seconds for this request
+	Runtime float32 `json:"runtime"`
+}
+
+// TrackingPasskeysAuthenticator defines model for trackingPasskeysAuthenticator.
+type TrackingPasskeysAuthenticator struct {
+	AuthenticatorName string `json:"authenticatorName"`
+	TotalPasskeys     int    `json:"totalPasskeys"`
+}
+
+// TrackingPasskeysAuthenticatorRsp defines model for trackingPasskeysAuthenticatorRsp.
+type TrackingPasskeysAuthenticatorRsp struct {
+	Data struct {
+		Paging externalRef0.Paging             `json:"paging"`
+		Stats  []TrackingPasskeysAuthenticator `json:"stats"`
+	} `json:"data"`
+
+	// HttpStatusCode HTTP status code of operation
+	HttpStatusCode int32  `json:"httpStatusCode"`
+	Message        string `json:"message"`
+
+	// RequestData Data about the request itself, can be used for debugging
+	RequestData externalRef0.RequestData `json:"requestData"`
+
+	// Runtime Runtime in seconds for this request
+	Runtime float32 `json:"runtime"`
+}
+
+// TrackingPasskeysType defines model for trackingPasskeysType.
+type TrackingPasskeysType struct {
+	HybridPasskeys int  `json:"hybridPasskeys"`
+	Passkeys       *int `json:"passkeys,omitempty"`
+	SyncedPasskeys int  `json:"syncedPasskeys"`
+	TotalPasskeys  int  `json:"totalPasskeys"`
+}
+
+// TrackingPasskeysTypeRsp defines model for trackingPasskeysTypeRsp.
+type TrackingPasskeysTypeRsp struct {
+	Data struct {
+		Paging externalRef0.Paging    `json:"paging"`
+		Stats  []TrackingPasskeysType `json:"stats"`
 	} `json:"data"`
 
 	// HttpStatusCode HTTP status code of operation
@@ -3087,6 +3152,9 @@ type EmailLinkID = string
 // EmailTemplateID defines model for emailTemplateID.
 type EmailTemplateID = string
 
+// From defines model for from.
+type From = string
+
 // Granularity defines model for granularity.
 type Granularity = string
 
@@ -3322,6 +3390,42 @@ type TrackingOSDetailedStatsListParams struct {
 
 	// Granularity Data granularity
 	Granularity Granularity `form:"granularity" json:"granularity"`
+}
+
+// TrackingPasskeysAdoptionParams defines parameters for TrackingPasskeysAdoption.
+type TrackingPasskeysAdoptionParams struct {
+	// RemoteAddress Client's remote address
+	RemoteAddress *externalRef0.RemoteAddress `form:"remoteAddress,omitempty" json:"remoteAddress,omitempty"`
+
+	// UserAgent Client's user agent
+	UserAgent *externalRef0.UserAgent `form:"userAgent,omitempty" json:"userAgent,omitempty"`
+
+	// Filter Field filtering
+	Filter *externalRef0.Filter `form:"filter[],omitempty" json:"filter[],omitempty"`
+}
+
+// TrackingPasskeysAuthenticatorParams defines parameters for TrackingPasskeysAuthenticator.
+type TrackingPasskeysAuthenticatorParams struct {
+	// From Timestamp of time range start epoch in yyyy-MM-dd'T'HH:mm:ss format
+	From From `form:"from" json:"from"`
+
+	// RemoteAddress Client's remote address
+	RemoteAddress *externalRef0.RemoteAddress `form:"remoteAddress,omitempty" json:"remoteAddress,omitempty"`
+
+	// UserAgent Client's user agent
+	UserAgent *externalRef0.UserAgent `form:"userAgent,omitempty" json:"userAgent,omitempty"`
+}
+
+// TrackingPasskeysTypeParams defines parameters for TrackingPasskeysType.
+type TrackingPasskeysTypeParams struct {
+	// From Timestamp of time range start epoch in yyyy-MM-dd'T'HH:mm:ss format
+	From From `form:"from" json:"from"`
+
+	// RemoteAddress Client's remote address
+	RemoteAddress *externalRef0.RemoteAddress `form:"remoteAddress,omitempty" json:"remoteAddress,omitempty"`
+
+	// UserAgent Client's user agent
+	UserAgent *externalRef0.UserAgent `form:"userAgent,omitempty" json:"userAgent,omitempty"`
 }
 
 // TrackingStatsListParams defines parameters for TrackingStatsList.
@@ -3994,6 +4098,15 @@ type ClientInterface interface {
 
 	// TrackingOSDetailedStatsList request
 	TrackingOSDetailedStatsList(ctx context.Context, params *TrackingOSDetailedStatsListParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// TrackingPasskeysAdoption request
+	TrackingPasskeysAdoption(ctx context.Context, params *TrackingPasskeysAdoptionParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// TrackingPasskeysAuthenticator request
+	TrackingPasskeysAuthenticator(ctx context.Context, params *TrackingPasskeysAuthenticatorParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// TrackingPasskeysType request
+	TrackingPasskeysType(ctx context.Context, params *TrackingPasskeysTypeParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// TrackingStatsList request
 	TrackingStatsList(ctx context.Context, params *TrackingStatsListParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -5077,6 +5190,42 @@ func (c *Client) TrackingOSStatsList(ctx context.Context, params *TrackingOSStat
 
 func (c *Client) TrackingOSDetailedStatsList(ctx context.Context, params *TrackingOSDetailedStatsListParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewTrackingOSDetailedStatsListRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) TrackingPasskeysAdoption(ctx context.Context, params *TrackingPasskeysAdoptionParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewTrackingPasskeysAdoptionRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) TrackingPasskeysAuthenticator(ctx context.Context, params *TrackingPasskeysAuthenticatorParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewTrackingPasskeysAuthenticatorRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) TrackingPasskeysType(ctx context.Context, params *TrackingPasskeysTypeParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewTrackingPasskeysTypeRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -8609,6 +8758,241 @@ func NewTrackingOSDetailedStatsListRequest(server string, params *TrackingOSDeta
 	return req, nil
 }
 
+// NewTrackingPasskeysAdoptionRequest generates requests for TrackingPasskeysAdoption
+func NewTrackingPasskeysAdoptionRequest(server string, params *TrackingPasskeysAdoptionParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/tracking/passkeys/adoption")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.RemoteAddress != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "remoteAddress", runtime.ParamLocationQuery, *params.RemoteAddress); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.UserAgent != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "userAgent", runtime.ParamLocationQuery, *params.UserAgent); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.Filter != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "filter[]", runtime.ParamLocationQuery, *params.Filter); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewTrackingPasskeysAuthenticatorRequest generates requests for TrackingPasskeysAuthenticator
+func NewTrackingPasskeysAuthenticatorRequest(server string, params *TrackingPasskeysAuthenticatorParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/tracking/passkeys/authenticator")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "from", runtime.ParamLocationQuery, params.From); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+		if params.RemoteAddress != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "remoteAddress", runtime.ParamLocationQuery, *params.RemoteAddress); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.UserAgent != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "userAgent", runtime.ParamLocationQuery, *params.UserAgent); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewTrackingPasskeysTypeRequest generates requests for TrackingPasskeysType
+func NewTrackingPasskeysTypeRequest(server string, params *TrackingPasskeysTypeParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/tracking/passkeys/type")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "from", runtime.ParamLocationQuery, params.From); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+		if params.RemoteAddress != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "remoteAddress", runtime.ParamLocationQuery, *params.RemoteAddress); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.UserAgent != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "userAgent", runtime.ParamLocationQuery, *params.UserAgent); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewTrackingStatsListRequest generates requests for TrackingStatsList
 func NewTrackingStatsListRequest(server string, params *TrackingStatsListParams) (*http.Request, error) {
 	var err error
@@ -11520,6 +11904,15 @@ type ClientWithResponsesInterface interface {
 	// TrackingOSDetailedStatsListWithResponse request
 	TrackingOSDetailedStatsListWithResponse(ctx context.Context, params *TrackingOSDetailedStatsListParams, reqEditors ...RequestEditorFn) (*TrackingOSDetailedStatsListResponse, error)
 
+	// TrackingPasskeysAdoptionWithResponse request
+	TrackingPasskeysAdoptionWithResponse(ctx context.Context, params *TrackingPasskeysAdoptionParams, reqEditors ...RequestEditorFn) (*TrackingPasskeysAdoptionResponse, error)
+
+	// TrackingPasskeysAuthenticatorWithResponse request
+	TrackingPasskeysAuthenticatorWithResponse(ctx context.Context, params *TrackingPasskeysAuthenticatorParams, reqEditors ...RequestEditorFn) (*TrackingPasskeysAuthenticatorResponse, error)
+
+	// TrackingPasskeysTypeWithResponse request
+	TrackingPasskeysTypeWithResponse(ctx context.Context, params *TrackingPasskeysTypeParams, reqEditors ...RequestEditorFn) (*TrackingPasskeysTypeResponse, error)
+
 	// TrackingStatsListWithResponse request
 	TrackingStatsListWithResponse(ctx context.Context, params *TrackingStatsListParams, reqEditors ...RequestEditorFn) (*TrackingStatsListResponse, error)
 
@@ -12778,6 +13171,75 @@ func (r TrackingOSDetailedStatsListResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r TrackingOSDetailedStatsListResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type TrackingPasskeysAdoptionResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *TrackingPasskeysAdoptionRsp
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r TrackingPasskeysAdoptionResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r TrackingPasskeysAdoptionResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type TrackingPasskeysAuthenticatorResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *TrackingPasskeysAuthenticatorRsp
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r TrackingPasskeysAuthenticatorResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r TrackingPasskeysAuthenticatorResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type TrackingPasskeysTypeResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *TrackingPasskeysTypeRsp
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r TrackingPasskeysTypeResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r TrackingPasskeysTypeResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -14339,6 +14801,33 @@ func (c *ClientWithResponses) TrackingOSDetailedStatsListWithResponse(ctx contex
 		return nil, err
 	}
 	return ParseTrackingOSDetailedStatsListResponse(rsp)
+}
+
+// TrackingPasskeysAdoptionWithResponse request returning *TrackingPasskeysAdoptionResponse
+func (c *ClientWithResponses) TrackingPasskeysAdoptionWithResponse(ctx context.Context, params *TrackingPasskeysAdoptionParams, reqEditors ...RequestEditorFn) (*TrackingPasskeysAdoptionResponse, error) {
+	rsp, err := c.TrackingPasskeysAdoption(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseTrackingPasskeysAdoptionResponse(rsp)
+}
+
+// TrackingPasskeysAuthenticatorWithResponse request returning *TrackingPasskeysAuthenticatorResponse
+func (c *ClientWithResponses) TrackingPasskeysAuthenticatorWithResponse(ctx context.Context, params *TrackingPasskeysAuthenticatorParams, reqEditors ...RequestEditorFn) (*TrackingPasskeysAuthenticatorResponse, error) {
+	rsp, err := c.TrackingPasskeysAuthenticator(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseTrackingPasskeysAuthenticatorResponse(rsp)
+}
+
+// TrackingPasskeysTypeWithResponse request returning *TrackingPasskeysTypeResponse
+func (c *ClientWithResponses) TrackingPasskeysTypeWithResponse(ctx context.Context, params *TrackingPasskeysTypeParams, reqEditors ...RequestEditorFn) (*TrackingPasskeysTypeResponse, error) {
+	rsp, err := c.TrackingPasskeysType(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseTrackingPasskeysTypeResponse(rsp)
 }
 
 // TrackingStatsListWithResponse request returning *TrackingStatsListResponse
@@ -16414,6 +16903,105 @@ func ParseTrackingOSDetailedStatsListResponse(rsp *http.Response) (*TrackingOSDe
 			return nil, err
 		}
 		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseTrackingPasskeysAdoptionResponse parses an HTTP response from a TrackingPasskeysAdoptionWithResponse call
+func ParseTrackingPasskeysAdoptionResponse(rsp *http.Response) (*TrackingPasskeysAdoptionResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &TrackingPasskeysAdoptionResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest TrackingPasskeysAdoptionRsp
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseTrackingPasskeysAuthenticatorResponse parses an HTTP response from a TrackingPasskeysAuthenticatorWithResponse call
+func ParseTrackingPasskeysAuthenticatorResponse(rsp *http.Response) (*TrackingPasskeysAuthenticatorResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &TrackingPasskeysAuthenticatorResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest TrackingPasskeysAuthenticatorRsp
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseTrackingPasskeysTypeResponse parses an HTTP response from a TrackingPasskeysTypeWithResponse call
+func ParseTrackingPasskeysTypeResponse(rsp *http.Response) (*TrackingPasskeysTypeResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &TrackingPasskeysTypeResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest TrackingPasskeysTypeRsp
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
 
 	}
 
