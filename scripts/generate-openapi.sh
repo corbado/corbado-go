@@ -2,18 +2,15 @@
 
 if [ $# -ne 1 ]; then
     echo "USAGE: <output path>"
-    echo "EXAMPLE: pkg/sdk/entity/api"
+    echo "EXAMPLE: pkg/generated"
 
     exit 1
 fi
 
 path=$1
 
-# download OpenAPI specs
-curl -s -O https://api.corbado.com/docs/api/openapi/backend_api_public.yml
+# To generate openapi client, you need to copy common.yml and backend_api_public.yml to the root of the project
 
 # generate Go entities and clients
-oapi-codegen -package api -generate "types,client" backend_api_public.yml > ${path}/api.gen.go
-
-# remove OpenAPI specs
-rm backend_api_public.yml
+oapi-codegen -package common -generate "types" common.yml > ${path}/common/common.gen.go
+oapi-codegen -package api -import-mapping common.yml:github.com/corbado/corbado-go/pkg/generated/common -generate "types,client" backend_api_public.yml > ${path}/api/api.gen.go

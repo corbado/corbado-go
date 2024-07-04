@@ -33,4 +33,4 @@ tasks:
       - docker-build
     desc: Generates OpenAPI entities and clients
     cmds:
-      - docker run -it -v $(pwd):/app corbado-go:latest scripts/generate-openapi.sh pkg/sdk/entity/api
+      - docker run -it -v $(pwd):/app corbado-go:latest scripts/generate-openapi.sh pkg/generated

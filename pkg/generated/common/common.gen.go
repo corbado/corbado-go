@@ -202,11 +202,12 @@ type FullUser struct {
 	ID UserID `json:"ID"`
 
 	// Created Timestamp of when the entity was created in yyyy-MM-dd'T'HH:mm:ss format
-	Created      Created           `json:"created"`
-	Emails       []UserEmail       `json:"emails"`
-	FullName     string            `json:"fullName"`
-	Name         string            `json:"name"`
-	PhoneNumbers []UserPhoneNumber `json:"phoneNumbers"`
+	Created        Created             `json:"created"`
+	Emails         []UserEmail         `json:"emails"`
+	FullName       string              `json:"fullName"`
+	Name           string              `json:"name"`
+	PhoneNumbers   []UserPhoneNumber   `json:"phoneNumbers"`
+	SocialAccounts []UserSocialAccount `json:"socialAccounts"`
 
 	// Status Generic status that can describe Corbado entities
 	Status Status `json:"status"`
@@ -332,6 +333,14 @@ type UserPhoneNumber struct {
 
 	// Updated Timestamp of when the entity was last updated in yyyy-MM-dd'T'HH:mm:ss format
 	Updated Updated `json:"updated"`
+}
+
+// UserSocialAccount User's social account
+type UserSocialAccount struct {
+	AvatarUrl       string             `json:"avatarUrl"`
+	FullName        string             `json:"fullName"`
+	IdentifierValue string             `json:"identifierValue"`
+	ProviderType    SocialProviderType `json:"providerType"`
 }
 
 // UserUsername User's username
