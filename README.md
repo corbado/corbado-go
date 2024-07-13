@@ -9,7 +9,7 @@
 [![documentation](https://img.shields.io/badge/documentation-Corbado_Backend_API_Reference-blue.svg)](https://apireference.cloud.corbado.io/backendapi/)
 [![Slack](https://img.shields.io/badge/slack-join%20chat-brightgreen.svg)](https://join.slack.com/t/corbado/shared_invite/zt-1b7867yz8-V~Xr~ngmSGbt7IA~g16ZsQ)
 
-The [Corbado](https://www.corbado.com) Go SDK provides convenient access to the [Corbado Backend API](https://apireference.cloud.corbado.io/) from applications written in the Go language.
+The [Corbado](https://www.corbado.com) Go SDK provides convenient access to the [Corbado Backend API](https://apireference.cloud.corbado.io/backendapi/) from applications written in the Go language.
 
 :warning: The Corbado Go SDK is commonly referred to as a private client, specifically designed for usage within closed backend applications. This particular SDK should exclusively be utilized in such environments, as it is crucial to ensure that the API secret remains strictly confidential and is never shared.
 
