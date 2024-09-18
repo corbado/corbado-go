@@ -32,6 +32,10 @@ func (s *SDKHelpers) GetShortSessionValue(req *http.Request, shortSessionCookieN
 		return "", err
 	}
 
+	if err := assert.StringNotEmpty(shortSessionCookieName); err != nil {
+		return "", err
+	}
+
 	ses, err := s.getShortSessionValueFromCookie(req, shortSessionCookieName)
 	if err != nil {
 		return "", err
@@ -41,7 +45,7 @@ func (s *SDKHelpers) GetShortSessionValue(req *http.Request, shortSessionCookieN
 		return s.getShortSessionValueFromAuthHeader(req)
 	}
 
-	return "", nil
+	return ses, nil
 }
 
 func (s *SDKHelpers) getShortSessionValueFromCookie(req *http.Request, shortSessionCookieName string) (string, error) {

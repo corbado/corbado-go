@@ -35,7 +35,9 @@ func newClient(config *Config) (*api.ClientWithResponses, error) {
 		extraOptions = append(extraOptions, config.ExtraClientOptions...)
 	}
 
-	return api.NewClientWithResponses(config.BackendAPI, extraOptions...)
+	backendServer := config.BackendAPI + "/v2"
+
+	return api.NewClientWithResponses(backendServer, extraOptions...)
 }
 
 type httpRequestDoer interface {
