@@ -19,11 +19,7 @@ import (
 )
 
 type Session interface {
-	ValidateShortSessionValue(shortSession string) (*entities2.User, error)
-	GetCurrentUser(shortSession string) (*entities2.User, error)
-	ConfigGet(ctx context.Context, params *api.SessionConfigGetParams, editors ...api.RequestEditorFn) (*api.SessionConfigGetRsp, error)
-	LongSessionRevoke(ctx context.Context, sessionID string, req api.LongSessionRevokeReq, editors ...api.RequestEditorFn) error
-	LongSessionGet(ctx context.Context, sessionID string, editors ...api.RequestEditorFn) (*api.LongSessionGetRsp, error)
+	ValidateToken(shortSession string) (*api.User, error)
 }
 
 type Impl struct {
