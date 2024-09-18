@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/corbado/corbado-go/internal/assert"
+	"github.com/corbado/corbado-go/internal/services/identifier"
 	"github.com/corbado/corbado-go/internal/services/session"
 	"github.com/corbado/corbado-go/internal/services/user"
 	"github.com/corbado/corbado-go/pkg/generated/api"
@@ -18,14 +19,16 @@ const Version = "2.0.0"
 type SDK interface {
 	Sessions() session.Session
 	Users() user.User
+	Identifiers() identifier.Identifier
 }
 
 type Impl struct {
 	client     *api.ClientWithResponses
 	HTTPClient *http.Client
 
-	sessions session.Session
-	users    user.User
+	sessions    session.Session
+	users       user.User
+	identifiers identifier.Identifier
 }
 
 var _ SDK = &Impl{}
@@ -66,16 +69,22 @@ func NewSDK(config *Config) (*Impl, error) {
 		return nil, err
 	}
 
+	identifiers, err := identifier.New(client)
+	if err != nil {
+		return nil, err
+	}
+
 	httpClient := config.HTTPClient
 	if httpClient == nil {
 		httpClient = &http.Client{}
 	}
 
 	return &Impl{
-		client:     client,
-		sessions:   sessions,
-		users:      users,
-		HTTPClient: httpClient,
+		client:      client,
+		sessions:    sessions,
+		users:       users,
+		HTTPClient:  httpClient,
+		identifiers: identifiers,
 	}, nil
 }
 
@@ -87,6 +96,11 @@ func (i *Impl) Sessions() session.Session {
 // Users returns users client
 func (i *Impl) Users() user.User {
 	return i.users
+}
+
+// Users returns identifiers client
+func (i *Impl) Identifiers() identifier.Identifier {
+	return i.Identifiers()
 }
 
 // IsServerError checks if given error is a ServerError

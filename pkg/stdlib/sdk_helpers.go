@@ -27,12 +27,12 @@ func NewSDKHelpers(config *corbado.Config) (*SDKHelpers, error) {
 	}, nil
 }
 
-func (s *SDKHelpers) GetShortSessionValue(req *http.Request) (string, error) {
+func (s *SDKHelpers) GetShortSessionValue(req *http.Request, shortSessionCookieName string) (string, error) {
 	if err := assert.NotNil(req); err != nil {
 		return "", err
 	}
 
-	ses, err := s.getShortSessionValueFromCookie(req)
+	ses, err := s.getShortSessionValueFromCookie(req, shortSessionCookieName)
 	if err != nil {
 		return "", err
 	}
@@ -44,12 +44,12 @@ func (s *SDKHelpers) GetShortSessionValue(req *http.Request) (string, error) {
 	return "", nil
 }
 
-func (s *SDKHelpers) getShortSessionValueFromCookie(req *http.Request) (string, error) {
+func (s *SDKHelpers) getShortSessionValueFromCookie(req *http.Request, shortSessionCookieName string) (string, error) {
 	if err := assert.NotNil(req); err != nil {
 		return "", err
 	}
 
-	cookie, err := req.Cookie(s.config.ShortSessionCookieName)
+	cookie, err := req.Cookie(shortSessionCookieName)
 	if errors.Is(err, http.ErrNoCookie) {
 		return "", nil
 	}

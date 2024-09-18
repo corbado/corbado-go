@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/corbado/corbado-go"
+	"github.com/corbado/corbado-go/pkg/generated/api"
 	"github.com/corbado/corbado-go/pkg/stdlib"
 )
 
@@ -28,38 +29,38 @@ func main() {
 	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		shortSession, err := sdkHelpers.GetShortSessionValue(r)
+		shortSession, err := sdkHelpers.GetShortSessionValue(r, "cbo_short_session")
 		if err != nil {
 			panic(err)
 		}
 
-		user, err := sdk.Sessions().GetCurrentUser(shortSession)
+		user, err := sdk.Sessions().ValidateToken(shortSession)
 		if err != nil {
-			panic(err)
-		}
-
-		if user.Authenticated {
-			// User is authenticated
-			fmt.Fprint(w, "User is authenticated!")
-
-			fmt.Fprintf(w, "User ID: %s\n", user.ID)
-			fmt.Fprintf(w, "User full name: %s\n", user.Name)
-			fmt.Fprintf(w, "User email: %s\n", user.Email)
-			fmt.Fprintf(w, "User phone number: %s\n", user.PhoneNumber)
-
-			rsp, err := sdk.Users().Get(context.Background(), user.ID, nil)
-			if err != nil {
-				panic(err)
-			}
-
-			fmt.Fprintf(w, "User created: %s\n", rsp.Data.Created)
-			fmt.Fprintf(w, "User updated: %s\n", rsp.Data.Updated)
-			fmt.Fprintf(w, "User status: %s\n", rsp.Data.Status)
-		} else {
 			// User is not authenticated, redirect to login
 			// page for example
+
 			http.Redirect(w, r, "/login", http.StatusFound)
 		}
+
+		// User is authenticated
+		fmt.Fprint(w, "User is authenticated!")
+
+		fmt.Fprintf(w, "User ID: %s\n", user.UserID)
+		fmt.Fprintf(w, "User full name: %s\n", user.FullName)
+
+		rsp, err := sdk.Users().Get(context.Background(), user.UserID, nil)
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Fprintf(w, "User status: %s\n", rsp.Status)
+
+		identifiers, err := sdk.Identifiers().ListByUserIDAndType(context.Background(), user.UserID, api.IdentifierType("email"), "", 1, 10, nil)
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Fprintf(w, "User email: %s\n", identifiers.Identifiers[0].Value)
 	})
 
 	if err := http.ListenAndServe(":8080", nil); err != nil {
