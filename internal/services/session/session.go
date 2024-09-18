@@ -15,11 +15,10 @@ import (
 	"github.com/corbado/corbado-go/internal/assert"
 	entities2 "github.com/corbado/corbado-go/pkg/entities"
 	"github.com/corbado/corbado-go/pkg/generated/api"
-	"github.com/corbado/corbado-go/pkg/servererror"
 )
 
 type Session interface {
-	ValidateToken(shortSession string) (*api.User, error)
+	ValidateToken(shortSession string) (*entities2.User, error)
 }
 
 type Impl struct {
@@ -84,7 +83,7 @@ func newJWKS(config *Config) (*keyfunc.JWKS, error) {
 	return keyfunc.Get(config.JwksURI, options)
 }
 
-func (i *Impl) ValidateShortSessionValue(shortSession string) (*entities2.User, error) {
+func (i *Impl) ValidateToken(shortSession string) (*entities2.User, error) {
 	if shortSession == "" {
 		return nil, nil
 	}
@@ -109,65 +108,7 @@ func (i *Impl) ValidateShortSessionValue(shortSession string) (*entities2.User, 
 	}
 
 	return &entities2.User{
-		Authenticated: true,
-		ID:            claims.Subject,
-		Name:          claims.Name,
-		Email:         claims.Email,
-		PhoneNumber:   claims.PhoneNumber,
+		UserID:   claims.Subject,
+		FullName: claims.Name,
 	}, nil
-}
-
-func (i *Impl) GetCurrentUser(shortSession string) (*entities2.User, error) {
-	usr, err := i.ValidateShortSessionValue(shortSession)
-	if err != nil {
-		return nil, err
-	}
-
-	if usr != nil {
-		return usr, nil
-	}
-
-	return entities2.NewGuestUser(), nil
-}
-
-// ConfigGet retrieves session config by projectID inferred from authentication
-func (i *Impl) ConfigGet(ctx context.Context, params *api.SessionConfigGetParams, editors ...api.RequestEditorFn) (*api.SessionConfigGetRsp, error) {
-	res, err := i.client.SessionConfigGetWithResponse(ctx, params, editors...)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-
-	if res.JSONDefault != nil {
-		return nil, servererror.New(res.JSONDefault)
-	}
-
-	return res.JSON200, nil
-}
-
-// LongSessionRevoke revokes an active long session by sessionID
-func (i *Impl) LongSessionRevoke(ctx context.Context, sessionID string, req api.LongSessionRevokeReq, editors ...api.RequestEditorFn) error {
-	res, err := i.client.LongSessionRevokeWithResponse(ctx, sessionID, req, editors...)
-	if err != nil {
-		return errors.WithStack(err)
-	}
-
-	if res.JSONDefault != nil {
-		return servererror.New(res.JSONDefault)
-	}
-
-	return nil
-}
-
-// LongSessionGet gets a long session by sessionID
-func (i *Impl) LongSessionGet(ctx context.Context, sessionID string, editors ...api.RequestEditorFn) (*api.LongSessionGetRsp, error) {
-	res, err := i.client.LongSessionGetWithResponse(ctx, sessionID, editors...)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-
-	if res.JSONDefault != nil {
-		return nil, servererror.New(res.JSONDefault)
-	}
-
-	return res.JSON200, nil
 }

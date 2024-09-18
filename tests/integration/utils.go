@@ -14,11 +14,10 @@ import (
 
 	"github.com/corbado/corbado-go"
 	"github.com/corbado/corbado-go/pkg/generated/api"
-	"github.com/corbado/corbado-go/pkg/util"
 )
 
 func SDK(t *testing.T) corbado.SDK {
-	config, err := corbado.NewConfig(GetProjectID(t), GetAPISecret(t))
+	config, err := corbado.NewConfig(GetProjectID(t), GetAPISecret(t), GetFrontendAPI(t), GetBackendAPI(t))
 	require.NoError(t, err)
 	config.BackendAPI = GetBackendAPI(t)
 
@@ -40,6 +39,10 @@ func GetBackendAPI(t *testing.T) string {
 	return getEnv(t, "CORBADO_BACKEND_API")
 }
 
+func GetFrontendAPI(t *testing.T) string {
+	return getEnv(t, "CORBADO_FRONTEND_API")
+}
+
 func CreateRandomTestEmail(t *testing.T) string {
 	value, err := generateString(10)
 	require.NoError(t, err)
@@ -54,21 +57,21 @@ func CreateRandomTestPhoneNumber(t *testing.T) string {
 	return "+491509" + value
 }
 
-func CreateRandomTestName(t *testing.T) string {
+func CreateRandomTestName(t *testing.T) *string {
 	value, err := generateString(10)
 	require.NoError(t, err)
 
-	return value
+	return &value
 }
 
 func CreateUser(t *testing.T) string {
 	rsp, err := SDK(t).Users().Create(context.TODO(), api.UserCreateReq{
-		Name:  CreateRandomTestName(t),
-		Email: util.Ptr(CreateRandomTestEmail(t)),
+		FullName: CreateRandomTestName(t),
+		Status:   "active",
 	})
 	require.NoError(t, err)
 
-	return rsp.Data.UserID
+	return rsp.UserID
 }
 
 func generateString(length int) (string, error) {

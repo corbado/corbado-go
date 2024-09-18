@@ -1,7 +1,6 @@
 package corbado
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -13,12 +12,11 @@ import (
 )
 
 type Config struct {
-	ProjectID              string
-	APISecret              string
-	FrontendAPI            string
-	BackendAPI             string
-	ShortSessionCookieName string
-	CacheMaxAge            time.Duration
+	ProjectID   string
+	APISecret   string
+	FrontendAPI string
+	BackendAPI  string
+	CacheMaxAge time.Duration
 
 	JWKSRefreshInterval  time.Duration
 	JWKSRefreshRateLimit time.Duration
@@ -29,10 +27,7 @@ type Config struct {
 }
 
 const (
-	configDefaultBackendAPI             string = "https://backendapi.corbado.io"
-	configDefaultFrontendAPI            string = "https://%s.frontendapi.corbado.io"
-	configDefaultShortSessionCookieName string = "cbo_short_session"
-	configDefaultCacheMaxAge                   = time.Minute
+	configDefaultCacheMaxAge = time.Minute
 
 	configDefaultJWKSRefreshInterval  = time.Hour
 	configDefaultJWKSRefreshRateLimit = 5 * time.Minute
@@ -40,7 +35,7 @@ const (
 )
 
 // NewConfig returns new config with sane defaults
-func NewConfig(projectID string, apiSecret string) (*Config, error) {
+func NewConfig(projectID string, apiSecret string, frontendApi string, backendAPI string) (*Config, error) {
 	if err := assert.StringNotEmpty(projectID); err != nil {
 		return nil, err
 	}
@@ -50,21 +45,20 @@ func NewConfig(projectID string, apiSecret string) (*Config, error) {
 	}
 
 	return &Config{
-		ProjectID:              projectID,
-		APISecret:              apiSecret,
-		FrontendAPI:            fmt.Sprintf(configDefaultFrontendAPI, projectID),
-		BackendAPI:             configDefaultBackendAPI,
-		ShortSessionCookieName: configDefaultShortSessionCookieName,
-		CacheMaxAge:            configDefaultCacheMaxAge,
-		JWKSRefreshInterval:    configDefaultJWKSRefreshInterval,
-		JWKSRefreshRateLimit:   configDefaultJWKSRefreshRateLimit,
-		JWKSRefreshTimeout:     configDefaultJWKSRefreshTimeout,
+		ProjectID:            projectID,
+		APISecret:            apiSecret,
+		FrontendAPI:          frontendApi,
+		BackendAPI:           backendAPI,
+		CacheMaxAge:          configDefaultCacheMaxAge,
+		JWKSRefreshInterval:  configDefaultJWKSRefreshInterval,
+		JWKSRefreshRateLimit: configDefaultJWKSRefreshRateLimit,
+		JWKSRefreshTimeout:   configDefaultJWKSRefreshTimeout,
 	}, nil
 }
 
-// MustNewConfig returns new config and panics if projectID or apiSecret are not specified/empty
-func MustNewConfig(projectID string, apiSecret string) *Config {
-	config, err := NewConfig(projectID, apiSecret)
+// MustNewConfig returns new config and panics if projectID, apiSecret, frontendApi or backendApi are not specified/empty
+func MustNewConfig(projectID string, apiSecret string, frontendApi string, backendApi string) *Config {
+	config, err := NewConfig(projectID, apiSecret, frontendApi, backendApi)
 	if err != nil {
 		panic(err)
 	}
@@ -84,7 +78,17 @@ func NewConfigFromEnv() (*Config, error) {
 		return nil, errors.Errorf("Missing env variable CORBADO_API_SECRET")
 	}
 
-	return NewConfig(projectID, apiSecret)
+	frontendApi := os.Getenv("CORBADO_FRONTEND_API")
+	if frontendApi == "" {
+		return nil, errors.Errorf("Missing env variable CORBADO_FRONTEND_API")
+	}
+
+	backendApi := os.Getenv("CORBADO_BACKEND_API")
+	if backendApi == "" {
+		return nil, errors.Errorf("Missing env variable CORBADO_BACKEND_API")
+	}
+
+	return NewConfig(projectID, apiSecret, frontendApi, backendApi)
 }
 
 func (c *Config) validate() error {
@@ -102,10 +106,6 @@ func (c *Config) validate() error {
 
 	if err := assert.ValidAPIEndpoint(c.BackendAPI); err != nil {
 		return errors.WithMessage(err, "Invalid BackendAPI given")
-	}
-
-	if err := assert.StringNotEmpty(c.ShortSessionCookieName); err != nil {
-		return errors.WithMessage(err, "Invalid ShortSessionCookieName given")
 	}
 
 	if err := assert.DurationNotEmpty(c.CacheMaxAge); err != nil {
