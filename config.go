@@ -2,7 +2,6 @@ package corbado
 
 import (
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/pkg/errors"
@@ -64,31 +63,6 @@ func MustNewConfig(projectID string, apiSecret string, frontendApi string, backe
 	}
 
 	return config
-}
-
-// NewConfigFromEnv returns new config with values from env variables (CORBADO_PROJECT_ID and CORBADO_API_SECRET)
-func NewConfigFromEnv() (*Config, error) {
-	projectID := os.Getenv("CORBADO_PROJECT_ID")
-	if projectID == "" {
-		return nil, errors.Errorf("Missing env variable CORBADO_PROJECT_ID")
-	}
-
-	apiSecret := os.Getenv("CORBADO_API_SECRET")
-	if apiSecret == "" {
-		return nil, errors.Errorf("Missing env variable CORBADO_API_SECRET")
-	}
-
-	frontendApi := os.Getenv("CORBADO_FRONTEND_API")
-	if frontendApi == "" {
-		return nil, errors.Errorf("Missing env variable CORBADO_FRONTEND_API")
-	}
-
-	backendApi := os.Getenv("CORBADO_BACKEND_API")
-	if backendApi == "" {
-		return nil, errors.Errorf("Missing env variable CORBADO_BACKEND_API")
-	}
-
-	return NewConfig(projectID, apiSecret, frontendApi, backendApi)
 }
 
 func (c *Config) validate() error {

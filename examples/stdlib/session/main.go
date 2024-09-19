@@ -3,15 +3,19 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/corbado/corbado-go"
 	"github.com/corbado/corbado-go/pkg/stdlib"
 )
 
 func main() {
-	// NewConfigFromEnv() reads project ID, API secret, Frontend API and Backend API URLs from CORBADO_PROJECT_ID,
-	// CORBADO_API_SECRET, CORBADO_FRONTEND_API and CORBADO_BACKEND_API environment variables
-	config, err := corbado.NewConfigFromEnv()
+	projectID := os.Getenv("CORBADO_PROJECT_ID")
+	apiSecret := os.Getenv("CORBADO_API_SECRET")
+	frontendApi := os.Getenv("CORBADO_FRONTEND_API")
+	backendApi := os.Getenv("CORBADO_BACKEND_API")
+
+	config, err := corbado.NewConfig(projectID, apiSecret, frontendApi, backendApi)
 	if err != nil {
 		panic(err)
 	}

@@ -26,12 +26,12 @@ The [Corbado](https://www.corbado.com) Go SDK provides convenient access to the 
 Use the following command to install the Corbado Go SDK:
 
 ```bash
-go get github.com/corbado/corbado-go@v1.0.3
+go get github.com/corbado/corbado-go@v2.0.0
 ```
 
 ### Usage
 
-To create a Corbado Go SDK instance you need to provide your `Project ID` and `API secret` which can be found at the [Developer Panel](https://app.corbado.com).
+To create a Corbado Go SDK instance you need to provide your `Project ID`, `API secret` , `Frontend API` and `Backend API` URLs which can be found at the [Developer Panel](https://app.corbado.com).
 
 ```Go
 package main
@@ -41,7 +41,7 @@ import (
 )
 
 func main() {
-    config, err := corbado.NewConfig("<Project ID>", "<API secret>")
+    config, err := corbado.NewConfig("<Project ID>", "<API secret>", "<Frontend API>", "<Backend API>")
     if err != nil {
         panic(err)
     }
@@ -61,18 +61,14 @@ A list of examples can be found in the [examples](/examples) directory. [Integra
 
 The Corbado Go SDK provides the following services:
 
-- `AuthTokens` for managing authentication tokens needed for own session management ([examples](tests/integration/authtoken))
-- `EmailMagicLinks` for managing email magic links ([examples](tests/integration/emailmagiclink))
-- `EmailOTPs` for managing email OTPs ([examples](tests/integration/emailotp))
-- `Sessions` for managing sessions ([examples](examples/sessionstdlib))
-- `SmsOTPs` for managing SMS OTPs ([examples](tests/integration/smsotp))
+- `Sessions` for managing sessions ([examples](examples/stdlib/session))
 - `Users` for managing users ([examples](tests/integration/user))
-- `Validations` for validating email addresses and phone numbers ([examples](tests/integration/validation))
+- `Identifiers` for managing identifiers ([examples](tests/integration/identifier))
 
 To use a specific service, such as `Users`, invoke it as shown below:
 
 ```Go
-users, err := sdk.Users().List(context.Background(), nil)
+user, err := sdk.Users().Get(context.Background(), "usr-12345679", nil)
 if err != nil {
     panic(err)
 }
@@ -95,7 +91,7 @@ import (
 )
 
 func main() {
-    config, err := corbado.NewConfig("<Project ID>", "<API secret>")
+    config, err := corbado.NewConfig("<Project ID>", "<API secret>", "<Frontned API>", "<Backend API>")
     if err != nil {
         panic(err)
     }
@@ -106,7 +102,7 @@ func main() {
     }
 
     // Try to get non-existing user with ID 'usr-123456789'
-    user, err := sdk.Users().Get(context.Background(), "usr-123456789", nil)
+    user, err := sdk.Users().Get(context.Background(), "usr-123456789" ,nil)
     if err != nil {
         if serverErr := corbado.AsServerError(err); serverErr != nil {
             // Show HTTP status code (404 in this case)
@@ -130,7 +126,7 @@ func main() {
         return
     }
 
-    fmt.Println(user.Data.ID)
+    fmt.Println(user.userID)
 }
 
 ```

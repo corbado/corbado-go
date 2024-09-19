@@ -7,6 +7,7 @@ import (
 	"github.com/corbado/corbado-go/pkg/generated/api"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/corbado/corbado-go"
@@ -141,7 +142,12 @@ func updateIdentifierStatusHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	r := mux.NewRouter()
 
-	config, err := corbado.NewConfigFromEnv()
+	projectID := os.Getenv("CORBADO_PROJECT_ID")
+	apiSecret := os.Getenv("CORBADO_API_SECRET")
+	frontendApi := os.Getenv("CORBADO_FRONTEND_API")
+	backendApi := os.Getenv("CORBADO_BACKEND_API")
+
+	config, err := corbado.NewConfig(projectID, apiSecret, frontendApi, backendApi)
 	if err != nil {
 		panic(err)
 	}
