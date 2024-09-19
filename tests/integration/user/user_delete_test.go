@@ -10,13 +10,12 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/corbado/corbado-go"
-	"github.com/corbado/corbado-go/pkg/generated/api"
 	"github.com/corbado/corbado-go/pkg/servererror"
 	"github.com/corbado/corbado-go/tests/integration"
 )
 
 func TestUserDelete_ValidationError(t *testing.T) {
-	rsp, err := integration.SDK(t).Users().Delete(context.TODO(), "usr-123456789", api.UserDeleteReq{})
+	rsp, err := integration.SDK(t).Users().Delete(context.TODO(), "usr-123456789")
 	require.Nil(t, rsp)
 	require.Error(t, err)
 
@@ -29,7 +28,7 @@ func TestUserDelete_ValidationError(t *testing.T) {
 func TestUserDelete_Success(t *testing.T) {
 	userID := integration.CreateUser(t)
 
-	rsp, err := integration.SDK(t).Users().Delete(context.TODO(), userID, api.UserDeleteReq{})
+	rsp, err := integration.SDK(t).Users().Delete(context.TODO(), userID)
 	require.NotNil(t, rsp)
 	require.NoError(t, err)
 }

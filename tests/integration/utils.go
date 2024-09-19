@@ -42,20 +42,6 @@ func GetFrontendAPI(t *testing.T) string {
 	return getEnv(t, "CORBADO_FRONTEND_API")
 }
 
-func CreateRandomTestEmail(t *testing.T) string {
-	value, err := generateString(10)
-	require.NoError(t, err)
-
-	return "integration-test+" + value + "@corbado.com"
-}
-
-func CreateRandomTestPhoneNumber(t *testing.T) string {
-	value, err := generateNumber(7)
-	require.NoError(t, err)
-
-	return "+491509" + value
-}
-
 func CreateRandomTestName(t *testing.T) *string {
 	value, err := generateString(10)
 	require.NoError(t, err)
