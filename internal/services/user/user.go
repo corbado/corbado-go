@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-
 	"github.com/pkg/errors"
 
 	"github.com/corbado/corbado-go/internal/assert"

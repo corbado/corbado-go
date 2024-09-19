@@ -98,9 +98,9 @@ func (i *Impl) Users() user.User {
 	return i.users
 }
 
-// Users returns identifiers client
+// Identifiers returns identifiers client
 func (i *Impl) Identifiers() identifier.Identifier {
-	return i.Identifiers()
+	return i.identifiers
 }
 
 // IsServerError checks if given error is a ServerError

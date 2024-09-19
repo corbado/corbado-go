@@ -2,6 +2,7 @@ package identifier
 
 import (
 	"context"
+	"strings"
 
 	"github.com/pkg/errors"
 
@@ -67,15 +68,31 @@ func (i *Impl) Delete(ctx context.Context, userID string, identifierID string, e
 	return res.JSON200, nil
 }
 
-// List lists identifiers based on filters
+// List lists identifiers based on optional filters, sorting, pagination
 func (i *Impl) List(ctx context.Context, filter []string, sort string, page int, pageSize int, editors ...api.RequestEditorFn) (*api.IdentifierList, error) {
-	req := api.IdentifierListParams{
-		Filter:   &filter,
-		Sort:     &sort,
-		Page:     &page,
-		PageSize: &pageSize,
+	var req api.IdentifierListParams
+
+	// Only set filter if it's not nil or empty
+	if len(filter) > 0 {
+		req.Filter = &filter
 	}
 
+	// Only set sort if it's not empty
+	if sort != "" {
+		req.Sort = &sort
+	}
+
+	// Only set page if it's greater than 0
+	if page > 0 {
+		req.Page = &page
+	}
+
+	// Only set pageSize if it's greater than 0
+	if pageSize > 0 {
+		req.PageSize = &pageSize
+	}
+
+	// Call the API with the prepared request
 	res, err := i.client.IdentifierListWithResponse(ctx, &req, editors...)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -96,12 +113,24 @@ func (i *Impl) ListByValueAndType(ctx context.Context, value string, identifierT
 
 // ListByUserID lists identifiers by user ID
 func (i *Impl) ListByUserID(ctx context.Context, userID string, sort string, page int, pageSize int, editors ...api.RequestEditorFn) (*api.IdentifierList, error) {
+	// Remove 'usr-' prefix if present
+	if strings.HasPrefix(userID, "usr-") {
+		userID = strings.TrimPrefix(userID, "usr-")
+	}
+
+	// Construct the filter
 	filter := []string{`userID:eq:` + userID}
 	return i.List(ctx, filter, sort, page, pageSize, editors...)
 }
 
 // ListByUserIDAndType lists identifiers by user ID and type
 func (i *Impl) ListByUserIDAndType(ctx context.Context, userID string, identifierType api.IdentifierType, sort string, page int, pageSize int, editors ...api.RequestEditorFn) (*api.IdentifierList, error) {
+	// Remove 'usr-' prefix if present
+	if strings.HasPrefix(userID, "usr-") {
+		userID = strings.TrimPrefix(userID, "usr-")
+	}
+
+	// Construct the filter
 	filter := []string{`userID:eq:` + userID, `identifierType:eq:` + string(identifierType)}
 	return i.List(ctx, filter, sort, page, pageSize, editors...)
 }
