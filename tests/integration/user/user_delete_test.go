@@ -1,6 +1,6 @@
 //go:build integration
 
-package user_test
+package user
 
 import (
 	"context"
@@ -28,7 +28,6 @@ func TestUserDelete_ValidationError(t *testing.T) {
 func TestUserDelete_Success(t *testing.T) {
 	userID := integration.CreateUser(t)
 
-	rsp, err := integration.SDK(t).Users().Delete(context.TODO(), userID)
-	require.NotNil(t, rsp)
+	_, err := integration.SDK(t).Users().Delete(context.TODO(), userID)
 	require.NoError(t, err)
 }

@@ -1,18 +1,16 @@
 //go:build integration
 
-package user_test
+package user
 
 import (
 	"context"
-	"testing"
-
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-
 	"github.com/corbado/corbado-go"
 	"github.com/corbado/corbado-go/pkg/generated/api"
 	"github.com/corbado/corbado-go/pkg/servererror"
 	"github.com/corbado/corbado-go/tests/integration"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"testing"
 )
 
 func TestUserCreate_ValidationError(t *testing.T) {
