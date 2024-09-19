@@ -19,8 +19,8 @@ func main() {
 	// Configuration
 	projectID := "<Your Project ID>"
 	apiSecret := "<Your API secret>"
-	frontendApi := "<Your Frontend API>"
-	backendApi := "<Your Backend API>"
+	frontendApi := "<Your Frontend API URL>"
+	backendApi := "<Your Backend API URL>"
 
 	config, err := corbado.NewConfig(projectID, apiSecret, frontendApi, backendApi)
 	if err != nil {
