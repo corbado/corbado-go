@@ -43,6 +43,14 @@ func NewConfig(projectID string, apiSecret string, frontendApi string, backendAP
 		return nil, err
 	}
 
+	if err := assert.StringNotEmpty(frontendApi); err != nil {
+		return nil, err
+	}
+
+	if err := assert.StringNotEmpty(backendAPI); err != nil {
+		return nil, err
+	}
+
 	return &Config{
 		ProjectID:            projectID,
 		APISecret:            apiSecret,
@@ -53,16 +61,6 @@ func NewConfig(projectID string, apiSecret string, frontendApi string, backendAP
 		JWKSRefreshRateLimit: configDefaultJWKSRefreshRateLimit,
 		JWKSRefreshTimeout:   configDefaultJWKSRefreshTimeout,
 	}, nil
-}
-
-// MustNewConfig returns new config and panics if projectID, apiSecret, frontendApi or backendApi are not specified/empty
-func MustNewConfig(projectID string, apiSecret string, frontendApi string, backendApi string) *Config {
-	config, err := NewConfig(projectID, apiSecret, frontendApi, backendApi)
-	if err != nil {
-		panic(err)
-	}
-
-	return config
 }
 
 func (c *Config) validate() error {

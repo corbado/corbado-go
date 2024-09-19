@@ -1,7 +1,9 @@
 package corbado
 
 import (
+	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -64,5 +66,89 @@ func TestNewConfig_Failure(t *testing.T) {
 			assert.Nil(t, cfg)
 			assert.ErrorContains(t, err, "given value '' is too short")
 		})
+	}
+}
+
+func TestConfig_Validate(t *testing.T) {
+	tests := []struct {
+		name                  string
+		config                Config
+		expectedErrorContains string
+	}{
+		{
+			name:                  "invalid ProjectID",
+			config:                Config{ProjectID: "", APISecret: "corbado1_secret", FrontendAPI: "http://localhost:8080", BackendAPI: "http://localhost:9090"},
+			expectedErrorContains: "Invalid ProjectID given",
+		},
+		{
+			name:                  "invalid APISecret",
+			config:                Config{ProjectID: "pro-12345678", APISecret: "", FrontendAPI: "http://localhost:8080", BackendAPI: "http://localhost:9090"},
+			expectedErrorContains: "Invalid APISecret given",
+		},
+		{
+			name:                  "invalid FrontendAPI",
+			config:                Config{ProjectID: "pro-12345678", APISecret: "corbado1_secret", FrontendAPI: "", BackendAPI: "http://localhost:9090"},
+			expectedErrorContains: "Invalid FrontendAPI given",
+		},
+		{
+			name:                  "invalid BackendAPI",
+			config:                Config{ProjectID: "pro-12345678", APISecret: "corbado1_secret", FrontendAPI: "http://localhost:8080", BackendAPI: ""},
+			expectedErrorContains: "Invalid BackendAPI given",
+		},
+		{
+			name:                  "invalid CacheMaxAge",
+			config:                Config{ProjectID: "pro-12345678", APISecret: "corbado1_secret", FrontendAPI: "http://localhost:8080", BackendAPI: "http://localhost:9090", CacheMaxAge: 0},
+			expectedErrorContains: "Invalid CacheMaxAge given",
+		},
+		{
+			name:                  "invalid JWKSRefreshInterval",
+			config:                Config{ProjectID: "pro-12345678", APISecret: "corbado1_secret", FrontendAPI: "http://localhost:8080", BackendAPI: "http://localhost:9090", CacheMaxAge: 10 * time.Second, JWKSRefreshInterval: 0},
+			expectedErrorContains: "Invalid JWKSRefreshInterval given",
+		},
+		{
+			name:                  "invalid JWKSRefreshRateLimit",
+			config:                Config{ProjectID: "pro-12345678", APISecret: "corbado1_secret", FrontendAPI: "http://localhost:8080", BackendAPI: "http://localhost:9090", CacheMaxAge: 10 * time.Second, JWKSRefreshInterval: 10 * time.Second, JWKSRefreshRateLimit: 0},
+			expectedErrorContains: "Invalid JWKSRefreshRateLimit given",
+		},
+		{
+			name:                  "invalid JWKSRefreshTimeout",
+			config:                Config{ProjectID: "pro-12345678", APISecret: "corbado1_secret", FrontendAPI: "http://localhost:8080", BackendAPI: "http://localhost:9090", CacheMaxAge: 10 * time.Second, JWKSRefreshInterval: 10 * time.Second, JWKSRefreshRateLimit: 10 * time.Second, JWKSRefreshTimeout: 0},
+			expectedErrorContains: "Invalid JWKSRefreshTimeout given",
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			err := test.config.validate()
+
+			// Assert that an error exists and contains the expected substring
+			if err == nil {
+				t.Errorf("Expected an error, but got none")
+			} else {
+				if !strings.Contains(err.Error(), test.expectedErrorContains) {
+					t.Errorf("Expected error containing %q, but got %q", test.expectedErrorContains, err.Error())
+				}
+			}
+		})
+	}
+}
+
+func TestConfig_Validate_Success(t *testing.T) {
+	validConfig := Config{
+		ProjectID:            "pro-12345678",
+		APISecret:            "corbado1_secret",
+		FrontendAPI:          "http://localhost:8080",
+		BackendAPI:           "http://localhost:9090",
+		CacheMaxAge:          10 * time.Second,
+		JWKSRefreshInterval:  10 * time.Second,
+		JWKSRefreshRateLimit: 10 * time.Second,
+		JWKSRefreshTimeout:   10 * time.Second,
+	}
+
+	err := validConfig.validate()
+
+	// Assert no error is returned for valid config
+	if err != nil {
+		t.Errorf("Expected no error, but got %q", err.Error())
 	}
 }
