@@ -7,10 +7,8 @@ package main
 import (
 	"context"
 	"fmt"
-	"net/http"
-	"os"
-
 	"github.com/corbado/corbado-go"
+	"net/http"
 )
 
 func main() {
@@ -19,10 +17,10 @@ func main() {
 	//////////////////////////////////////////////////////////////////////////////////////////////
 
 	// Configuration
-	projectID := os.Getenv("CORBADO_PROJECT_ID")
-	apiSecret := os.Getenv("CORBADO_API_SECRET")
-	frontendApi := os.Getenv("CORBADO_FRONTEND_API")
-	backendApi := os.Getenv("CORBADO_BACKEND_API")
+	projectID := "<Your Project ID>"
+	apiSecret := "<Your API secret>"
+	frontendApi := "<Your Frontend API>"
+	backendApi := "<Your Backend API>"
 
 	config, err := corbado.NewConfig(projectID, apiSecret, frontendApi, backendApi)
 	if err != nil {
@@ -41,7 +39,7 @@ func main() {
 		//////////////////////////////////////////////////////////////////////////////////////////////
 
 		// Retrieve the short-term session value from the Cookie (e.g. from cookie or Auth Headers)
-		shortSession := "eyJhbGciOiJSUzI1NiIsImtpZCI6InBraS01MDYxMTQ2NzY0ODg3ODc2OTMyIiwidHlwIjoiSldUIn0.eyJpc3MiOiJodHRwczovL2F1dGguY29yYmFkby1kZXYuY29tIiwic3ViIjoidXNyLTE1IiwiZXhwIjoxNzI2NzUwOTg2LCJuYmYiOjE3MjY3NTA2NzYsImlhdCI6MTcyNjc1MDY4NiwianRpIjoiUXVKZENrQ2x0R3QybVBGNlFlUmtTbmxZeEdLTXlzIiwibmFtZSI6IkFtaW5lIEhhbWRvdW5pIiwib3JpZyI6Im1vaGFtZWQuYW1pbmUuaGFtZG91bmlAY29yYmFkby5jb20iLCJlbWFpbCI6Im1vaGFtZWQuYW1pbmUuaGFtZG91bmlAY29yYmFkby5jb20iLCJ2ZXJzaW9uIjoyfQ.l3088ytJ-8LBmlzqqBH1n-ebY2yx56vfaQlRU5_eR7EwcMzAuwFIInsinTVlNlXOhf4s1l0YqMKMSkIitlk9c7eo09wV55ZZ76QXJh3NK3itkoNAkl8eaiszigbJecIExZuTzu7yG4l0gD9sq0Ik9eOD6pHN8WOLkImCkEGjORi-30HbS0oY8Kq4tpc3TJav4GIC9_PbVh075M97oyRn2Qza1q1PVwE5Xhh8jr01qn6tJynowhvWO1nBKnGtI0x8qBlapHx7jt7fmVWbVSHkCxJgnqUaCNZC9V-cdssOUhFK6BgP9JRYAL8uCEwOhd-NbLFoV-2R6VMx05KxvjlhnA"
+		shortSession := "<Your short-term session value>"
 		user, err := sdk.Sessions().ValidateToken(shortSession)
 
 		if err != nil || user == nil {
