@@ -49,6 +49,20 @@ func CreateRandomTestName(t *testing.T) *string {
 	return &value
 }
 
+func CreateRandomTestEmail(t *testing.T) string {
+	value, err := generateString(10)
+	require.NoError(t, err)
+
+	return "integration-test+" + value + "@corbado.com"
+}
+
+func CreateRandomTestPhoneNumber(t *testing.T) string {
+	value, err := generateNumber(7)
+	require.NoError(t, err)
+
+	return "+491509" + value
+}
+
 func CreateUser(t *testing.T) string {
 	rsp, err := SDK(t).Users().Create(context.TODO(), api.UserCreateReq{
 		FullName: CreateRandomTestName(t),
@@ -57,6 +71,19 @@ func CreateUser(t *testing.T) string {
 	require.NoError(t, err)
 
 	return rsp.UserID
+}
+
+func CreateIdentifier(t *testing.T) string {
+	userId := CreateUser(t)
+
+	rsp, err := SDK(t).Identifiers().Create(context.TODO(), userId, api.IdentifierCreateReq{
+		IdentifierType:  "email",
+		IdentifierValue: CreateRandomTestEmail(t),
+	})
+
+	require.NoError(t, err)
+
+	return rsp.IdentifierID
 }
 
 func generateString(length int) (string, error) {
