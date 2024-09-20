@@ -160,7 +160,7 @@ func TestValidateToken(t *testing.T) {
 	// Create a mock session using the createSession function
 	config := &session.Config{
 		ProjectID:            "test-project-id",
-		JwksURI:              "http://localhost:8080", // Assuming this is the JWKS URI
+		JwksURI:              "http://localhost:8081",
 		JWTIssuer:            "https://auth.acme.com",
 		JWKSRefreshInterval:  0,
 		JWKSRefreshRateLimit: 0,
@@ -169,7 +169,6 @@ func TestValidateToken(t *testing.T) {
 	session, err := createSession(config)
 	assert.NoError(t, err)
 
-	// Get the absolute path relative to the current working directory
 	workingDir, err := os.Getwd()
 	if err != nil {
 		log.Fatalf("failed to get working directory: %v", err)
@@ -178,8 +177,7 @@ func TestValidateToken(t *testing.T) {
 	// Construct the absolute path to the private key file
 	filePath := filepath.Join(workingDir, "../testdata/privateKey.pem")
 
-	// Retrieve JWT test cases from the provideJWTs function
-	privateKeyFile, err := os.ReadFile(filePath) // You need to implement this function to load your private key
+	privateKeyFile, err := os.ReadFile(filePath)
 
 	if err != nil {
 		panic(err)
@@ -203,7 +201,6 @@ func TestValidateToken(t *testing.T) {
 				exception = err
 			}
 
-			// Check for success case
 			if success {
 				assert.NotNil(t, user, "Expected a user but got nil")
 				assert.Equal(t, "usr-1234567890", user.UserID, "User ID should be 'usr-1234567890'")
@@ -213,7 +210,6 @@ func TestValidateToken(t *testing.T) {
 				assert.ErrorAs(t, exception, &validationErr, "Expected a ValidationError")
 				log.Println(validationErr.Errors)
 
-				// Simplified JWT validation error check using switch with error codes
 				switch {
 				case validationErr.Errors&jwt.ValidationErrorMalformed != 0:
 					assert.Equal(t, jwt.ValidationErrorMalformed, validationErr.Errors&jwt.ValidationErrorMalformed, "Expected a malformed token error")
