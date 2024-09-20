@@ -20,12 +20,12 @@ func main() {
 	//////////////////////////////////////////////////////////////////////////////////////////////
 
 	// Configuration
-	projectID := "pro-8800191598924016720"
-	apiSecret := "corbado1_UdPwavfp5AbWdFThUojMfTdY7Rm9Wu"
-	frontendApi := "https://pro-8800191598924016720.frontendapi.cloud.corbado.io"
-	backendApi := "https://backendapi.cloud.corbado.io"
+	projectID := "<Your Project ID>"
+	apiSecret := "<Your API secret>"
+	frontendAPI := "<Your Frontend API URL>"
+	backendAPI := "<Your Backend API URL>"
 
-	config, err := corbado.NewConfig(projectID, apiSecret, frontendApi, backendApi)
+	config, err := corbado.NewConfig(projectID, apiSecret, frontendAPI, backendAPI)
 	if err != nil {
 		panic(err)
 	}
