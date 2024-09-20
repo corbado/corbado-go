@@ -23,9 +23,9 @@ type Session interface {
 }
 
 type Impl struct {
-	client *api.ClientWithResponses
-	config *Config
-	jwks   *keyfunc.JWKS
+	Client *api.ClientWithResponses
+	Config *Config
+	Jwks   *keyfunc.JWKS
 }
 
 var _ Session = &Impl{}
@@ -41,8 +41,8 @@ func New(client *api.ClientWithResponses, config *Config) (*Impl, error) {
 	}
 
 	return &Impl{
-		client: client,
-		config: config,
+		Client: client,
+		Config: config,
 	}, nil
 }
 
@@ -89,23 +89,23 @@ func (i *Impl) ValidateToken(shortSession string) (*entities2.User, error) {
 		return nil, err
 	}
 
-	if i.jwks == nil {
-		jwks, err := newJWKS(i.config)
+	if i.Jwks == nil {
+		jwks, err := newJWKS(i.Config)
 		if err != nil {
 			return nil, err
 		}
 
-		i.jwks = jwks
+		i.Jwks = jwks
 	}
 
-	token, err := jwt.ParseWithClaims(shortSession, &entities2.Claims{}, i.jwks.Keyfunc)
+	token, err := jwt.ParseWithClaims(shortSession, &entities2.Claims{}, i.Jwks.Keyfunc)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 
 	claims := token.Claims.(*entities2.Claims)
-	if claims.Issuer != i.config.JWTIssuer {
-		return nil, errors.Errorf("JWT issuer mismatch (configured: '%s', actual JWT: '%s')", i.config.JWTIssuer, claims.Issuer)
+	if claims.Issuer != i.Config.JWTIssuer {
+		return nil, errors.Errorf("JWT issuer mismatch (configured: '%s', actual JWT: '%s')", i.Config.JWTIssuer, claims.Issuer)
 	}
 
 	return &entities2.User{
