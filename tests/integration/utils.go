@@ -6,7 +6,6 @@ import (
 	"context"
 	"crypto/rand"
 	"math/big"
-	"os"
 	"testing"
 
 	"github.com/pkg/errors"
@@ -17,29 +16,13 @@ import (
 )
 
 func SDK(t *testing.T) corbado.SDK {
-	config, err := corbado.NewConfig(GetProjectID(t), GetAPISecret(t), GetFrontendAPI(t), GetBackendAPI(t))
+	config, err := corbado.NewConfigFromEnv()
 	require.NoError(t, err)
 
 	sdk, err := corbado.NewSDK(config)
 	require.NoError(t, err)
 
 	return sdk
-}
-
-func GetProjectID(t *testing.T) string {
-	return getEnv(t, "CORBADO_PROJECT_ID")
-}
-
-func GetAPISecret(t *testing.T) string {
-	return getEnv(t, "CORBADO_API_SECRET")
-}
-
-func GetBackendAPI(t *testing.T) string {
-	return getEnv(t, "CORBADO_BACKEND_API")
-}
-
-func GetFrontendAPI(t *testing.T) string {
-	return getEnv(t, "CORBADO_FRONTEND_API")
 }
 
 func CreateRandomTestName(t *testing.T) *string {
@@ -97,13 +80,4 @@ func generateString(length int) (string, error) {
 	}
 
 	return string(res), nil
-}
-
-func getEnv(t *testing.T, name string) string {
-	env := os.Getenv(name)
-	if env == "" {
-		t.Fatalf("Missing env variable %s", name)
-	}
-
-	return env
 }

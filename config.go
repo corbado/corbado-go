@@ -2,6 +2,7 @@ package corbado
 
 import (
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/pkg/errors"
@@ -61,6 +62,17 @@ func NewConfig(projectID string, apiSecret string, frontendApi string, backendAP
 		JWKSRefreshRateLimit: configDefaultJWKSRefreshRateLimit,
 		JWKSRefreshTimeout:   configDefaultJWKSRefreshTimeout,
 	}, nil
+}
+
+// NewConfigFromEnv created new config be reading the following environment variables: CORBADO_PROJECT_ID,
+// CORBADO_API_SECRET, CORBADO_FRONTEND_API and CORBADO_BACKEND_API
+func NewConfigFromEnv() (*Config, error) {
+	return NewConfig(
+		os.Getenv("CORBADO_PROJECT_ID"),
+		os.Getenv("CORBADO_API_SECRET"),
+		os.Getenv("CORBADO_FRONTEND_API"),
+		os.Getenv("CORBADO_BACKEND_API"),
+	)
 }
 
 func (c *Config) validate() error {
