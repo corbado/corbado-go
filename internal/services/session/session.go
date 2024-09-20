@@ -8,9 +8,10 @@ import (
 	"net/url"
 
 	"github.com/MicahParks/keyfunc"
-	"github.com/corbado/corbado-go/pkg/logger"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/pkg/errors"
+
+	"github.com/corbado/corbado-go/pkg/logger"
 
 	"github.com/corbado/corbado-go/internal/assert"
 	entities2 "github.com/corbado/corbado-go/pkg/entities"
@@ -84,8 +85,8 @@ func newJWKS(config *Config) (*keyfunc.JWKS, error) {
 }
 
 func (i *Impl) ValidateToken(shortSession string) (*entities2.User, error) {
-	if shortSession == "" {
-		return nil, nil
+	if err := assert.StringNotEmpty(shortSession); err != nil {
+		return nil, err
 	}
 
 	if i.jwks == nil {
