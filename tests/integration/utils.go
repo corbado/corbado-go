@@ -49,7 +49,7 @@ func CreateUser(t *testing.T) string {
 	return rsp.UserID
 }
 
-func CreateIdentifier(t *testing.T) (string, string, string) {
+func CreateIdentifier(t *testing.T) string {
 	userId := CreateUser(t)
 
 	email := CreateRandomTestEmail(t)
@@ -62,7 +62,7 @@ func CreateIdentifier(t *testing.T) (string, string, string) {
 
 	require.NoError(t, err)
 
-	return rsp.IdentifierID, userId, email
+	return rsp.IdentifierID
 }
 
 func generateString(length int) (string, error) {
