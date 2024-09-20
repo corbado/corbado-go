@@ -22,7 +22,7 @@ func TestIdentifier_List(t *testing.T) {
 	newList, err := integration.SDK(t).Identifiers().List(context.Background(), []string{}, "", 1, 100)
 	assert.NoError(t, err)
 	assert.NotNil(t, initialList)
-	assert.Equal(t, len(newList.Identifiers), len(initialList.Identifiers)+1)
+	assert.Equal(t, newList.Paging.TotalItems, initialList.Paging.TotalItems+1)
 }
 
 func TestIdentifier_ListByValueAndType(t *testing.T) {
