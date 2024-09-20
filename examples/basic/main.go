@@ -20,10 +20,10 @@ func main() {
 	//////////////////////////////////////////////////////////////////////////////////////////////
 
 	// Configuration
-	projectID := "<Your Project ID>"
-	apiSecret := "<Your API secret>"
-	frontendApi := "<Your Frontend API URL>"
-	backendApi := "<Your Backend API URL>"
+	projectID := "pro-8800191598924016720"
+	apiSecret := "corbado1_UdPwavfp5AbWdFThUojMfTdY7Rm9Wu"
+	frontendApi := "https://pro-8800191598924016720.frontendapi.cloud.corbado.io"
+	backendApi := "https://backendapi.cloud.corbado.io"
 
 	config, err := corbado.NewConfig(projectID, apiSecret, frontendApi, backendApi)
 	if err != nil {
@@ -107,7 +107,11 @@ func main() {
 			}
 
 			fmt.Fprintf(w, "User ID: %s\n", fullUser.UserID)
-			fmt.Fprintf(w, "User full name: %s\n", *fullUser.FullName)
+
+			if fullUser.FullName != nil {
+				fmt.Fprintf(w, "User full name: %s\n", fullUser.FullName)
+			}
+
 			fmt.Fprintf(w, "User status: %s\n", fullUser.Status)
 
 			// To get the email we use the identifier service
@@ -122,6 +126,8 @@ func main() {
 			fmt.Fprintf(w, "User Email: %s\n", emailIdentifiers.Identifiers[0].Value)
 		}
 	})
+
+	fmt.Println("Listening on :8000 ...")
 
 	if err := http.ListenAndServe(":8000", nil); err != nil {
 		panic(err)
