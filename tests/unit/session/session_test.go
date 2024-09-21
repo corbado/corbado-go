@@ -24,7 +24,6 @@ import (
 	"github.com/corbado/corbado-go/pkg/generated/api"
 )
 
-// generateJWT is a helper function to generate fully working JWT
 func generateJWT(iss string, exp, nbf int64, privateKey *rsa.PrivateKey) string {
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, jwt.MapClaims{
 		"iss":          iss,
