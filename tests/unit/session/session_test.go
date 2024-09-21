@@ -47,13 +47,13 @@ func generateJWT(iss string, exp, nbf int64, privateKey *rsa.PrivateKey) string 
 	return tokenString
 }
 
-func generatePrivateKey() (*rsa.PrivateKey, error) {
+func generatePrivateKey(filename string) (*rsa.PrivateKey, error) {
 	workingDir, err := os.Getwd()
 	if err != nil {
 		return nil, err
 	}
 
-	privateKeyFile, err := os.ReadFile(filepath.Join(workingDir, "../testdata/privateKey.pem"))
+	privateKeyFile, err := os.ReadFile(filepath.Join(workingDir, "../testdata/"+filename))
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +138,10 @@ func newSession() (*session.Impl, error) {
 }
 
 func TestValidateToken(t *testing.T) {
-	privateKey, err := generatePrivateKey()
+	validPrivateKey, err := generatePrivateKey("validPrivateKey.pem")
+	require.NoError(t, err)
+
+	invalidPrivateKey, err := generatePrivateKey("invalidPrivateKey.pem")
 	require.NoError(t, err)
 
 	tests := []struct {
@@ -160,26 +163,32 @@ func TestValidateToken(t *testing.T) {
 			success:             false,
 		},
 		{
+			name:                "JWT with invalid private key signed",
+			shortSession:        generateJWT("https://auth.acme.com", time.Now().Add(100*time.Second).Unix(), time.Now().Unix(), invalidPrivateKey),
+			validationErrorCode: validationerror.CodeJWTInvalidSignature,
+			success:             false,
+		},
+		{
 			name:                "Not before (nbf) in future",
-			shortSession:        generateJWT("https://auth.acme.com", time.Now().Add(100*time.Second).Unix(), time.Now().Add(100*time.Second).Unix(), privateKey),
+			shortSession:        generateJWT("https://auth.acme.com", time.Now().Add(100*time.Second).Unix(), time.Now().Add(100*time.Second).Unix(), validPrivateKey),
 			validationErrorCode: validationerror.CodeJWTBefore,
 			success:             false,
 		},
 		{
 			name:                "Expired (exp)",
-			shortSession:        generateJWT("https://auth.acme.com", time.Now().Add(-100*time.Second).Unix(), time.Now().Add(-100*time.Second).Unix(), privateKey),
+			shortSession:        generateJWT("https://auth.acme.com", time.Now().Add(-100*time.Second).Unix(), time.Now().Add(-100*time.Second).Unix(), validPrivateKey),
 			validationErrorCode: validationerror.CodeJWTExpired,
 			success:             false,
 		},
 		{
 			name:                "Invalid issuer (iss)",
-			shortSession:        generateJWT("https://invalid.com", time.Now().Add(100*time.Second).Unix(), time.Now().Unix(), privateKey),
+			shortSession:        generateJWT("https://invalid.com", time.Now().Add(100*time.Second).Unix(), time.Now().Unix(), validPrivateKey),
 			validationErrorCode: validationerror.CodeJWTIssuerMismatch,
 			success:             false,
 		},
 		{
 			name:         "Success",
-			shortSession: generateJWT("https://auth.acme.com", time.Now().Add(100*time.Second).Unix(), time.Now().Unix(), privateKey),
+			shortSession: generateJWT("https://auth.acme.com", time.Now().Add(100*time.Second).Unix(), time.Now().Unix(), validPrivateKey),
 			success:      true,
 		},
 	}
