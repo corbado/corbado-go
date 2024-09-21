@@ -10,7 +10,6 @@ import (
 
 	"github.com/corbado/corbado-go"
 	"github.com/corbado/corbado-go/pkg/generated/api"
-	"github.com/corbado/corbado-go/pkg/servererror"
 	"github.com/corbado/corbado-go/tests/integration"
 )
 
@@ -26,7 +25,7 @@ func TestUserOperations(t *testing.T) {
 
 			serverErr := corbado.AsServerError(err)
 			require.NotNil(t, serverErr)
-			require.Equal(t, "status: cannot be blank", servererror.GetValidationMessage(serverErr.Validation))
+			require.Equal(t, "status: cannot be blank", serverErr.GetValidationMessage())
 		})
 
 		t.Run("Success", func(t *testing.T) {
@@ -74,7 +73,7 @@ func TestUserOperations(t *testing.T) {
 			serverErr := corbado.AsServerError(err)
 			require.NotNil(t, serverErr)
 			require.Equal(t, int32(400), serverErr.HTTPStatusCode)
-			require.Equal(t, "userID: does not exist", servererror.GetValidationMessage(serverErr.Validation))
+			require.Equal(t, "userID: does not exist", serverErr.GetValidationMessage())
 		})
 
 		t.Run("Success", func(t *testing.T) {
