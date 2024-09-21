@@ -12,6 +12,7 @@ import (
 	"github.com/corbado/corbado-go/internal/services/user"
 	"github.com/corbado/corbado-go/pkg/generated/api"
 	"github.com/corbado/corbado-go/pkg/servererror"
+	"github.com/corbado/corbado-go/pkg/validationerror"
 )
 
 const Version = "2.0.0"
@@ -105,19 +106,36 @@ func (i *Impl) Identifiers() identifier.Identifier {
 
 // IsServerError checks if given error is a ServerError
 func IsServerError(err error) bool {
-	var serverError *servererror.ServerError
-	ok := errors.As(err, &serverError)
+	var serverErr *servererror.ServerError
 
-	return ok
+	return errors.As(err, &serverErr)
 }
 
 // AsServerError casts given error into a ServerError, if possible
 func AsServerError(err error) *servererror.ServerError {
-	var serverError *servererror.ServerError
-	ok := errors.As(err, &serverError)
+	var serverErr *servererror.ServerError
+	ok := errors.As(err, &serverErr)
 	if !ok {
 		return nil
 	}
 
-	return serverError
+	return serverErr
+}
+
+// IsValidationError checks if given error is a ValidationError
+func IsValidationError(err error) bool {
+	var validationErr *validationerror.ValidationError
+
+	return errors.As(err, &validationErr)
+}
+
+// AsValidationError casts given error into a ValidationError, if possible
+func AsValidationError(err error) *validationerror.ValidationError {
+	var validationErr *validationerror.ValidationError
+	ok := errors.As(err, &validationErr)
+	if !ok {
+		return nil
+	}
+
+	return validationErr
 }

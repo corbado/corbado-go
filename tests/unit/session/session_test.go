@@ -15,6 +15,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/corbado/corbado-go/pkg/logger"
+	"github.com/corbado/corbado-go/pkg/validationerror"
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/stretchr/testify/assert"
@@ -142,40 +143,40 @@ func TestValidateToken(t *testing.T) {
 	require.NoError(t, err)
 
 	tests := []struct {
-		name            string
-		shortSession    string
-		validationError uint32
-		success         bool
+		name                string
+		shortSession        string
+		validationErrorCode validationerror.Code
+		success             bool
 	}{
 		{
-			name:            "JWT with invalid format",
-			shortSession:    "invalid",
-			validationError: jwt.ValidationErrorMalformed,
-			success:         false,
+			name:                "JWT with invalid format",
+			shortSession:        "invalid",
+			validationErrorCode: validationerror.CodeJWTInvalidData,
+			success:             false,
 		},
 		{
-			name:            "JWT with invalid signature",
-			shortSession:    "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImtpZDEyMyJ9.eyJpc3MiOiJodHRwczovL2F1dGguYWNtZS5jb20iLCJpYXQiOjE3MjY0OTE4MDcsImV4cCI6MTcyNjQ5MTkwNywibmJmIjoxNzI2NDkxNzA3LCJzdWIiOiJ1c3ItMTIzNDU2Nzg5MCIsIm5hbWUiOiJuYW1lIiwiZW1haWwiOiJlbWFpbCIsInBob25lX251bWJlciI6InBob25lTnVtYmVyIiwib3JpZyI6Im9yaWcifQ.invalid",
-			validationError: jwt.ValidationErrorSignatureInvalid,
-			success:         false,
+			name:                "JWT with invalid signature",
+			shortSession:        "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImtpZDEyMyJ9.eyJpc3MiOiJodHRwczovL2F1dGguYWNtZS5jb20iLCJpYXQiOjE3MjY0OTE4MDcsImV4cCI6MTcyNjQ5MTkwNywibmJmIjoxNzI2NDkxNzA3LCJzdWIiOiJ1c3ItMTIzNDU2Nzg5MCIsIm5hbWUiOiJuYW1lIiwiZW1haWwiOiJlbWFpbCIsInBob25lX251bWJlciI6InBob25lTnVtYmVyIiwib3JpZyI6Im9yaWcifQ.invalid",
+			validationErrorCode: validationerror.CodeJWTInvalidSignature,
+			success:             false,
 		},
 		{
-			name:            "Not before (nbf) in future",
-			shortSession:    generateJWT("https://auth.acme.com", time.Now().Add(100*time.Second).Unix(), time.Now().Add(100*time.Second).Unix(), privateKey),
-			validationError: jwt.ValidationErrorNotValidYet,
-			success:         false,
+			name:                "Not before (nbf) in future",
+			shortSession:        generateJWT("https://auth.acme.com", time.Now().Add(100*time.Second).Unix(), time.Now().Add(100*time.Second).Unix(), privateKey),
+			validationErrorCode: validationerror.CodeJWTBefore,
+			success:             false,
 		},
 		{
-			name:            "Expired (exp)",
-			shortSession:    generateJWT("https://auth.acme.com", time.Now().Add(-100*time.Second).Unix(), time.Now().Add(-100*time.Second).Unix(), privateKey),
-			validationError: jwt.ValidationErrorExpired,
-			success:         false,
+			name:                "Expired (exp)",
+			shortSession:        generateJWT("https://auth.acme.com", time.Now().Add(-100*time.Second).Unix(), time.Now().Add(-100*time.Second).Unix(), privateKey),
+			validationErrorCode: validationerror.CodeJWTExpired,
+			success:             false,
 		},
 		{
-			name:            "Invalid issuer (iss)",
-			shortSession:    generateJWT("https://invalid.com", time.Now().Add(100*time.Second).Unix(), time.Now().Add(100*time.Second).Unix(), privateKey),
-			validationError: jwt.ValidationErrorIssuer,
-			success:         false,
+			name:                "Invalid issuer (iss)",
+			shortSession:        generateJWT("https://invalid.com", time.Now().Add(100*time.Second).Unix(), time.Now().Unix(), privateKey),
+			validationErrorCode: validationerror.CodeJWTIssuerMismatch,
+			success:             false,
 		},
 		{
 			name:         "Success",
@@ -199,9 +200,9 @@ func TestValidateToken(t *testing.T) {
 				assert.Error(t, err)
 				assert.Nil(t, user)
 
-				var validationErr *jwt.ValidationError
+				var validationErr *validationerror.ValidationError
 				assert.ErrorAs(t, err, &validationErr)
-				assert.Equal(t, test.validationError, validationErr.Errors&test.validationError)
+				assert.Equal(t, test.validationErrorCode, validationErr.Code)
 			}
 		})
 	}

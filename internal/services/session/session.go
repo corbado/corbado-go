@@ -3,6 +3,7 @@ package session
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -12,6 +13,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/corbado/corbado-go/pkg/logger"
+	"github.com/corbado/corbado-go/pkg/validationerror"
 
 	"github.com/corbado/corbado-go/internal/assert"
 	entities2 "github.com/corbado/corbado-go/pkg/entities"
@@ -30,7 +32,7 @@ type Impl struct {
 
 var _ Session = &Impl{}
 
-// New returns new user client
+// New returns new session instance
 func New(client *api.ClientWithResponses, config *Config) (*Impl, error) {
 	if err := assert.NotNil(client, config); err != nil {
 		return nil, err
@@ -100,12 +102,30 @@ func (i *Impl) ValidateToken(shortSession string) (*entities2.User, error) {
 
 	token, err := jwt.ParseWithClaims(shortSession, &entities2.Claims{}, i.Jwks.Keyfunc)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		code := validationerror.CodeJWTGeneral
+		libraryValidationErr := &jwt.ValidationError{}
+
+		if errors.As(err, &libraryValidationErr) {
+			if libraryValidationErr.Errors&jwt.ValidationErrorMalformed != 0 {
+				code = validationerror.CodeJWTInvalidData
+			} else if libraryValidationErr.Errors&jwt.ValidationErrorSignatureInvalid != 0 {
+				code = validationerror.CodeJWTInvalidSignature
+			} else if libraryValidationErr.Errors&jwt.ValidationErrorNotValidYet != 0 {
+				code = validationerror.CodeJWTBefore
+			} else if libraryValidationErr.Errors&jwt.ValidationErrorExpired != 0 {
+				code = validationerror.CodeJWTExpired
+			}
+		}
+
+		return nil, validationerror.New(err.Error(), code)
 	}
 
 	claims := token.Claims.(*entities2.Claims)
 	if claims.Issuer != i.Config.JWTIssuer {
-		return nil, errors.Errorf("JWT issuer mismatch (configured: '%s', actual JWT: '%s')", i.Config.JWTIssuer, claims.Issuer)
+		return nil, validationerror.New(
+			fmt.Sprintf("JWT issuer mismatch (configured: '%s', actual JWT: '%s')", i.Config.JWTIssuer, claims.Issuer),
+			validationerror.CodeJWTIssuerMismatch,
+		)
 	}
 
 	return &entities2.User{
