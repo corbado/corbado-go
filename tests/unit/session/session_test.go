@@ -151,6 +151,11 @@ func TestValidateToken(t *testing.T) {
 		success             bool
 	}{
 		{
+			name:         "Empty JWT",
+			shortSession: "",
+			success:      false,
+		},
+		{
 			name:                "JWT with invalid format",
 			shortSession:        "invalid",
 			validationErrorCode: validationerror.CodeJWTInvalidData,
@@ -208,9 +213,11 @@ func TestValidateToken(t *testing.T) {
 				assert.Error(t, err)
 				assert.Nil(t, user)
 
-				var validationErr *validationerror.ValidationError
-				assert.ErrorAs(t, err, &validationErr)
-				assert.Equal(t, test.validationErrorCode, validationErr.Code)
+				if test.validationErrorCode > 0 {
+					var validationErr *validationerror.ValidationError
+					assert.ErrorAs(t, err, &validationErr)
+					assert.Equal(t, test.validationErrorCode, validationErr.Code)
+				}
 			}
 		})
 	}
