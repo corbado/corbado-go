@@ -4,7 +4,7 @@ import (
 	"context"
 	"crypto/rsa"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -74,12 +74,15 @@ func newSession() (*session.Impl, error) {
 	}
 
 	// Create an HTTP mock server for the JWKS endpoint
-	mockServer := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	mockServer := http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write(jwksData)
+
+		if _, err := w.Write(jwksData); err != nil {
+			panic(err)
+		}
 	})
 
-	server := &http.Server{Addr: "localhost:8081", Handler: mockServer}
+	server := &http.Server{Addr: "localhost:8081", Handler: mockServer} // nolint:gosec
 	go func() {
 		_ = server.ListenAndServe()
 	}()
@@ -106,10 +109,10 @@ func newSession() (*session.Impl, error) {
 
 			return req, nil
 		},
-		ResponseExtractor: func(ctx context.Context, resp *http.Response) (json.RawMessage, error) {
+		ResponseExtractor: func(_ context.Context, resp *http.Response) (json.RawMessage, error) {
 			defer resp.Body.Close()
 
-			body, err := ioutil.ReadAll(resp.Body)
+			body, err := io.ReadAll(resp.Body)
 			if err != nil {
 				return nil, err
 			}
@@ -162,7 +165,8 @@ func TestValidateToken(t *testing.T) {
 			success:             false,
 		},
 		{
-			name:                "JWT with invalid signature",
+			name: "JWT with invalid signature",
+			// nolint:lll
 			shortSession:        "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImtpZDEyMyJ9.eyJpc3MiOiJodHRwczovL2F1dGguYWNtZS5jb20iLCJpYXQiOjE3MjY0OTE4MDcsImV4cCI6MTcyNjQ5MTkwNywibmJmIjoxNzI2NDkxNzA3LCJzdWIiOiJ1c3ItMTIzNDU2Nzg5MCIsIm5hbWUiOiJuYW1lIiwiZW1haWwiOiJlbWFpbCIsInBob25lX251bWJlciI6InBob25lTnVtYmVyIiwib3JpZyI6Im9yaWcifQ.invalid",
 			validationErrorCode: validationerror.CodeJWTInvalidSignature,
 			success:             false,

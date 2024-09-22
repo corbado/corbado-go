@@ -69,6 +69,7 @@ func TestNewConfig_Failure(t *testing.T) {
 	}
 }
 
+// nolint:funlen
 func TestConfig_Validate(t *testing.T) {
 	tests := []struct {
 		name                  string
@@ -76,43 +77,93 @@ func TestConfig_Validate(t *testing.T) {
 		expectedErrorContains string
 	}{
 		{
-			name:                  "invalid ProjectID",
-			config:                Config{ProjectID: "", APISecret: "corbado1_secret", FrontendAPI: "http://localhost:8080", BackendAPI: "http://localhost:9090"},
+			name: "invalid ProjectID",
+			config: Config{
+				ProjectID:   "",
+				APISecret:   "corbado1_secret",
+				FrontendAPI: "http://localhost:8080",
+				BackendAPI:  "http://localhost:9090",
+			},
 			expectedErrorContains: "Invalid ProjectID given",
 		},
 		{
-			name:                  "invalid APISecret",
-			config:                Config{ProjectID: "pro-12345678", APISecret: "", FrontendAPI: "http://localhost:8080", BackendAPI: "http://localhost:9090"},
+			name: "invalid APISecret",
+			config: Config{
+				ProjectID:   "pro-12345678",
+				APISecret:   "",
+				FrontendAPI: "http://localhost:8080",
+				BackendAPI:  "http://localhost:9090",
+			},
 			expectedErrorContains: "Invalid APISecret given",
 		},
 		{
-			name:                  "invalid FrontendAPI",
-			config:                Config{ProjectID: "pro-12345678", APISecret: "corbado1_secret", FrontendAPI: "", BackendAPI: "http://localhost:9090"},
+			name: "invalid FrontendAPI",
+			config: Config{
+				ProjectID:   "pro-12345678",
+				APISecret:   "corbado1_secret",
+				FrontendAPI: "",
+				BackendAPI:  "http://localhost:9090",
+			},
 			expectedErrorContains: "Invalid FrontendAPI given",
 		},
 		{
-			name:                  "invalid BackendAPI",
-			config:                Config{ProjectID: "pro-12345678", APISecret: "corbado1_secret", FrontendAPI: "http://localhost:8080", BackendAPI: ""},
+			name: "invalid BackendAPI",
+			config: Config{
+				ProjectID:   "pro-12345678",
+				APISecret:   "corbado1_secret",
+				FrontendAPI: "http://localhost:8080",
+				BackendAPI:  "",
+			},
 			expectedErrorContains: "Invalid BackendAPI given",
 		},
 		{
-			name:                  "invalid CacheMaxAge",
-			config:                Config{ProjectID: "pro-12345678", APISecret: "corbado1_secret", FrontendAPI: "http://localhost:8080", BackendAPI: "http://localhost:9090", CacheMaxAge: 0},
+			name: "invalid CacheMaxAge",
+			config: Config{
+				ProjectID:   "pro-12345678",
+				APISecret:   "corbado1_secret",
+				FrontendAPI: "http://localhost:8080",
+				BackendAPI:  "http://localhost:9090",
+				CacheMaxAge: 0,
+			},
 			expectedErrorContains: "Invalid CacheMaxAge given",
 		},
 		{
-			name:                  "invalid JWKSRefreshInterval",
-			config:                Config{ProjectID: "pro-12345678", APISecret: "corbado1_secret", FrontendAPI: "http://localhost:8080", BackendAPI: "http://localhost:9090", CacheMaxAge: 10 * time.Second, JWKSRefreshInterval: 0},
+			name: "invalid JWKSRefreshInterval",
+			config: Config{
+				ProjectID:           "pro-12345678",
+				APISecret:           "corbado1_secret",
+				FrontendAPI:         "http://localhost:8080",
+				BackendAPI:          "http://localhost:9090",
+				CacheMaxAge:         10 * time.Second,
+				JWKSRefreshInterval: 0,
+			},
 			expectedErrorContains: "Invalid JWKSRefreshInterval given",
 		},
 		{
-			name:                  "invalid JWKSRefreshRateLimit",
-			config:                Config{ProjectID: "pro-12345678", APISecret: "corbado1_secret", FrontendAPI: "http://localhost:8080", BackendAPI: "http://localhost:9090", CacheMaxAge: 10 * time.Second, JWKSRefreshInterval: 10 * time.Second, JWKSRefreshRateLimit: 0},
+			name: "invalid JWKSRefreshRateLimit",
+			config: Config{
+				ProjectID:            "pro-12345678",
+				APISecret:            "corbado1_secret",
+				FrontendAPI:          "http://localhost:8080",
+				BackendAPI:           "http://localhost:9090",
+				CacheMaxAge:          10 * time.Second,
+				JWKSRefreshInterval:  10 * time.Second,
+				JWKSRefreshRateLimit: 0,
+			},
 			expectedErrorContains: "Invalid JWKSRefreshRateLimit given",
 		},
 		{
-			name:                  "invalid JWKSRefreshTimeout",
-			config:                Config{ProjectID: "pro-12345678", APISecret: "corbado1_secret", FrontendAPI: "http://localhost:8080", BackendAPI: "http://localhost:9090", CacheMaxAge: 10 * time.Second, JWKSRefreshInterval: 10 * time.Second, JWKSRefreshRateLimit: 10 * time.Second, JWKSRefreshTimeout: 0},
+			name: "invalid JWKSRefreshTimeout",
+			config: Config{
+				ProjectID:            "pro-12345678",
+				APISecret:            "corbado1_secret",
+				FrontendAPI:          "http://localhost:8080",
+				BackendAPI:           "http://localhost:9090",
+				CacheMaxAge:          10 * time.Second,
+				JWKSRefreshInterval:  10 * time.Second,
+				JWKSRefreshRateLimit: 10 * time.Second,
+				JWKSRefreshTimeout:   0,
+			},
 			expectedErrorContains: "Invalid JWKSRefreshTimeout given",
 		},
 	}
@@ -124,10 +175,8 @@ func TestConfig_Validate(t *testing.T) {
 			// Assert that an error exists and contains the expected substring
 			if err == nil {
 				t.Errorf("Expected an error, but got none")
-			} else {
-				if !strings.Contains(err.Error(), test.expectedErrorContains) {
-					t.Errorf("Expected error containing %q, but got %q", test.expectedErrorContains, err.Error())
-				}
+			} else if !strings.Contains(err.Error(), test.expectedErrorContains) {
+				t.Errorf("Expected error containing %q, but got %q", test.expectedErrorContains, err.Error())
 			}
 		})
 	}

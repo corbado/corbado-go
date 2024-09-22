@@ -35,7 +35,7 @@ const (
 )
 
 // NewConfig returns new config with sane defaults
-func NewConfig(projectID string, apiSecret string, frontendApi string, backendAPI string) (*Config, error) {
+func NewConfig(projectID string, apiSecret string, frontendAPI string, backendAPI string) (*Config, error) {
 	if err := assert.StringNotEmpty(projectID); err != nil {
 		return nil, err
 	}
@@ -44,7 +44,7 @@ func NewConfig(projectID string, apiSecret string, frontendApi string, backendAP
 		return nil, err
 	}
 
-	if err := assert.StringNotEmpty(frontendApi); err != nil {
+	if err := assert.StringNotEmpty(frontendAPI); err != nil {
 		return nil, err
 	}
 
@@ -55,7 +55,7 @@ func NewConfig(projectID string, apiSecret string, frontendApi string, backendAP
 	return &Config{
 		ProjectID:            projectID,
 		APISecret:            apiSecret,
-		FrontendAPI:          frontendApi,
+		FrontendAPI:          frontendAPI,
 		BackendAPI:           backendAPI,
 		CacheMaxAge:          configDefaultCacheMaxAge,
 		JWKSRefreshInterval:  configDefaultJWKSRefreshInterval,

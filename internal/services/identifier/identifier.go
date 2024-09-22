@@ -41,7 +41,12 @@ func New(client *api.ClientWithResponses) (*Impl, error) {
 }
 
 // Create creates a new identifier
-func (i *Impl) Create(ctx context.Context, userID string, req api.IdentifierCreateReq, editors ...api.RequestEditorFn) (*api.Identifier, error) {
+func (i *Impl) Create(
+	ctx context.Context,
+	userID string,
+	req api.IdentifierCreateReq,
+	editors ...api.RequestEditorFn,
+) (*api.Identifier, error) {
 	res, err := i.client.IdentifierCreateWithResponse(ctx, userID, req, editors...)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -55,7 +60,12 @@ func (i *Impl) Create(ctx context.Context, userID string, req api.IdentifierCrea
 }
 
 // Delete deletes an identifier
-func (i *Impl) Delete(ctx context.Context, userID string, identifierID string, editors ...api.RequestEditorFn) (*common.GenericRsp, error) {
+func (i *Impl) Delete(
+	ctx context.Context,
+	userID string,
+	identifierID string,
+	editors ...api.RequestEditorFn,
+) (*common.GenericRsp, error) {
 	res, err := i.client.IdentifierDeleteWithResponse(ctx, userID, identifierID, editors...)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -69,7 +79,14 @@ func (i *Impl) Delete(ctx context.Context, userID string, identifierID string, e
 }
 
 // List lists identifiers based on optional filters, sorting, pagination
-func (i *Impl) List(ctx context.Context, filter []string, sort string, page int, pageSize int, editors ...api.RequestEditorFn) (*api.IdentifierList, error) {
+func (i *Impl) List(
+	ctx context.Context,
+	filter []string,
+	sort string,
+	page int,
+	pageSize int,
+	editors ...api.RequestEditorFn,
+) (*api.IdentifierList, error) {
 	var req api.IdentifierListParams
 
 	// Only set filter if it's not nil or empty
@@ -106,29 +123,48 @@ func (i *Impl) List(ctx context.Context, filter []string, sort string, page int,
 }
 
 // ListByValueAndType lists identifiers by value and type
-func (i *Impl) ListByValueAndType(ctx context.Context, value string, identifierType api.IdentifierType, sort string, page int, pageSize int, editors ...api.RequestEditorFn) (*api.IdentifierList, error) {
+func (i *Impl) ListByValueAndType(
+	ctx context.Context,
+	value string,
+	identifierType api.IdentifierType,
+	sort string,
+	page int,
+	pageSize int,
+	editors ...api.RequestEditorFn,
+) (*api.IdentifierList, error) {
 	filter := []string{`identifierValue:eq:` + value, `identifierType:eq:` + string(identifierType)}
+
 	return i.List(ctx, filter, sort, page, pageSize, editors...)
 }
 
 // ListByUserID lists identifiers by user ID
-func (i *Impl) ListByUserID(ctx context.Context, userID string, sort string, page int, pageSize int, editors ...api.RequestEditorFn) (*api.IdentifierList, error) {
-	// Remove 'usr-' prefix if present
-	if strings.HasPrefix(userID, "usr-") {
-		userID = strings.TrimPrefix(userID, "usr-")
-	}
+func (i *Impl) ListByUserID(
+	ctx context.Context,
+	userID string,
+	sort string,
+	page int,
+	pageSize int,
+	editors ...api.RequestEditorFn,
+) (*api.IdentifierList, error) {
+	userID = strings.TrimPrefix(userID, "usr-")
 
 	// Construct the filter
 	filter := []string{`userID:eq:` + userID}
+
 	return i.List(ctx, filter, sort, page, pageSize, editors...)
 }
 
 // ListByUserIDAndType lists identifiers by user ID and type
-func (i *Impl) ListByUserIDAndType(ctx context.Context, userID string, identifierType api.IdentifierType, sort string, page int, pageSize int, editors ...api.RequestEditorFn) (*api.IdentifierList, error) {
-	// Remove 'usr-' prefix if present
-	if strings.HasPrefix(userID, "usr-") {
-		userID = strings.TrimPrefix(userID, "usr-")
-	}
+func (i *Impl) ListByUserIDAndType(
+	ctx context.Context,
+	userID string,
+	identifierType api.IdentifierType,
+	sort string,
+	page int,
+	pageSize int,
+	editors ...api.RequestEditorFn,
+) (*api.IdentifierList, error) {
+	userID = strings.TrimPrefix(userID, "usr-")
 
 	// Construct the filter
 	filter := []string{`userID:eq:` + userID, `identifierType:eq:` + string(identifierType)}
@@ -136,7 +172,13 @@ func (i *Impl) ListByUserIDAndType(ctx context.Context, userID string, identifie
 }
 
 // UpdateIdentifier updates an identifier
-func (i *Impl) UpdateIdentifier(ctx context.Context, userID string, identifierID string, req api.IdentifierUpdateReq, editors ...api.RequestEditorFn) (*api.Identifier, error) {
+func (i *Impl) UpdateIdentifier(
+	ctx context.Context,
+	userID string,
+	identifierID string,
+	req api.IdentifierUpdateReq,
+	editors ...api.RequestEditorFn,
+) (*api.Identifier, error) {
 	res, err := i.client.IdentifierUpdateWithResponse(ctx, userID, identifierID, req, editors...)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -150,7 +192,13 @@ func (i *Impl) UpdateIdentifier(ctx context.Context, userID string, identifierID
 }
 
 // UpdateStatus updates the status of an identifier
-func (i *Impl) UpdateStatus(ctx context.Context, userID string, identifierID string, status api.IdentifierStatus, editors ...api.RequestEditorFn) (*api.Identifier, error) {
+func (i *Impl) UpdateStatus(
+	ctx context.Context,
+	userID string,
+	identifierID string,
+	status api.IdentifierStatus,
+	editors ...api.RequestEditorFn,
+) (*api.Identifier, error) {
 	req := api.IdentifierUpdateReq{
 		Status: status,
 	}

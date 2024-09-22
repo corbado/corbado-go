@@ -50,7 +50,7 @@ func New(client *api.ClientWithResponses, config *Config) (*Impl, error) {
 
 func newJWKS(config *Config) (*keyfunc.JWKS, error) {
 	options := keyfunc.Options{
-		RequestFactory: func(ctx context.Context, urlAddress string) (*http.Request, error) {
+		RequestFactory: func(_ context.Context, urlAddress string) (*http.Request, error) {
 			address, err := url.Parse(urlAddress)
 			if err != nil {
 				return nil, errors.WithStack(err)
@@ -66,7 +66,7 @@ func newJWKS(config *Config) (*keyfunc.JWKS, error) {
 
 			return req, nil
 		},
-		ResponseExtractor: func(ctx context.Context, resp *http.Response) (json.RawMessage, error) {
+		ResponseExtractor: func(_ context.Context, resp *http.Response) (json.RawMessage, error) {
 			rspBody, err := io.ReadAll(resp.Body)
 			if err != nil {
 				return nil, err
@@ -106,13 +106,17 @@ func (i *Impl) ValidateToken(shortSession string) (*entities2.User, error) {
 		libraryValidationErr := &jwt.ValidationError{}
 
 		if errors.As(err, &libraryValidationErr) {
-			if libraryValidationErr.Errors&jwt.ValidationErrorMalformed != 0 {
+			switch {
+			case libraryValidationErr.Errors&jwt.ValidationErrorMalformed != 0:
 				code = validationerror.CodeJWTInvalidData
-			} else if libraryValidationErr.Errors&jwt.ValidationErrorSignatureInvalid != 0 {
+
+			case libraryValidationErr.Errors&jwt.ValidationErrorSignatureInvalid != 0:
 				code = validationerror.CodeJWTInvalidSignature
-			} else if libraryValidationErr.Errors&jwt.ValidationErrorNotValidYet != 0 {
+
+			case libraryValidationErr.Errors&jwt.ValidationErrorNotValidYet != 0:
 				code = validationerror.CodeJWTBefore
-			} else if libraryValidationErr.Errors&jwt.ValidationErrorExpired != 0 {
+
+			case libraryValidationErr.Errors&jwt.ValidationErrorExpired != 0:
 				code = validationerror.CodeJWTExpired
 			}
 		}
