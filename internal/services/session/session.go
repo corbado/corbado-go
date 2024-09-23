@@ -16,12 +16,12 @@ import (
 	"github.com/corbado/corbado-go/pkg/validationerror"
 
 	"github.com/corbado/corbado-go/internal/assert"
-	entities2 "github.com/corbado/corbado-go/pkg/entities"
+	"github.com/corbado/corbado-go/pkg/entities"
 	"github.com/corbado/corbado-go/pkg/generated/api"
 )
 
 type Session interface {
-	ValidateToken(shortSession string) (*entities2.User, error)
+	ValidateToken(shortSession string) (*entities.User, error)
 }
 
 type Impl struct {
@@ -86,7 +86,7 @@ func newJWKS(config *Config) (*keyfunc.JWKS, error) {
 	return keyfunc.Get(config.JwksURI, options)
 }
 
-func (i *Impl) ValidateToken(shortSession string) (*entities2.User, error) {
+func (i *Impl) ValidateToken(shortSession string) (*entities.User, error) {
 	if err := assert.StringNotEmpty(shortSession); err != nil {
 		return nil, err
 	}
@@ -100,7 +100,7 @@ func (i *Impl) ValidateToken(shortSession string) (*entities2.User, error) {
 		i.Jwks = jwks
 	}
 
-	token, err := jwt.ParseWithClaims(shortSession, &entities2.Claims{}, i.Jwks.Keyfunc)
+	token, err := jwt.ParseWithClaims(shortSession, &entities.Claims{}, i.Jwks.Keyfunc)
 	if err != nil {
 		code := validationerror.CodeJWTGeneral
 		libraryValidationErr := &jwt.ValidationError{}
@@ -124,7 +124,7 @@ func (i *Impl) ValidateToken(shortSession string) (*entities2.User, error) {
 		return nil, validationerror.New(err.Error(), code)
 	}
 
-	claims := token.Claims.(*entities2.Claims)
+	claims := token.Claims.(*entities.Claims)
 	if claims.Issuer != i.Config.JWTIssuer {
 		return nil, validationerror.New(
 			fmt.Sprintf("JWT issuer mismatch (configured: '%s', actual JWT: '%s')", i.Config.JWTIssuer, claims.Issuer),
@@ -132,7 +132,7 @@ func (i *Impl) ValidateToken(shortSession string) (*entities2.User, error) {
 		)
 	}
 
-	return &entities2.User{
+	return &entities.User{
 		UserID:   claims.Subject,
 		FullName: claims.Name,
 	}, nil

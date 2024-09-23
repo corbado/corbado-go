@@ -50,11 +50,10 @@ func CreateUser(t *testing.T) string {
 }
 
 func CreateIdentifier(t *testing.T) string {
-	userId := CreateUser(t)
-
+	userID := CreateUser(t)
 	email := CreateRandomTestEmail(t)
 
-	rsp, err := SDK(t).Identifiers().Create(context.TODO(), userId, api.IdentifierCreateReq{
+	rsp, err := SDK(t).Identifiers().Create(context.TODO(), userID, api.IdentifierCreateReq{
 		IdentifierType:  "email",
 		IdentifierValue: email,
 		Status:          "verified",

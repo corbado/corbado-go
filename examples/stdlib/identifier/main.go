@@ -4,14 +4,16 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/corbado/corbado-go/pkg/generated/api"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
 
-	"github.com/corbado/corbado-go"
+	"github.com/corbado/corbado-go/pkg/generated/api"
+
 	"github.com/gorilla/mux"
+
+	"github.com/corbado/corbado-go"
 )
 
 var sdk corbado.SDK
@@ -19,7 +21,7 @@ var sdk corbado.SDK
 // Create a new identifier for a user
 func createIdentifierHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	userID := vars["userId"]
+	userID := vars["userID"]
 
 	var req api.IdentifierCreateReq
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -40,8 +42,8 @@ func createIdentifierHandler(w http.ResponseWriter, r *http.Request) {
 // Delete an identifier by user ID and identifier ID
 func deleteIdentifierHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	userID := vars["userId"]
-	identifierID := vars["identifierId"]
+	userID := vars["userID"]
+	identifierID := vars["identifierID"]
 
 	result, err := sdk.Identifiers().Delete(context.Background(), userID, identifierID)
 	if err != nil {
@@ -98,7 +100,7 @@ func listIdentifiersByValueAndTypeHandler(w http.ResponseWriter, r *http.Request
 // List identifiers by user ID
 func listIdentifiersByUserIDHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	userID := vars["userId"]
+	userID := vars["userID"]
 	query := r.URL.Query()
 	sort := query.Get("sort")
 	page, _ := strconv.Atoi(query.Get("page"))
@@ -117,8 +119,8 @@ func listIdentifiersByUserIDHandler(w http.ResponseWriter, r *http.Request) {
 // Update the status of an identifier
 func updateIdentifierStatusHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	userID := vars["userId"]
-	identifierID := vars["identifierId"]
+	userID := vars["userID"]
+	identifierID := vars["identifierID"]
 
 	var req struct {
 		Status string `json:"status"`
@@ -159,12 +161,12 @@ func main() {
 
 	sdk = newSdk
 
-	r.HandleFunc("/create/{userId}", createIdentifierHandler).Methods("POST")
-	r.HandleFunc("/delete/{userId}/{identifierId}", deleteIdentifierHandler).Methods("DELETE")
+	r.HandleFunc("/create/{userID}", createIdentifierHandler).Methods("POST")
+	r.HandleFunc("/delete/{userID}/{identifierID}", deleteIdentifierHandler).Methods("DELETE")
 	r.HandleFunc("/list", listIdentifiersHandler).Methods("GET")
 	r.HandleFunc("/listByValueAndType", listIdentifiersByValueAndTypeHandler).Methods("GET")
-	r.HandleFunc("/listByUserId/{userId}", listIdentifiersByUserIDHandler).Methods("GET")
-	r.HandleFunc("/updateStatus/{userId}/{identifierId}", updateIdentifierStatusHandler).Methods("PUT")
+	r.HandleFunc("/listByUserId/{userID}", listIdentifiersByUserIDHandler).Methods("GET")
+	r.HandleFunc("/updateStatus/{userID}/{identifierID}", updateIdentifierStatusHandler).Methods("PUT")
 
 	log.Println("Server started on :8000")
 	if err := http.ListenAndServe(":8000", r); err != nil {
