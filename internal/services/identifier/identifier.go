@@ -89,27 +89,22 @@ func (i *Impl) List(
 ) (*api.IdentifierList, error) {
 	var req api.IdentifierListParams
 
-	// Only set filter if it's not nil or empty
 	if len(filter) > 0 {
 		req.Filter = &filter
 	}
 
-	// Only set sort if it's not empty
 	if sort != "" {
 		req.Sort = &sort
 	}
 
-	// Only set page if it's greater than 0
 	if page > 0 {
 		req.Page = &page
 	}
 
-	// Only set pageSize if it's greater than 0
 	if pageSize > 0 {
 		req.PageSize = &pageSize
 	}
 
-	// Call the API with the prepared request
 	res, err := i.client.IdentifierListWithResponse(ctx, &req, editors...)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -147,8 +142,6 @@ func (i *Impl) ListByUserID(
 	editors ...api.RequestEditorFn,
 ) (*api.IdentifierList, error) {
 	userID = strings.TrimPrefix(userID, "usr-")
-
-	// Construct the filter
 	filter := []string{`userID:eq:` + userID}
 
 	return i.List(ctx, filter, sort, page, pageSize, editors...)
@@ -165,9 +158,8 @@ func (i *Impl) ListByUserIDAndType(
 	editors ...api.RequestEditorFn,
 ) (*api.IdentifierList, error) {
 	userID = strings.TrimPrefix(userID, "usr-")
-
-	// Construct the filter
 	filter := []string{`userID:eq:` + userID, `identifierType:eq:` + string(identifierType)}
+
 	return i.List(ctx, filter, sort, page, pageSize, editors...)
 }
 
