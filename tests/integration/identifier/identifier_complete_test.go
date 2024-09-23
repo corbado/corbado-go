@@ -47,19 +47,42 @@ func TestIdentifierOperations(t *testing.T) {
 
 	t.Run("ListIdentifiers", func(t *testing.T) {
 		t.Run("All", func(t *testing.T) {
-			// List identifiers
-			initialList, err := integration.SDK(t).Identifiers().List(ctx, []string{}, "", 1, 100)
-			assert.NoError(t, err)
-			assert.NotNil(t, initialList)
 
 			// Create new identifier
-			integration.CreateIdentifier(t)
+			newIdentifier := integration.CreateIdentifier(t)
 
-			// List identifiers containing new identifier
-			newList, err := integration.SDK(t).Identifiers().List(ctx, []string{}, "", 1, 100)
-			assert.NoError(t, err)
-			assert.NotNil(t, newList)
-			assert.Equal(t, newList.Paging.TotalItems, initialList.Paging.TotalItems+1)
+			var allIdentifiers []api.Identifier
+			page := 1
+			pageSize := 100
+			hasNextPage := true
+
+			for hasNextPage {
+				// List identifiers for the current page
+				list, err := integration.SDK(t).Identifiers().List(ctx, []string{}, "", page, pageSize)
+				assert.NoError(t, err)
+				assert.NotNil(t, list)
+
+				// Append identifiers to the complete list
+				allIdentifiers = append(allIdentifiers, list.Identifiers...)
+
+				// Check if there's a next page
+				if list.Paging.TotalPages <= page {
+					hasNextPage = false
+				} else {
+					page++
+				}
+			}
+
+			// Search for the new identifier in the list
+			found := false
+			for _, identifier := range allIdentifiers {
+				if identifier.IdentifierID == newIdentifier {
+					found = true
+					break
+				}
+			}
+
+			assert.True(t, found, "New identifier should be found in the list")
 		})
 
 		t.Run("ByValueAndType", func(t *testing.T) {
