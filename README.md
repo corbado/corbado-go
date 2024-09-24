@@ -91,7 +91,7 @@ import (
 )
 
 func main() {
-    config, err := corbado.NewConfig("<Project ID>", "<API secret>", "<Frontned API>", "<Backend API>")
+    config, err := corbado.NewConfig("<Project ID>", "<API secret>", "<Frontend API>", "<Backend API>")
     if err != nil {
         panic(err)
     }

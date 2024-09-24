@@ -109,7 +109,7 @@ func main() {
 			fmt.Fprintf(w, "User ID: %s\n", fullUser.UserID)
 
 			if fullUser.FullName != nil {
-				fmt.Fprintf(w, "User full name: %s\n", fullUser.FullName)
+				fmt.Fprintf(w, "User full name: %s\n", *fullUser.FullName)
 			}
 
 			fmt.Fprintf(w, "User status: %s\n", fullUser.Status)
