@@ -9,7 +9,7 @@
 [![documentation](https://img.shields.io/badge/documentation-Corbado_Backend_API_Reference-blue.svg)](https://apireference.cloud.corbado.io/backendapi/)
 [![Slack](https://img.shields.io/badge/slack-join%20chat-brightgreen.svg)](https://join.slack.com/t/corbado/shared_invite/zt-1b7867yz8-V~Xr~ngmSGbt7IA~g16ZsQ)
 
-The [Corbado](https://www.corbado.com) Go SDK provides convenient access to the [Corbado Backend API](https://apireference.cloud.corbado.io/backendapi/) from applications written in the Go language.
+The [Corbado](https://www.corbado.com) Go SDK provides convenient access to the [Corbado Backend API](https://apireference.cloud.corbado.io/backendapi-v2/) from applications written in the Go language.
 
 :warning: The Corbado Go SDK is commonly referred to as a private client, specifically designed for usage within closed backend applications. This particular SDK should exclusively be utilized in such environments, as it is crucial to ensure that the API secret remains strictly confidential and is never shared.
 
@@ -68,7 +68,7 @@ The Corbado Go SDK provides the following services:
 To use a specific service, such as `Users`, invoke it as shown below:
 
 ```Go
-user, err := sdk.Users().Get(context.Background(), "usr-12345679", nil)
+user, err := sdk.Users().Get(context.Background(), "usr-12345679")
 if err != nil {
     panic(err)
 }
@@ -102,10 +102,10 @@ func main() {
     }
 
     // Try to get non-existing user with ID 'usr-123456789'
-    user, err := sdk.Users().Get(context.Background(), "usr-123456789" ,nil)
+    user, err := sdk.Users().Get(context.Background(), "usr-123456789")
     if err != nil {
         if serverErr := corbado.AsServerError(err); serverErr != nil {
-            // Show HTTP status code (404 in this case)
+            // Show HTTP status code (400 in this case)
             fmt.Println(serverErr.HTTPStatusCode)
 
             // Show request ID (can be used in developer panel to look up the full request
