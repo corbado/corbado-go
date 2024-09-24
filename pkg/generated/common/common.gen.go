@@ -22,6 +22,13 @@ const (
 	AuthMethodWebauthn    AuthMethod = "webauthn"
 )
 
+// Defines values for IdentifierType.
+const (
+	IdentifierTypeEmail    IdentifierType = "email"
+	IdentifierTypePhone    IdentifierType = "phone"
+	IdentifierTypeUsername IdentifierType = "username"
+)
+
 // Defines values for LoginIdentifierConfigEnforceVerification.
 const (
 	AtFirstLogin LoginIdentifierConfigEnforceVerification = "at_first_login"
@@ -31,9 +38,9 @@ const (
 
 // Defines values for LoginIdentifierType.
 const (
-	LoginIdentifierTypeCustom      LoginIdentifierType = "custom"
-	LoginIdentifierTypeEmail       LoginIdentifierType = "email"
-	LoginIdentifierTypePhoneNumber LoginIdentifierType = "phone_number"
+	Custom      LoginIdentifierType = "custom"
+	Email       LoginIdentifierType = "email"
+	PhoneNumber LoginIdentifierType = "phone_number"
 )
 
 // Defines values for SessionManagement.
@@ -89,7 +96,7 @@ type AllTypes struct {
 	// P18 User entry with emails and phone numbers
 	P18 *FullUser `json:"p18,omitempty"`
 
-	// P19 Login Identifier type
+	// P19 Login Identifier type (deprecated)
 	P19 *LoginIdentifierType `json:"p19,omitempty"`
 	P2  *ClientInfo          `json:"p2,omitempty"`
 
@@ -106,6 +113,9 @@ type AllTypes struct {
 	P23 *HighEntropyValues     `json:"p23,omitempty"`
 	P24 *LoginIdentifierConfig `json:"p24,omitempty"`
 	P25 *SocialProviderType    `json:"p25,omitempty"`
+
+	// P26 Login Identifier type
+	P26 *IdentifierType `json:"p26,omitempty"`
 
 	// P3 generic ID
 	P3 *ID `json:"p3,omitempty"`
@@ -242,20 +252,23 @@ type HighEntropyValues struct {
 	PlatformVersion string `json:"platformVersion"`
 }
 
+// IdentifierType Login Identifier type
+type IdentifierType string
+
 // LoginIdentifierConfig defines model for loginIdentifierConfig.
 type LoginIdentifierConfig struct {
 	EnforceVerification LoginIdentifierConfigEnforceVerification `json:"enforceVerification"`
 	Metadata            *map[string]interface{}                  `json:"metadata,omitempty"`
 
 	// Type Login Identifier type
-	Type                 LoginIdentifierType `json:"type"`
-	UseAsLoginIdentifier bool                `json:"useAsLoginIdentifier"`
+	Type                 IdentifierType `json:"type"`
+	UseAsLoginIdentifier bool           `json:"useAsLoginIdentifier"`
 }
 
 // LoginIdentifierConfigEnforceVerification defines model for LoginIdentifierConfig.EnforceVerification.
 type LoginIdentifierConfigEnforceVerification string
 
-// LoginIdentifierType Login Identifier type
+// LoginIdentifierType Login Identifier type (deprecated)
 type LoginIdentifierType string
 
 // Paging defines model for paging.

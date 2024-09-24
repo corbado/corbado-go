@@ -7,49 +7,29 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/corbado/corbado-go/internal/assert"
-	"github.com/corbado/corbado-go/internal/services/authtoken"
-	"github.com/corbado/corbado-go/internal/services/emailmagiclink"
-	"github.com/corbado/corbado-go/internal/services/emailotp"
-	"github.com/corbado/corbado-go/internal/services/passkey"
-	"github.com/corbado/corbado-go/internal/services/project"
+	"github.com/corbado/corbado-go/internal/services/identifier"
 	"github.com/corbado/corbado-go/internal/services/session"
-	"github.com/corbado/corbado-go/internal/services/smsotp"
-	"github.com/corbado/corbado-go/internal/services/template"
 	"github.com/corbado/corbado-go/internal/services/user"
-	"github.com/corbado/corbado-go/internal/services/validation"
 	"github.com/corbado/corbado-go/pkg/generated/api"
 	"github.com/corbado/corbado-go/pkg/servererror"
+	"github.com/corbado/corbado-go/pkg/validationerror"
 )
 
-const Version = "1.0.4"
+const Version = "2.0.0"
 
 type SDK interface {
-	AuthTokens() authtoken.AuthToken
-	EmailMagicLinks() emailmagiclink.EmailMagicLink
-	EmailOTPs() emailotp.EmailOTP
-	Passkeys() passkey.Passkey
-	Projects() project.Project
 	Sessions() session.Session
-	SmsOTPs() smsotp.SmsOTP
-	Templates() template.Template
 	Users() user.User
-	Validations() validation.Validation
+	Identifiers() identifier.Identifier
 }
 
 type Impl struct {
 	client     *api.ClientWithResponses
 	HTTPClient *http.Client
 
-	authTokens      authtoken.AuthToken
-	emailMagicLinks emailmagiclink.EmailMagicLink
-	emailOTPs       emailotp.EmailOTP
-	passkeys        passkey.Passkey
-	projects        project.Project
-	sessions        session.Session
-	smsOTPs         smsotp.SmsOTP
-	templates       template.Template
-	users           user.User
-	validations     validation.Validation
+	sessions    session.Session
+	users       user.User
+	identifiers identifier.Identifier
 }
 
 var _ SDK = &Impl{}
@@ -70,30 +50,6 @@ func NewSDK(config *Config) (*Impl, error) {
 	}
 
 	// instantiate all APIs eagerly because it's cheap to do so and we don't have to deal with thread safety this way
-	authTokens, err := authtoken.New(client)
-	if err != nil {
-		return nil, err
-	}
-
-	emailMagicLinks, err := emailmagiclink.New(client)
-	if err != nil {
-		return nil, err
-	}
-
-	emailOTPs, err := emailotp.New(client)
-	if err != nil {
-		return nil, err
-	}
-
-	passkeys, err := passkey.New(client)
-	if err != nil {
-		return nil, err
-	}
-
-	projects, err := project.New(client)
-	if err != nil {
-		return nil, err
-	}
 
 	sessionConfig := &session.Config{
 		ProjectID:            config.ProjectID,
@@ -109,22 +65,12 @@ func NewSDK(config *Config) (*Impl, error) {
 		return nil, err
 	}
 
-	smsOTPs, err := smsotp.New(client)
-	if err != nil {
-		return nil, err
-	}
-
-	templates, err := template.New(client)
-	if err != nil {
-		return nil, err
-	}
-
 	users, err := user.New(client)
 	if err != nil {
 		return nil, err
 	}
 
-	validations, err := validation.New(client)
+	identifiers, err := identifier.New(client)
 	if err != nil {
 		return nil, err
 	}
@@ -135,44 +81,12 @@ func NewSDK(config *Config) (*Impl, error) {
 	}
 
 	return &Impl{
-		client:          client,
-		authTokens:      authTokens,
-		emailMagicLinks: emailMagicLinks,
-		emailOTPs:       emailOTPs,
-		passkeys:        passkeys,
-		projects:        projects,
-		sessions:        sessions,
-		smsOTPs:         smsOTPs,
-		templates:       templates,
-		users:           users,
-		validations:     validations,
-		HTTPClient:      httpClient,
+		client:      client,
+		sessions:    sessions,
+		users:       users,
+		HTTPClient:  httpClient,
+		identifiers: identifiers,
 	}, nil
-}
-
-// AuthTokens returns auth tokens client
-func (i *Impl) AuthTokens() authtoken.AuthToken {
-	return i.authTokens
-}
-
-// EmailMagicLinks returns email magic links client
-func (i *Impl) EmailMagicLinks() emailmagiclink.EmailMagicLink {
-	return i.emailMagicLinks
-}
-
-// EmailOTPs returns email OTPs client
-func (i *Impl) EmailOTPs() emailotp.EmailOTP {
-	return i.emailOTPs
-}
-
-// Passkeys returns passkeys client
-func (i *Impl) Passkeys() passkey.Passkey {
-	return i.passkeys
-}
-
-// Projects returns projects client
-func (i *Impl) Projects() project.Project {
-	return i.projects
 }
 
 // Sessions returns sessions client
@@ -180,41 +94,48 @@ func (i *Impl) Sessions() session.Session {
 	return i.sessions
 }
 
-// SmsOTPs returns sms OTPs client
-func (i *Impl) SmsOTPs() smsotp.SmsOTP {
-	return i.smsOTPs
-}
-
-// Templates returns templates client
-func (i *Impl) Templates() template.Template {
-	return i.templates
-}
-
 // Users returns users client
 func (i *Impl) Users() user.User {
 	return i.users
 }
 
-// Validations returns validation client
-func (i *Impl) Validations() validation.Validation {
-	return i.validations
+// Identifiers returns identifiers client
+func (i *Impl) Identifiers() identifier.Identifier {
+	return i.identifiers
 }
 
 // IsServerError checks if given error is a ServerError
 func IsServerError(err error) bool {
-	var serverError *servererror.ServerError
-	ok := errors.As(err, &serverError)
+	var serverErr *servererror.ServerError
 
-	return ok
+	return errors.As(err, &serverErr)
 }
 
 // AsServerError casts given error into a ServerError, if possible
 func AsServerError(err error) *servererror.ServerError {
-	var serverError *servererror.ServerError
-	ok := errors.As(err, &serverError)
+	var serverErr *servererror.ServerError
+	ok := errors.As(err, &serverErr)
 	if !ok {
 		return nil
 	}
 
-	return serverError
+	return serverErr
+}
+
+// IsValidationError checks if given error is a ValidationError
+func IsValidationError(err error) bool {
+	var validationErr *validationerror.ValidationError
+
+	return errors.As(err, &validationErr)
+}
+
+// AsValidationError casts given error into a ValidationError, if possible
+func AsValidationError(err error) *validationerror.ValidationError {
+	var validationErr *validationerror.ValidationError
+	ok := errors.As(err, &validationErr)
+	if !ok {
+		return nil
+	}
+
+	return validationErr
 }

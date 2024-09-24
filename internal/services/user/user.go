@@ -12,12 +12,10 @@ import (
 )
 
 type User interface {
-	List(ctx context.Context, params *api.UserListParams, editors ...api.RequestEditorFn) (*api.UserListRsp, error)
-	Update(ctx context.Context, userID common.UserID, req api.UserUpdateReq, editors ...api.RequestEditorFn) (*api.UserUpdateRsp, error)
-	Create(ctx context.Context, req api.UserCreateReq, editors ...api.RequestEditorFn) (*api.UserCreateRsp, error)
-	Get(ctx context.Context, userID common.UserID, params *api.UserGetParams, editors ...api.RequestEditorFn) (*api.UserGetRsp, error)
-	Delete(ctx context.Context, userID common.UserID, req api.UserDeleteReq, editors ...api.RequestEditorFn) (*common.GenericRsp, error)
-	Exists(ctx context.Context, req api.UserExistsReq, editors ...api.RequestEditorFn) (*api.UserExistsRsp, error)
+	Create(ctx context.Context, req api.UserCreateReq, editors ...api.RequestEditorFn) (*api.User, error)
+	CreateActiveByName(ctx context.Context, fullName string, editors ...api.RequestEditorFn) (*api.User, error)
+	Get(ctx context.Context, userID common.UserID, editors ...api.RequestEditorFn) (*api.User, error)
+	Delete(ctx context.Context, userID common.UserID, editors ...api.RequestEditorFn) (*common.GenericRsp, error)
 }
 
 type Impl struct {
@@ -37,22 +35,8 @@ func New(client *api.ClientWithResponses) (*Impl, error) {
 	}, nil
 }
 
-// List lists users
-func (i *Impl) List(ctx context.Context, params *api.UserListParams, editors ...api.RequestEditorFn) (*api.UserListRsp, error) {
-	res, err := i.client.UserListWithResponse(ctx, params, editors...)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-
-	if res.JSONDefault != nil {
-		return nil, servererror.New(res.JSONDefault)
-	}
-
-	return res.JSON200, nil
-}
-
 // Create creates a new user
-func (i *Impl) Create(ctx context.Context, req api.UserCreateReq, editors ...api.RequestEditorFn) (*api.UserCreateRsp, error) {
+func (i *Impl) Create(ctx context.Context, req api.UserCreateReq, editors ...api.RequestEditorFn) (*api.User, error) {
 	res, err := i.client.UserCreateWithResponse(ctx, req, editors...)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -65,9 +49,14 @@ func (i *Impl) Create(ctx context.Context, req api.UserCreateReq, editors ...api
 	return res.JSON200, nil
 }
 
-// Update updates a user
-func (i *Impl) Update(ctx context.Context, userID common.UserID, req api.UserUpdateReq, editors ...api.RequestEditorFn) (*api.UserUpdateRsp, error) {
-	res, err := i.client.UserUpdateWithResponse(ctx, userID, req, editors...)
+// Create creates a new user
+func (i *Impl) CreateActiveByName(ctx context.Context, fullName string, editors ...api.RequestEditorFn) (*api.User, error) {
+	req := api.UserCreateReq{
+		FullName: &fullName,
+		Status:   "active",
+	}
+
+	res, err := i.client.UserCreateWithResponse(ctx, req, editors...)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
@@ -80,8 +69,8 @@ func (i *Impl) Update(ctx context.Context, userID common.UserID, req api.UserUpd
 }
 
 // Get gets a user by ID
-func (i *Impl) Get(ctx context.Context, userID common.UserID, params *api.UserGetParams, editors ...api.RequestEditorFn) (*api.UserGetRsp, error) {
-	res, err := i.client.UserGetWithResponse(ctx, userID, params, editors...)
+func (i *Impl) Get(ctx context.Context, userID common.UserID, editors ...api.RequestEditorFn) (*api.User, error) {
+	res, err := i.client.UserGetWithResponse(ctx, userID, editors...)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
@@ -94,22 +83,8 @@ func (i *Impl) Get(ctx context.Context, userID common.UserID, params *api.UserGe
 }
 
 // Delete deletes a user by ID
-func (i *Impl) Delete(ctx context.Context, userID common.UserID, req api.UserDeleteReq, editors ...api.RequestEditorFn) (*common.GenericRsp, error) {
-	res, err := i.client.UserDeleteWithResponse(ctx, userID, req, editors...)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-
-	if res.JSONDefault != nil {
-		return nil, servererror.New(res.JSONDefault)
-	}
-
-	return res.JSON200, nil
-}
-
-// Exists checks if a confirmed user exists for provided login identifier
-func (i *Impl) Exists(ctx context.Context, req api.UserExistsReq, editors ...api.RequestEditorFn) (*api.UserExistsRsp, error) {
-	res, err := i.client.UserExistsWithResponse(ctx, req, editors...)
+func (i *Impl) Delete(ctx context.Context, userID common.UserID, editors ...api.RequestEditorFn) (*common.GenericRsp, error) {
+	res, err := i.client.UserDeleteWithResponse(ctx, userID, editors...)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}

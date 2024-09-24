@@ -3,38 +3,36 @@ package session
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 
 	"github.com/MicahParks/keyfunc"
-	"github.com/corbado/corbado-go/pkg/logger"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/pkg/errors"
 
+	"github.com/corbado/corbado-go/pkg/logger"
+	"github.com/corbado/corbado-go/pkg/validationerror"
+
 	"github.com/corbado/corbado-go/internal/assert"
-	entities2 "github.com/corbado/corbado-go/pkg/entities"
+	"github.com/corbado/corbado-go/pkg/entities"
 	"github.com/corbado/corbado-go/pkg/generated/api"
-	"github.com/corbado/corbado-go/pkg/servererror"
 )
 
 type Session interface {
-	ValidateShortSessionValue(shortSession string) (*entities2.User, error)
-	GetCurrentUser(shortSession string) (*entities2.User, error)
-	ConfigGet(ctx context.Context, params *api.SessionConfigGetParams, editors ...api.RequestEditorFn) (*api.SessionConfigGetRsp, error)
-	LongSessionRevoke(ctx context.Context, sessionID string, req api.LongSessionRevokeReq, editors ...api.RequestEditorFn) error
-	LongSessionGet(ctx context.Context, sessionID string, editors ...api.RequestEditorFn) (*api.LongSessionGetRsp, error)
+	ValidateToken(shortSession string) (*entities.User, error)
 }
 
 type Impl struct {
-	client *api.ClientWithResponses
-	config *Config
-	jwks   *keyfunc.JWKS
+	Client *api.ClientWithResponses
+	Config *Config
+	Jwks   *keyfunc.JWKS
 }
 
 var _ Session = &Impl{}
 
-// New returns new user client
+// New returns new session instance
 func New(client *api.ClientWithResponses, config *Config) (*Impl, error) {
 	if err := assert.NotNil(client, config); err != nil {
 		return nil, err
@@ -45,14 +43,14 @@ func New(client *api.ClientWithResponses, config *Config) (*Impl, error) {
 	}
 
 	return &Impl{
-		client: client,
-		config: config,
+		Client: client,
+		Config: config,
 	}, nil
 }
 
 func newJWKS(config *Config) (*keyfunc.JWKS, error) {
 	options := keyfunc.Options{
-		RequestFactory: func(ctx context.Context, urlAddress string) (*http.Request, error) {
+		RequestFactory: func(_ context.Context, urlAddress string) (*http.Request, error) {
 			address, err := url.Parse(urlAddress)
 			if err != nil {
 				return nil, errors.WithStack(err)
@@ -68,7 +66,7 @@ func newJWKS(config *Config) (*keyfunc.JWKS, error) {
 
 			return req, nil
 		},
-		ResponseExtractor: func(ctx context.Context, resp *http.Response) (json.RawMessage, error) {
+		ResponseExtractor: func(_ context.Context, resp *http.Response) (json.RawMessage, error) {
 			rspBody, err := io.ReadAll(resp.Body)
 			if err != nil {
 				return nil, err
@@ -88,90 +86,54 @@ func newJWKS(config *Config) (*keyfunc.JWKS, error) {
 	return keyfunc.Get(config.JwksURI, options)
 }
 
-func (i *Impl) ValidateShortSessionValue(shortSession string) (*entities2.User, error) {
-	if shortSession == "" {
-		return nil, nil
+func (i *Impl) ValidateToken(shortSession string) (*entities.User, error) {
+	if err := assert.StringNotEmpty(shortSession); err != nil {
+		return nil, err
 	}
 
-	if i.jwks == nil {
-		jwks, err := newJWKS(i.config)
+	if i.Jwks == nil {
+		jwks, err := newJWKS(i.Config)
 		if err != nil {
 			return nil, err
 		}
 
-		i.jwks = jwks
+		i.Jwks = jwks
 	}
 
-	token, err := jwt.ParseWithClaims(shortSession, &entities2.Claims{}, i.jwks.Keyfunc)
+	token, err := jwt.ParseWithClaims(shortSession, &entities.Claims{}, i.Jwks.Keyfunc)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		code := validationerror.CodeJWTGeneral
+		libraryValidationErr := &jwt.ValidationError{}
+
+		if errors.As(err, &libraryValidationErr) {
+			switch {
+			case libraryValidationErr.Errors&jwt.ValidationErrorMalformed != 0:
+				code = validationerror.CodeJWTInvalidData
+
+			case libraryValidationErr.Errors&jwt.ValidationErrorSignatureInvalid != 0:
+				code = validationerror.CodeJWTInvalidSignature
+
+			case libraryValidationErr.Errors&jwt.ValidationErrorNotValidYet != 0:
+				code = validationerror.CodeJWTBefore
+
+			case libraryValidationErr.Errors&jwt.ValidationErrorExpired != 0:
+				code = validationerror.CodeJWTExpired
+			}
+		}
+
+		return nil, validationerror.New(err.Error(), code)
 	}
 
-	claims := token.Claims.(*entities2.Claims)
-	if claims.Issuer != i.config.JWTIssuer {
-		return nil, errors.Errorf("JWT issuer mismatch (configured: '%s', actual JWT: '%s')", i.config.JWTIssuer, claims.Issuer)
+	claims := token.Claims.(*entities.Claims)
+	if claims.Issuer != i.Config.JWTIssuer {
+		return nil, validationerror.New(
+			fmt.Sprintf("JWT issuer mismatch (configured: '%s', actual JWT: '%s')", i.Config.JWTIssuer, claims.Issuer),
+			validationerror.CodeJWTIssuerMismatch,
+		)
 	}
 
-	return &entities2.User{
-		Authenticated: true,
-		ID:            claims.Subject,
-		Name:          claims.Name,
-		Email:         claims.Email,
-		PhoneNumber:   claims.PhoneNumber,
+	return &entities.User{
+		UserID:   claims.Subject,
+		FullName: claims.Name,
 	}, nil
-}
-
-func (i *Impl) GetCurrentUser(shortSession string) (*entities2.User, error) {
-	usr, err := i.ValidateShortSessionValue(shortSession)
-	if err != nil {
-		return nil, err
-	}
-
-	if usr != nil {
-		return usr, nil
-	}
-
-	return entities2.NewGuestUser(), nil
-}
-
-// ConfigGet retrieves session config by projectID inferred from authentication
-func (i *Impl) ConfigGet(ctx context.Context, params *api.SessionConfigGetParams, editors ...api.RequestEditorFn) (*api.SessionConfigGetRsp, error) {
-	res, err := i.client.SessionConfigGetWithResponse(ctx, params, editors...)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-
-	if res.JSONDefault != nil {
-		return nil, servererror.New(res.JSONDefault)
-	}
-
-	return res.JSON200, nil
-}
-
-// LongSessionRevoke revokes an active long session by sessionID
-func (i *Impl) LongSessionRevoke(ctx context.Context, sessionID string, req api.LongSessionRevokeReq, editors ...api.RequestEditorFn) error {
-	res, err := i.client.LongSessionRevokeWithResponse(ctx, sessionID, req, editors...)
-	if err != nil {
-		return errors.WithStack(err)
-	}
-
-	if res.JSONDefault != nil {
-		return servererror.New(res.JSONDefault)
-	}
-
-	return nil
-}
-
-// LongSessionGet gets a long session by sessionID
-func (i *Impl) LongSessionGet(ctx context.Context, sessionID string, editors ...api.RequestEditorFn) (*api.LongSessionGetRsp, error) {
-	res, err := i.client.LongSessionGetWithResponse(ctx, sessionID, editors...)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-
-	if res.JSONDefault != nil {
-		return nil, servererror.New(res.JSONDefault)
-	}
-
-	return res.JSON200, nil
 }

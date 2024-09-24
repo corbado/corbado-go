@@ -13,4 +13,4 @@ path=$1
 
 # generate Go entities and clients
 oapi-codegen -package common -generate "types" common.yml > ${path}/common/common.gen.go
-oapi-codegen -package api -import-mapping common.yml:github.com/corbado/corbado-go/pkg/generated/common -generate "types,client" backend_api_public.yml > ${path}/api/api.gen.go
+oapi-codegen -package api -import-mapping common.yml:github.com/corbado/corbado-go/pkg/generated/common -generate "types,client" backend_api_public_v2.yml > ${path}/api/api.gen.go

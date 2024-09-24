@@ -13,7 +13,7 @@ tasks:
   unittests:
     desc: Runs unit tests
     cmds:
-      - go test -v ./...
+      - go test -v ./tests/unit/...
 
   integrationtests:
     desc: Runs integration tests

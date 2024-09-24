@@ -7,17 +7,15 @@ import (
 	"github.com/corbado/corbado-go/pkg/generated/common"
 )
 
-type ValidationErrors = []struct {
-	Field   string `json:"field"`
-	Message string `json:"message"`
-}
-
 type ServerError struct {
 	Details    *string  `json:"details,omitempty"`
 	Links      []string `json:"links"`
 	Type       string   `json:"type"`
-	Validation *ValidationErrors
-	Data       *map[string]any
+	Validation *[]struct {
+		Field   string `json:"field"`
+		Message string `json:"message"`
+	}
+	Data *map[string]any
 
 	HTTPStatusCode int32              `json:"httpStatusCode"`
 	Message        string             `json:"message"`
@@ -49,7 +47,7 @@ func New(cause *common.ErrorRsp) *ServerError {
 func (s *ServerError) Error() string {
 	msg := fmt.Sprintf("[%d %s]", s.HTTPStatusCode, s.Message)
 
-	validation := GetValidationMessage(s.Validation)
+	validation := s.GetValidationMessage()
 	if validation != "" {
 		msg = fmt.Sprintf("%s %s", msg, validation)
 	}
@@ -63,14 +61,14 @@ func (s *ServerError) Error() string {
 	return msg
 }
 
-// GetValidationMessage extracts validation message from validation error
-func GetValidationMessage(v *ValidationErrors) string {
-	if v == nil || len(*v) == 0 {
+// GetValidationMessage returns all validation messages as one string
+func (s *ServerError) GetValidationMessage() string {
+	if s.Validation == nil || len(*s.Validation) == 0 {
 		return ""
 	}
 
-	fieldMessages := make([]string, len(*v))
-	for i, validation := range *v {
+	fieldMessages := make([]string, len(*s.Validation))
+	for i, validation := range *s.Validation {
 		fieldMessages[i] = fmt.Sprintf("%s: %s", validation.Field, validation.Message)
 	}
 
