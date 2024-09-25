@@ -1,4 +1,4 @@
-module github.com/corbado/corbado-go
+module github.com/corbado/corbado-go/v2
 
 go 1.18
 
