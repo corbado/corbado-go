@@ -5,10 +5,10 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/corbado/corbado-go/internal/assert"
-	"github.com/corbado/corbado-go/pkg/generated/api"
-	"github.com/corbado/corbado-go/pkg/generated/common"
-	"github.com/corbado/corbado-go/pkg/servererror"
+	"github.com/corbado/corbado-go/v2/internal/assert"
+	"github.com/corbado/corbado-go/v2/pkg/generated/api"
+	"github.com/corbado/corbado-go/v2/pkg/generated/common"
+	"github.com/corbado/corbado-go/v2/pkg/servererror"
 )
 
 type User interface {

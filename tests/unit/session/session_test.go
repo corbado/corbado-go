@@ -14,14 +14,14 @@ import (
 	"github.com/MicahParks/keyfunc"
 	"github.com/stretchr/testify/require"
 
-	"github.com/corbado/corbado-go/pkg/logger"
-	"github.com/corbado/corbado-go/pkg/validationerror"
+	"github.com/corbado/corbado-go/v2/pkg/logger"
+	"github.com/corbado/corbado-go/v2/pkg/validationerror"
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/corbado/corbado-go/internal/services/session"
-	"github.com/corbado/corbado-go/pkg/generated/api"
+	"github.com/corbado/corbado-go/v2/internal/services/session"
+	"github.com/corbado/corbado-go/v2/pkg/generated/api"
 )
 
 func generateJWT(iss string, exp, nbf int64, privateKey *rsa.PrivateKey) string {

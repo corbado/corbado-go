@@ -7,8 +7,8 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/corbado/corbado-go/internal/assert"
-	"github.com/corbado/corbado-go/pkg/generated/api"
+	"github.com/corbado/corbado-go/v2/internal/assert"
+	"github.com/corbado/corbado-go/v2/pkg/generated/api"
 )
 
 type Config struct {

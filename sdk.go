@@ -6,16 +6,16 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/corbado/corbado-go/internal/assert"
-	"github.com/corbado/corbado-go/internal/services/identifier"
-	"github.com/corbado/corbado-go/internal/services/session"
-	"github.com/corbado/corbado-go/internal/services/user"
-	"github.com/corbado/corbado-go/pkg/generated/api"
-	"github.com/corbado/corbado-go/pkg/servererror"
-	"github.com/corbado/corbado-go/pkg/validationerror"
+	"github.com/corbado/corbado-go/v2/internal/assert"
+	"github.com/corbado/corbado-go/v2/internal/services/identifier"
+	"github.com/corbado/corbado-go/v2/internal/services/session"
+	"github.com/corbado/corbado-go/v2/internal/services/user"
+	"github.com/corbado/corbado-go/v2/pkg/generated/api"
+	"github.com/corbado/corbado-go/v2/pkg/servererror"
+	"github.com/corbado/corbado-go/v2/pkg/validationerror"
 )
 
-const Version = "2.0.1"
+const Version = "2.0.2"
 
 type SDK interface {
 	Sessions() session.Session

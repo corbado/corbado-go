@@ -8,8 +8,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/corbado/corbado-go/pkg/generated/api"
-	"github.com/corbado/corbado-go/tests/integration"
+	"github.com/corbado/corbado-go/v2/pkg/generated/api"
+	"github.com/corbado/corbado-go/v2/tests/integration"
 )
 
 func TestIdentifierOperations(t *testing.T) {

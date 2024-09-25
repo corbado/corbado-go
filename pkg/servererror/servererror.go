@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/corbado/corbado-go/pkg/generated/common"
+	"github.com/corbado/corbado-go/v2/pkg/generated/common"
 )
 
 type ServerError struct {

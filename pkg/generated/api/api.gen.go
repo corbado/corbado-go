@@ -13,7 +13,7 @@ import (
 	"net/url"
 	"strings"
 
-	externalRef0 "github.com/corbado/corbado-go/pkg/generated/common"
+	externalRef0 "github.com/corbado/corbado-go/v2/pkg/generated/common"
 	"github.com/oapi-codegen/runtime"
 )
 

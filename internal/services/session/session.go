@@ -12,12 +12,12 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/pkg/errors"
 
-	"github.com/corbado/corbado-go/pkg/logger"
-	"github.com/corbado/corbado-go/pkg/validationerror"
+	"github.com/corbado/corbado-go/v2/pkg/logger"
+	"github.com/corbado/corbado-go/v2/pkg/validationerror"
 
-	"github.com/corbado/corbado-go/internal/assert"
-	"github.com/corbado/corbado-go/pkg/entities"
-	"github.com/corbado/corbado-go/pkg/generated/api"
+	"github.com/corbado/corbado-go/v2/internal/assert"
+	"github.com/corbado/corbado-go/v2/pkg/entities"
+	"github.com/corbado/corbado-go/v2/pkg/generated/api"
 )
 
 type Session interface {

@@ -9,11 +9,10 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/corbado/corbado-go/pkg/generated/api"
+	"github.com/corbado/corbado-go/v2"
+	"github.com/corbado/corbado-go/v2/pkg/generated/api"
 
 	"github.com/gorilla/mux"
-
-	"github.com/corbado/corbado-go"
 )
 
 var sdk corbado.SDK

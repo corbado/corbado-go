@@ -11,7 +11,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/corbado/corbado-go"
+	"github.com/corbado/corbado-go/v2"
 )
 
 func main() {

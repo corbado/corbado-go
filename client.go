@@ -8,12 +8,13 @@ import (
 	"net/http"
 	"runtime"
 
-	"github.com/corbado/corbado-go/pkg/logger"
 	"github.com/deepmap/oapi-codegen/pkg/securityprovider"
 	"github.com/pkg/errors"
 
-	"github.com/corbado/corbado-go/internal/assert"
-	"github.com/corbado/corbado-go/pkg/generated/api"
+	"github.com/corbado/corbado-go/v2/pkg/logger"
+
+	"github.com/corbado/corbado-go/v2/internal/assert"
+	"github.com/corbado/corbado-go/v2/pkg/generated/api"
 )
 
 func newClient(config *Config) (*api.ClientWithResponses, error) {

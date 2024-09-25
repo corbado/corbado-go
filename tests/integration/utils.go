@@ -11,8 +11,8 @@ import (
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
 
-	"github.com/corbado/corbado-go"
-	"github.com/corbado/corbado-go/pkg/generated/api"
+	"github.com/corbado/corbado-go/v2"
+	"github.com/corbado/corbado-go/v2/pkg/generated/api"
 )
 
 func SDK(t *testing.T) corbado.SDK {
