@@ -121,19 +121,43 @@ func (i *Impl) ValidateToken(shortSession string) (*entities.User, error) {
 			}
 		}
 
-		return nil, validationerror.New(err.Error(), code)
+		return nil, newValidationError(err.Error(), shortSession, code)
 	}
 
 	claims := token.Claims.(*entities.Claims)
-	if claims.Issuer != i.Config.JWTIssuer {
-		return nil, validationerror.New(
-			fmt.Sprintf("JWT issuer mismatch (configured: '%s', actual JWT: '%s')", i.Config.JWTIssuer, claims.Issuer),
-			validationerror.CodeJWTIssuerMismatch,
-		)
+	if err := i.validateIssuer(claims.Issuer, shortSession); err != nil {
+		return nil, err
 	}
 
 	return &entities.User{
 		UserID:   claims.Subject,
 		FullName: claims.Name,
 	}, nil
+}
+
+func (i *Impl) validateIssuer(jwtIssuer string, shortSession string) error {
+	// Compare to old Frontend API (without .cloud.) to make our Frontend API host name change downwards compatible
+	if jwtIssuer == fmt.Sprintf("https://%s.frontendapi.corbado.io", i.Config.ProjectID) {
+		return nil
+	}
+
+	// Compare to new Frontend API (with .cloud.)
+	if jwtIssuer == fmt.Sprintf("https://%s.frontendapi.cloud.corbado.io", i.Config.ProjectID) {
+		return nil
+	}
+
+	// Compare to configured issuer (from FrontendAPI), needed if you set a CNAME for example
+	if jwtIssuer != i.Config.JWTIssuer {
+		return newValidationError(
+			fmt.Sprintf("JWT issuer mismatch (configured trough FrontendAPI: '%s', JWT issuer: '%s')", i.Config.JWTIssuer, jwtIssuer),
+			shortSession,
+			validationerror.CodeJWTIssuerMismatch,
+		)
+	}
+
+	return nil
+}
+
+func newValidationError(message string, jwt string, code validationerror.Code) error {
+	return validationerror.New(fmt.Sprintf("JWT validation failed: '%s' (JWT: '%s')", message, jwt), code)
 }

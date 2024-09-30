@@ -62,7 +62,7 @@ func generatePrivateKey(filename string) (*rsa.PrivateKey, error) {
 }
 
 // newSession mocks the JWKS endpoint and creates a new session service
-func newSession() (*session.Impl, error) {
+func newSession(issuer string) (*session.Impl, error) {
 	workingDir, err := os.Getwd()
 	if err != nil {
 		return nil, err
@@ -89,12 +89,9 @@ func newSession() (*session.Impl, error) {
 
 	// Config
 	config := &session.Config{
-		ProjectID:            "test-project-id",
-		JwksURI:              "http://localhost:8081",
-		JWTIssuer:            "https://auth.acme.com",
-		JWKSRefreshInterval:  0,
-		JWKSRefreshRateLimit: 0,
-		JWKSRefreshTimeout:   0,
+		ProjectID: "pro-1",
+		JwksURI:   "http://localhost:8081",
+		JWTIssuer: issuer,
 	}
 
 	// Create a new JWKS instance using the mock JWKS server
@@ -140,6 +137,7 @@ func newSession() (*session.Impl, error) {
 	}, nil
 }
 
+// nolint:funlen
 func TestValidateToken(t *testing.T) {
 	validPrivateKey, err := generatePrivateKey("validPrivateKey.pem")
 	require.NoError(t, err)
@@ -149,6 +147,7 @@ func TestValidateToken(t *testing.T) {
 
 	tests := []struct {
 		name                string
+		issuer              string
 		shortSession        string
 		validationErrorCode validationerror.Code
 		success             bool
@@ -160,43 +159,68 @@ func TestValidateToken(t *testing.T) {
 		},
 		{
 			name:                "JWT with invalid format",
+			issuer:              "https://pro-1.frontendapi.cloud.corbado.io",
 			shortSession:        "invalid",
 			validationErrorCode: validationerror.CodeJWTInvalidData,
 			success:             false,
 		},
 		{
-			name: "JWT with invalid signature",
-			// nolint:lll
-			shortSession:        "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImtpZDEyMyJ9.eyJpc3MiOiJodHRwczovL2F1dGguYWNtZS5jb20iLCJpYXQiOjE3MjY0OTE4MDcsImV4cCI6MTcyNjQ5MTkwNywibmJmIjoxNzI2NDkxNzA3LCJzdWIiOiJ1c3ItMTIzNDU2Nzg5MCIsIm5hbWUiOiJuYW1lIiwiZW1haWwiOiJlbWFpbCIsInBob25lX251bWJlciI6InBob25lTnVtYmVyIiwib3JpZyI6Im9yaWcifQ.invalid",
+			name:                "JWT with invalid signature",
+			issuer:              "https://pro-1.frontendapi.cloud.corbado.io",
+			shortSession:        "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImtpZDEyMyJ9.eyJpc3MiOiJodHRwczovL2F1dGguYWNtZS5jb20iLCJpYXQiOjE3MjY0OTE4MDcsImV4cCI6MTcyNjQ5MTkwNywibmJmIjoxNzI2NDkxNzA3LCJzdWIiOiJ1c3ItMTIzNDU2Nzg5MCIsIm5hbWUiOiJuYW1lIiwiZW1haWwiOiJlbWFpbCIsInBob25lX251bWJlciI6InBob25lTnVtYmVyIiwib3JpZyI6Im9yaWcifQ.invalid", // nolint:lll
 			validationErrorCode: validationerror.CodeJWTInvalidSignature,
 			success:             false,
 		},
 		{
 			name:                "JWT with invalid private key signed",
-			shortSession:        generateJWT("https://auth.acme.com", time.Now().Add(100*time.Second).Unix(), time.Now().Unix(), invalidPrivateKey),
+			issuer:              "https://pro-1.frontendapi.cloud.corbado.io",
+			shortSession:        generateJWT("https://pro-1.frontendapi.cloud.corbado.io", time.Now().Add(100*time.Second).Unix(), time.Now().Unix(), invalidPrivateKey),
 			validationErrorCode: validationerror.CodeJWTInvalidSignature,
 			success:             false,
 		},
 		{
 			name:                "Not before (nbf) in future",
-			shortSession:        generateJWT("https://auth.acme.com", time.Now().Add(100*time.Second).Unix(), time.Now().Add(100*time.Second).Unix(), validPrivateKey),
+			issuer:              "https://pro-1.frontendapi.cloud.corbado.io",
+			shortSession:        generateJWT("https://pro-1.frontendapi.cloud.corbado.io", time.Now().Add(100*time.Second).Unix(), time.Now().Add(100*time.Second).Unix(), validPrivateKey),
 			validationErrorCode: validationerror.CodeJWTBefore,
 			success:             false,
 		},
 		{
 			name:                "Expired (exp)",
-			shortSession:        generateJWT("https://auth.acme.com", time.Now().Add(-100*time.Second).Unix(), time.Now().Add(-100*time.Second).Unix(), validPrivateKey),
+			issuer:              "https://pro-1.frontendapi.cloud.corbado.io",
+			shortSession:        generateJWT("https://pro-1.frontendapi.cloud.corbado.io", time.Now().Add(-100*time.Second).Unix(), time.Now().Add(-100*time.Second).Unix(), validPrivateKey),
 			validationErrorCode: validationerror.CodeJWTExpired,
 			success:             false,
 		},
 		{
-			name:                "Invalid issuer (iss)",
-			shortSession:        generateJWT("https://invalid.com", time.Now().Add(100*time.Second).Unix(), time.Now().Unix(), validPrivateKey),
+			name:                "Invalid issuer 1 (iss)",
+			issuer:              "https://pro-1.frontendapi.corbado.io",
+			shortSession:        generateJWT("https://pro-2.frontendapi.cloud.corbado.io", time.Now().Add(100*time.Second).Unix(), time.Now().Unix(), validPrivateKey),
 			validationErrorCode: validationerror.CodeJWTIssuerMismatch,
 			success:             false,
 		},
 		{
-			name:         "Success",
+			name:                "Invalid issuer 1 (iss)",
+			issuer:              "https://pro-1.frontendapi.cloud.corbado.io",
+			shortSession:        generateJWT("https://pro-2.frontendapi.corbado.io", time.Now().Add(100*time.Second).Unix(), time.Now().Unix(), validPrivateKey),
+			validationErrorCode: validationerror.CodeJWTIssuerMismatch,
+			success:             false,
+		},
+		{
+			name:         "Success with old Frontend API URL in JWT",
+			issuer:       "https://pro-1.frontendapi.cloud.corbado.io",
+			shortSession: generateJWT("https://pro-1.frontendapi.corbado.io", time.Now().Add(100*time.Second).Unix(), time.Now().Unix(), validPrivateKey),
+			success:      true,
+		},
+		{
+			name:         "Success with old Frontend API URL in config",
+			issuer:       "https://pro-1.frontendapi.corbado.io",
+			shortSession: generateJWT("https://pro-1.frontendapi.cloud.corbado.io", time.Now().Add(100*time.Second).Unix(), time.Now().Unix(), validPrivateKey),
+			success:      true,
+		},
+		{
+			name:         "Success with CNAME",
+			issuer:       "https://auth.acme.com",
 			shortSession: generateJWT("https://auth.acme.com", time.Now().Add(100*time.Second).Unix(), time.Now().Unix(), validPrivateKey),
 			success:      true,
 		},
@@ -204,7 +228,7 @@ func TestValidateToken(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			sessionSvc, err := newSession()
+			sessionSvc, err := newSession(test.issuer)
 			require.NoError(t, err)
 
 			user, err := sessionSvc.ValidateToken(test.shortSession)
