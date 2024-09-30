@@ -137,6 +137,7 @@ func newSession(issuer string) (*session.Impl, error) {
 	}, nil
 }
 
+// nolint:funlen
 func TestValidateToken(t *testing.T) {
 	validPrivateKey, err := generatePrivateKey("validPrivateKey.pem")
 	require.NoError(t, err)
