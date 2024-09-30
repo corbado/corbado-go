@@ -9,4 +9,5 @@ const (
 	CodeJWTInvalidSignature
 	CodeJWTBefore
 	CodeJWTExpired
+	CodeJWTIssuerEmpty
 )
