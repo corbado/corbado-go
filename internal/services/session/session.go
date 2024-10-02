@@ -136,6 +136,10 @@ func (i *Impl) ValidateToken(shortSession string) (*entities.User, error) {
 }
 
 func (i *Impl) validateIssuer(jwtIssuer string, shortSession string) error {
+	if jwtIssuer == "" {
+		return newValidationError("Issuer is empty", shortSession, validationerror.CodeJWTIssuerEmpty)
+	}
+
 	// Compare to old Frontend API (without .cloud.) to make our Frontend API host name change downwards compatible
 	if jwtIssuer == fmt.Sprintf("https://%s.frontendapi.corbado.io", i.Config.ProjectID) {
 		return nil
@@ -149,7 +153,7 @@ func (i *Impl) validateIssuer(jwtIssuer string, shortSession string) error {
 	// Compare to configured issuer (from FrontendAPI), needed if you set a CNAME for example
 	if jwtIssuer != i.Config.JWTIssuer {
 		return newValidationError(
-			fmt.Sprintf("JWT issuer mismatch (configured trough FrontendAPI: '%s', JWT issuer: '%s')", i.Config.JWTIssuer, jwtIssuer),
+			fmt.Sprintf("Issuer mismatch (configured trough FrontendAPI: '%s', JWT issuer: '%s')", i.Config.JWTIssuer, jwtIssuer),
 			shortSession,
 			validationerror.CodeJWTIssuerMismatch,
 		)

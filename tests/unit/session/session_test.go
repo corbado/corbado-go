@@ -193,6 +193,13 @@ func TestValidateToken(t *testing.T) {
 			success:             false,
 		},
 		{
+			name:                "Empty issuer (iss)",
+			issuer:              "https://pro-1.frontendapi.corbado.io",
+			shortSession:        generateJWT("", time.Now().Add(100*time.Second).Unix(), time.Now().Unix(), validPrivateKey),
+			validationErrorCode: validationerror.CodeJWTIssuerEmpty,
+			success:             false,
+		},
+		{
 			name:                "Invalid issuer 1 (iss)",
 			issuer:              "https://pro-1.frontendapi.corbado.io",
 			shortSession:        generateJWT("https://pro-2.frontendapi.cloud.corbado.io", time.Now().Add(100*time.Second).Unix(), time.Now().Unix(), validPrivateKey),
@@ -200,7 +207,7 @@ func TestValidateToken(t *testing.T) {
 			success:             false,
 		},
 		{
-			name:                "Invalid issuer 1 (iss)",
+			name:                "Invalid issuer 2 (iss)",
 			issuer:              "https://pro-1.frontendapi.cloud.corbado.io",
 			shortSession:        generateJWT("https://pro-2.frontendapi.corbado.io", time.Now().Add(100*time.Second).Unix(), time.Now().Unix(), validPrivateKey),
 			validationErrorCode: validationerror.CodeJWTIssuerMismatch,
