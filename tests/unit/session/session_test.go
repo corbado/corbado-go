@@ -84,7 +84,9 @@ func newSession(issuer string) (*session.Impl, error) {
 
 	server := &http.Server{Addr: "localhost:8081", Handler: mockServer} // nolint:gosec
 	go func() {
-		_ = server.ListenAndServe()
+		if err := server.ListenAndServe(); err != nil {
+			panic(err)
+		}
 	}()
 
 	// Config
