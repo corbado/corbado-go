@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"testing"
@@ -82,15 +83,13 @@ func newSession(issuer string) (*session.Impl, error) {
 		}
 	})
 
-	server := &http.Server{Addr: "localhost:8081", Handler: mockServer} // nolint:gosec
-	go func() {
-		_ = server.ListenAndServe()
-	}()
+	server := httptest.NewServer(mockServer)
+	defer server.Close()
 
 	// Config
 	config := &session.Config{
 		ProjectID: "pro-1",
-		JwksURI:   "http://localhost:8081",
+		JwksURI:   server.URL,
 		JWTIssuer: issuer,
 	}
 
@@ -125,7 +124,7 @@ func newSession(issuer string) (*session.Impl, error) {
 		RefreshUnknownKID: true,
 	}
 
-	jwks, err := keyfunc.Get("http://localhost:8081", options)
+	jwks, err := keyfunc.Get(server.URL, options)
 	if err != nil {
 		return nil, err
 	}
