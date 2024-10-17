@@ -21,7 +21,7 @@ import (
 )
 
 type Session interface {
-	ValidateToken(shortSession string) (*entities.User, error)
+	ValidateToken(sessionToken string) (*entities.User, error)
 }
 
 type Impl struct {
@@ -86,8 +86,8 @@ func newJWKS(config *Config) (*keyfunc.JWKS, error) {
 	return keyfunc.Get(config.JwksURI, options)
 }
 
-func (i *Impl) ValidateToken(shortSession string) (*entities.User, error) {
-	if err := assert.StringNotEmpty(shortSession); err != nil {
+func (i *Impl) ValidateToken(sessionToken string) (*entities.User, error) {
+	if err := assert.StringNotEmpty(sessionToken); err != nil {
 		return nil, err
 	}
 
@@ -100,7 +100,7 @@ func (i *Impl) ValidateToken(shortSession string) (*entities.User, error) {
 		i.Jwks = jwks
 	}
 
-	token, err := jwt.ParseWithClaims(shortSession, &entities.Claims{}, i.Jwks.Keyfunc)
+	token, err := jwt.ParseWithClaims(sessionToken, &entities.Claims{}, i.Jwks.Keyfunc)
 	if err != nil {
 		code := validationerror.CodeJWTGeneral
 		libraryValidationErr := &jwt.ValidationError{}
@@ -121,11 +121,11 @@ func (i *Impl) ValidateToken(shortSession string) (*entities.User, error) {
 			}
 		}
 
-		return nil, newValidationError(err.Error(), shortSession, code)
+		return nil, newValidationError(err.Error(), sessionToken, code)
 	}
 
 	claims := token.Claims.(*entities.Claims)
-	if err := i.validateIssuer(claims.Issuer, shortSession); err != nil {
+	if err := i.validateIssuer(claims.Issuer, sessionToken); err != nil {
 		return nil, err
 	}
 
@@ -135,9 +135,9 @@ func (i *Impl) ValidateToken(shortSession string) (*entities.User, error) {
 	}, nil
 }
 
-func (i *Impl) validateIssuer(jwtIssuer string, shortSession string) error {
+func (i *Impl) validateIssuer(jwtIssuer string, sessionToken string) error {
 	if jwtIssuer == "" {
-		return newValidationError("Issuer is empty", shortSession, validationerror.CodeJWTIssuerEmpty)
+		return newValidationError("Issuer is empty", sessionToken, validationerror.CodeJWTIssuerEmpty)
 	}
 
 	// Compare to old Frontend API (without .cloud.) to make our Frontend API host name change downwards compatible
@@ -154,7 +154,7 @@ func (i *Impl) validateIssuer(jwtIssuer string, shortSession string) error {
 	if jwtIssuer != i.Config.JWTIssuer {
 		return newValidationError(
 			fmt.Sprintf("Issuer mismatch (configured trough FrontendAPI: '%s', JWT issuer: '%s')", i.Config.JWTIssuer, jwtIssuer),
-			shortSession,
+			sessionToken,
 			validationerror.CodeJWTIssuerMismatch,
 		)
 	}

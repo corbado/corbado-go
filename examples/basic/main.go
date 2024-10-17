@@ -41,8 +41,8 @@ func main() {
 		// Protecting routes                                                                        //
 		//////////////////////////////////////////////////////////////////////////////////////////////
 
-		// Retrieve short-term session value from cookie
-		shortSessionCookie, err := r.Cookie("cbo_short_session")
+		// Retrieve session-token from cookie
+		sessionTokenCookie, err := r.Cookie("cbo_session_token")
 		if errors.Is(err, http.ErrNoCookie) {
 			// User is not authenticated, redirect to login page for example
 			http.Redirect(w, r, "/login", http.StatusFound)
@@ -55,9 +55,9 @@ func main() {
 			return
 		}
 
-		shortSession := shortSessionCookie.Value
+		sessionToken := sessionTokenCookie.Value
 
-		user, err := sdk.Sessions().ValidateToken(shortSession)
+		user, err := sdk.Sessions().ValidateToken(sessionToken)
 		if err != nil {
 			// Return full error (not recommended on production)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -69,11 +69,11 @@ func main() {
 		fmt.Fprintf(w, "User with ID %s is authenticated!", user.UserID)
 
 		//////////////////////////////////////////////////////////////////////////////////////////////
-		// Getting user data from short-term session (represented as JWT)                           //
+		// Getting user data from session-token								                        //
 		//////////////////////////////////////////////////////////////////////////////////////////////
 
 		{
-			user, err := sdk.Sessions().ValidateToken(shortSession)
+			user, err := sdk.Sessions().ValidateToken(sessionToken)
 			if err != nil {
 				// Return full error (not recommended on production)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -90,7 +90,7 @@ func main() {
 		//////////////////////////////////////////////////////////////////////////////////////////////
 
 		{
-			user, err := sdk.Sessions().ValidateToken(shortSession)
+			user, err := sdk.Sessions().ValidateToken(sessionToken)
 			if err != nil {
 				// Return full error (not recommended on production)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
