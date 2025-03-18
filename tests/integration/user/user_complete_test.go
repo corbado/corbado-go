@@ -25,7 +25,7 @@ func TestUserOperations(t *testing.T) {
 
 			serverErr := corbado.AsServerError(err)
 			require.NotNil(t, serverErr)
-			require.Equal(t, "xxx status: cannot be blank", serverErr.GetValidationMessage())
+			require.Equal(t, "status: cannot be blank", serverErr.GetValidationMessage())
 		})
 
 		t.Run("Success", func(t *testing.T) {
