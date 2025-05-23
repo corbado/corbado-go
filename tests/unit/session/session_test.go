@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/rsa"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -264,8 +263,6 @@ func TestValidateToken(t *testing.T) {
 			require.NoError(t, err)
 
 			user, err := sessionSvc.ValidateToken(test.sessionToken)
-			fmt.Println(user)
-			fmt.Println(err)
 
 			if test.success {
 				assert.NoError(t, err)
