@@ -25,8 +25,8 @@ import (
 	"github.com/corbado/corbado-go/v2/pkg/generated/api"
 )
 
-func generateJWT(iss string, exp, nbf int64, privateKey *rsa.PrivateKey) string {
-	token := jwt.NewWithClaims(jwt.SigningMethodRS256, jwt.MapClaims{
+func generateJWT(iss string, exp, nbf int64, privateKey *rsa.PrivateKey, method jwt.SigningMethod) string {
+	token := jwt.NewWithClaims(method, jwt.MapClaims{
 		"iss":          iss,
 		"iat":          time.Now().Unix(),
 		"exp":          exp,
@@ -40,7 +40,14 @@ func generateJWT(iss string, exp, nbf int64, privateKey *rsa.PrivateKey) string 
 
 	token.Header["kid"] = "kid123"
 
-	tokenString, err := token.SignedString(privateKey)
+	var key any
+	if method == jwt.SigningMethodNone {
+		key = jwt.UnsafeAllowNoneSignatureType
+	} else {
+		key = privateKey
+	}
+
+	tokenString, err := token.SignedString(key)
 	if err != nil {
 		panic(err)
 	}
@@ -171,63 +178,81 @@ func TestValidateToken(t *testing.T) {
 			success:             false,
 		},
 		{
+			name:                "JWT with alg none",
+			issuer:              "https://pro-1.frontendapi.cloud.corbado.io",
+			sessionToken:        generateJWT("https://auth.acme.com", time.Now().Add(100*time.Second).Unix(), time.Now().Unix(), validPrivateKey, jwt.SigningMethodNone),
+			validationErrorCode: validationerror.CodeJWTGeneral,
+			success:             false,
+		},
+		{
 			name:                "JWT with invalid private key signed",
 			issuer:              "https://pro-1.frontendapi.cloud.corbado.io",
-			sessionToken:        generateJWT("https://pro-1.frontendapi.cloud.corbado.io", time.Now().Add(100*time.Second).Unix(), time.Now().Unix(), invalidPrivateKey),
+			sessionToken:        generateJWT("https://pro-1.frontendapi.cloud.corbado.io", time.Now().Add(100*time.Second).Unix(), time.Now().Unix(), invalidPrivateKey, jwt.SigningMethodRS256),
 			validationErrorCode: validationerror.CodeJWTInvalidSignature,
 			success:             false,
 		},
 		{
-			name:                "Not before (nbf) in future",
-			issuer:              "https://pro-1.frontendapi.cloud.corbado.io",
-			sessionToken:        generateJWT("https://pro-1.frontendapi.cloud.corbado.io", time.Now().Add(100*time.Second).Unix(), time.Now().Add(100*time.Second).Unix(), validPrivateKey),
+			name:   "Not before (nbf) in future",
+			issuer: "https://pro-1.frontendapi.cloud.corbado.io",
+			sessionToken: generateJWT(
+				"https://pro-1.frontendapi.cloud.corbado.io",
+				time.Now().Add(100*time.Second).Unix(),
+				time.Now().Add(100*time.Second).Unix(),
+				validPrivateKey,
+				jwt.SigningMethodRS256,
+			),
 			validationErrorCode: validationerror.CodeJWTBefore,
 			success:             false,
 		},
 		{
-			name:                "Expired (exp)",
-			issuer:              "https://pro-1.frontendapi.cloud.corbado.io",
-			sessionToken:        generateJWT("https://pro-1.frontendapi.cloud.corbado.io", time.Now().Add(-100*time.Second).Unix(), time.Now().Add(-100*time.Second).Unix(), validPrivateKey),
+			name:   "Expired (exp)",
+			issuer: "https://pro-1.frontendapi.cloud.corbado.io",
+			sessionToken: generateJWT("https://pro-1.frontendapi.cloud.corbado.io",
+				time.Now().Add(-100*time.Second).Unix(),
+				time.Now().Add(-100*time.Second).Unix(),
+				validPrivateKey,
+				jwt.SigningMethodRS256,
+			),
 			validationErrorCode: validationerror.CodeJWTExpired,
 			success:             false,
 		},
 		{
 			name:                "Empty issuer (iss)",
 			issuer:              "https://pro-1.frontendapi.corbado.io",
-			sessionToken:        generateJWT("", time.Now().Add(100*time.Second).Unix(), time.Now().Unix(), validPrivateKey),
+			sessionToken:        generateJWT("", time.Now().Add(100*time.Second).Unix(), time.Now().Unix(), validPrivateKey, jwt.SigningMethodRS256),
 			validationErrorCode: validationerror.CodeJWTIssuerEmpty,
 			success:             false,
 		},
 		{
 			name:                "Invalid issuer 1 (iss)",
 			issuer:              "https://pro-1.frontendapi.corbado.io",
-			sessionToken:        generateJWT("https://pro-2.frontendapi.cloud.corbado.io", time.Now().Add(100*time.Second).Unix(), time.Now().Unix(), validPrivateKey),
+			sessionToken:        generateJWT("https://pro-2.frontendapi.cloud.corbado.io", time.Now().Add(100*time.Second).Unix(), time.Now().Unix(), validPrivateKey, jwt.SigningMethodRS256),
 			validationErrorCode: validationerror.CodeJWTIssuerMismatch,
 			success:             false,
 		},
 		{
 			name:                "Invalid issuer 2 (iss)",
 			issuer:              "https://pro-1.frontendapi.cloud.corbado.io",
-			sessionToken:        generateJWT("https://pro-2.frontendapi.corbado.io", time.Now().Add(100*time.Second).Unix(), time.Now().Unix(), validPrivateKey),
+			sessionToken:        generateJWT("https://pro-2.frontendapi.corbado.io", time.Now().Add(100*time.Second).Unix(), time.Now().Unix(), validPrivateKey, jwt.SigningMethodRS256),
 			validationErrorCode: validationerror.CodeJWTIssuerMismatch,
 			success:             false,
 		},
 		{
 			name:         "Success with old Frontend API URL in JWT",
 			issuer:       "https://pro-1.frontendapi.cloud.corbado.io",
-			sessionToken: generateJWT("https://pro-1.frontendapi.corbado.io", time.Now().Add(100*time.Second).Unix(), time.Now().Unix(), validPrivateKey),
+			sessionToken: generateJWT("https://pro-1.frontendapi.corbado.io", time.Now().Add(100*time.Second).Unix(), time.Now().Unix(), validPrivateKey, jwt.SigningMethodRS256),
 			success:      true,
 		},
 		{
 			name:         "Success with old Frontend API URL in config",
 			issuer:       "https://pro-1.frontendapi.corbado.io",
-			sessionToken: generateJWT("https://pro-1.frontendapi.cloud.corbado.io", time.Now().Add(100*time.Second).Unix(), time.Now().Unix(), validPrivateKey),
+			sessionToken: generateJWT("https://pro-1.frontendapi.cloud.corbado.io", time.Now().Add(100*time.Second).Unix(), time.Now().Unix(), validPrivateKey, jwt.SigningMethodRS256),
 			success:      true,
 		},
 		{
 			name:         "Success with CNAME",
 			issuer:       "https://auth.acme.com",
-			sessionToken: generateJWT("https://auth.acme.com", time.Now().Add(100*time.Second).Unix(), time.Now().Unix(), validPrivateKey),
+			sessionToken: generateJWT("https://auth.acme.com", time.Now().Add(100*time.Second).Unix(), time.Now().Unix(), validPrivateKey, jwt.SigningMethodRS256),
 			success:      true,
 		},
 	}
