@@ -6,10 +6,10 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Test Status](https://github.com/corbado/corbado-go/workflows/tests/badge.svg)](https://github.com/corbado/corbado-go/actions?query=workflow%3Atests)
 [![Go Report Card](https://goreportcard.com/badge/github.com/corbado/corbado-go)](https://goreportcard.com/report/github.com/corbado/corbado-go)
-[![documentation](https://img.shields.io/badge/documentation-Corbado_Backend_API_Reference-blue.svg)](https://apireference.cloud.corbado.io/backendapi/)
+[![documentation](https://img.shields.io/badge/documentation-Corbado_Backend_API_Reference-blue.svg)](https://docs.corbado.com/api-reference/backend-api)
 [![Slack](https://img.shields.io/badge/slack-join%20chat-brightgreen.svg)](https://join.slack.com/t/corbado/shared_invite/zt-1b7867yz8-V~Xr~ngmSGbt7IA~g16ZsQ)
 
-The [Corbado](https://www.corbado.com) Go SDK provides convenient access to the [Corbado Backend API](https://apireference.cloud.corbado.io/backendapi-v2/) from applications written in the Go language.
+The [Corbado](https://www.corbado.com) Go SDK provides convenient access to the [Corbado Backend API](https://docs.corbado.com/api-reference/backend-api) from applications written in the Go language.
 
 [![integration-guides](https://github.com/user-attachments/assets/7859201b-a345-4b68-b336-6e2edcc6577b)](https://app.corbado.com/getting-started?search=go)
 
@@ -74,7 +74,7 @@ user, err := sdk.Users().Get(context.Background(), "usr-12345679")
 if err != nil {
     panic(err)
 }
-``` 
+```
 
 ## :books: Advanced
 
