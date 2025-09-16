@@ -15,7 +15,7 @@ import (
 	"github.com/corbado/corbado-go/v2/pkg/validationerror"
 )
 
-const Version = "2.2.0"
+const Version = "2.2.2"
 
 type SDK interface {
 	Sessions() session.Session
