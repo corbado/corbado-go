@@ -120,6 +120,7 @@ jobs:
           # optional: avoid waiting on THIS workflow itself
           running-workflow-name: "Dependabot high/critical alert issues"
           check-regexp: "^(?!.*(create_issue_for_high_critical|auto_merge_dependabot)).*$"
+          allowed-conclusions: success,skipped
 
       - name: Merge Dependabot PR
         uses: actions/github-script@v7
