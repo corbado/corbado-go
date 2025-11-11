@@ -7,7 +7,7 @@ require (
 	github.com/deepmap/oapi-codegen v1.16.3
 
 	// test-only vulnerable dep to trigger Dependabot alert
-	github.com/go-git/go-git/v5 v5.11.0
+	github.com/go-git/go-git/v5 v5.13.0
 	github.com/golang-jwt/jwt/v4 v4.5.2
 	github.com/gorilla/mux v1.8.1
 	github.com/oapi-codegen/runtime v1.1.1
