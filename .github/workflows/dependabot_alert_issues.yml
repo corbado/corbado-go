@@ -23,33 +23,41 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Create tracking issue for high/critical advisory
-        if: |
-          steps.metadata.outputs.security-advisory-severity == 'high' ||
-          steps.metadata.outputs.security-advisory-severity == 'critical'
+      - name: Create tracking issue for advisory
         uses: actions/github-script@v7
         env:
-          SEVERITY: ${{ steps.metadata.outputs.security-advisory-severity }}
-          GHSA: ${{ steps.metadata.outputs.security-advisory-ghsa-id }}
+          GHSA: ${{ steps.metadata.outputs.ghsa-id }}
           PACKAGE: ${{ steps.metadata.outputs.dependency-names }}
+          PREVIOUS_VERSION: ${{ steps.metadata.outputs.previous-version }}
+          NEW_VERSION: ${{ steps.metadata.outputs.new-version }}
+          UPDATE_TYPE: ${{ steps.metadata.outputs.update-type }}
+          DEPENDENCY_TYPE: ${{ steps.metadata.outputs.dependency-type }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { owner, repo } = context.repo;
             const pr = context.payload.pull_request;
 
-            const severity = (process.env.SEVERITY || 'unknown').toUpperCase();
             const pkg = process.env.PACKAGE || 'unknown-package';
-            const ghsa = process.env.GHSA || 'unknown-GHSA';
+            const ghsa = process.env.GHSA || '';
+            const previousVersion = process.env.PREVIOUS_VERSION || 'unknown';
+            const newVersion = process.env.NEW_VERSION || 'unknown';
+            const updateType = process.env.UPDATE_TYPE || 'unknown';
+            const dependencyType = process.env.DEPENDENCY_TYPE || 'unknown';
             const alertUrl = pr.html_url; // link to PR as the "alert" surface
 
             const teamMention = '@Dopeamin';
 
-            const title = `[Dependabot] ${severity} vulnerability in ${pkg} (${ghsa})`;
+            const title = ghsa
+              ? `[Dependabot] Advisory for ${pkg} (${ghsa})`
+              : `[Dependabot] Update for ${pkg} (${previousVersion} → ${newVersion})`;
 
-            // Avoid duplicates: search by GHSA id in title
+            // Avoid duplicates: search by GHSA id or package/version in title
+            const duplicateQuery = ghsa
+              ? `repo:${owner}/${repo} "${ghsa}" in:title is:issue`
+              : `repo:${owner}/${repo} "${pkg}" "${newVersion}" in:title is:issue`;
             const search = await github.rest.search.issuesAndPullRequests({
-              q: `repo:${owner}/${repo} "${ghsa}" in:title is:issue`,
+              q: duplicateQuery,
             });
 
             if (search.data.total_count > 0) {
@@ -57,22 +65,36 @@ jobs:
               return;
             }
 
+            const details = [
+              `- **Package**: \`${pkg}\``,
+              `- **Update**: \`${previousVersion}\` → \`${newVersion}\``,
+              `- **Update type**: ${updateType}`,
+              `- **Dependency type**: ${dependencyType}`,
+              `- **PR**: #${pr.number}`,
+              `- **PR URL**: ${alertUrl}`,
+            ];
+
+            if (ghsa) {
+              details.splice(2, 0, `- **Advisory (GHSA)**: \`${ghsa}\``);
+            }
+
             const body = `${teamMention}
 
-            A new **${severity}** Dependabot alert was detected.
+            A new Dependabot pull request requires attention.
 
-            - **Package**: \`${pkg}\`
-            - **Advisory (GHSA)**: \`${ghsa}\`
-            - **Alert URL**: ${alertUrl}
+            ${details.join('\n')}
 
             This issue was created automatically by a GitHub Actions workflow.`;
 
+            const labels = ['dependabot'];
+            if (ghsa) {
+              labels.push('security');
+            }
             await github.rest.issues.create({
               owner,
               repo,
               title,
               body,
-              labels: ['security', 'dependabot', severity.toLowerCase()],
-              
+              labels,
               assignees: ['Dopeamin'],
             });
