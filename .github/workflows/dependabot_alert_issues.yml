@@ -6,15 +6,16 @@ on:
 
 permissions:
   issues: write
-  contents: read
-  pull-requests: read
+  contents: write # was: read  -> needed for merging
+  pull-requests: write # was: read  -> needed for merging
+  checks: read
+  statuses: read
 
 jobs:
   create_issue_for_high_critical:
     runs-on: ubuntu-latest
 
-    # Only run for Dependabot PRs
-    if: github.actor == 'dependabot[bot]'
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
 
     steps:
       - name: Fetch Dependabot metadata
@@ -71,7 +72,6 @@ jobs:
               `- **Update type**: ${updateType}`,
               `- **Dependency type**: ${dependencyType}`,
               `- **PR**: #${pr.number}`,
-              `- **PR URL**: ${alertUrl}`,
             ];
 
             if (ghsa) {
@@ -98,3 +98,71 @@ jobs:
               labels,
               assignees: ['Dopeamin'],
             });
+
+  auto_merge_dependabot:
+    runs-on: ubuntu-latest
+    needs: create_issue_for_high_critical
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
+
+    steps:
+      - name: Check if all required checks passed
+        id: status
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { owner, repo } = context.repo;
+            const pr = context.payload.pull_request;
+            const sha = pr.head.sha;
+
+            // Combined status (old API)
+            const { data: combined } = await github.rest.repos.getCombinedStatusForRef({
+              owner,
+              repo,
+              ref: sha,
+            });
+
+            // Checks API (GitHub Actions and other checks)
+            const { data: checks } = await github.rest.checks.listForRef({
+              owner,
+              repo,
+              ref: sha,
+            });
+
+            const allStatusesSuccess =
+              (combined.state === 'success' || combined.state === 'pending') &&
+              combined.statuses.every(s =>
+                ['success', 'neutral', 'skipped', 'pending'].includes(s.state)
+              );
+
+            const allChecksSuccess =
+              checks.check_runs.length === 0 ||
+              checks.check_runs.every(c =>
+                ['success', 'neutral', 'skipped'].includes(c.conclusion)
+              );
+
+            if (!allStatusesSuccess || !allChecksSuccess) {
+              core.info('Not all checks are successful yet – skipping merge.');
+              core.setOutput('can_merge', 'false');
+            } else {
+              core.info('All checks look good – ready to merge.');
+              core.setOutput('can_merge', 'true');
+            }
+
+      - name: Merge Dependabot PR
+        if: steps.status.outputs.can_merge == 'true'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { owner, repo } = context.repo;
+            const pr = context.payload.pull_request;
+
+            await github.rest.pulls.merge({
+              owner,
+              repo,
+              pull_number: pr.number,
+              merge_method: 'squash', // or 'merge' / 'rebase'
+            });
+
+            core.info(`Merged Dependabot PR #${pr.number}`);
