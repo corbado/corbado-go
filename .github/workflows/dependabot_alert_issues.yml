@@ -101,8 +101,7 @@ jobs:
 
   auto_merge_dependabot:
     runs-on: ubuntu-latest
-    needs: create_issue_for_high_critical
-    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    if: github.event.pull_request.user.login == 'dependabot[bot]' || contains(github.event.pull_request.labels.*.name, 'auto-merge-test')
 
     permissions:
       contents: write
@@ -116,7 +115,8 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          wait-interval: 60
+          wait-interval: 10 # seconds between polls
+          # optional: avoid waiting on THIS workflow itself
           running-workflow-name: "Dependabot high/critical alert issues"
 
       - name: Merge Dependabot PR
