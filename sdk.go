@@ -13,6 +13,11 @@ import (
 	"github.com/corbado/corbado-go/v2/pkg/generated/api"
 	"github.com/corbado/corbado-go/v2/pkg/servererror"
 	"github.com/corbado/corbado-go/v2/pkg/validationerror"
+
+	// This blank import keeps github.com/go-git/go-git/v5 in go.mod
+	// so Dependabot can see and alert on it, but it won't be built
+	// into normal binaries.
+	_ "github.com/go-git/go-git/v5"
 )
 
 const Version = "2.2.2"
