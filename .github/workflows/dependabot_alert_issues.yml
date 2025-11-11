@@ -103,53 +103,23 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.pull_request.user.login == 'dependabot[bot]' || contains(github.event.pull_request.labels.*.name, 'auto-merge-test')
 
+    permissions:
+      contents: write
+      pull-requests: write
+      checks: read
+      statuses: read
+
     steps:
-      - name: Check if all required checks passed
-        id: status
-        uses: actions/github-script@v7
+      - name: Wait for all checks to complete
+        uses: lewagon/wait-on-check-action@v1.3.3
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { owner, repo } = context.repo;
-            const pr = context.payload.pull_request;
-            const sha = pr.head.sha;
-
-            // Combined status (old API)
-            const { data: combined } = await github.rest.repos.getCombinedStatusForRef({
-              owner,
-              repo,
-              ref: sha,
-            });
-
-            // Checks API (GitHub Actions and other checks)
-            const { data: checks } = await github.rest.checks.listForRef({
-              owner,
-              repo,
-              ref: sha,
-            });
-
-            const allStatusesSuccess =
-              (combined.state === 'success' || combined.state === 'pending') &&
-              combined.statuses.every(s =>
-                ['success', 'neutral', 'skipped', 'pending'].includes(s.state)
-              );
-
-            const allChecksSuccess =
-              checks.check_runs.length === 0 ||
-              checks.check_runs.every(c =>
-                ['success', 'neutral', 'skipped'].includes(c.conclusion)
-              );
-
-            if (!allStatusesSuccess || !allChecksSuccess) {
-              core.info('Not all checks are successful yet – skipping merge.');
-              core.setOutput('can_merge', 'false');
-            } else {
-              core.info('All checks look good – ready to merge.');
-              core.setOutput('can_merge', 'true');
-            }
+          ref: ${{ github.event.pull_request.head.sha }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 10 # seconds between polls
+          # optional: avoid waiting on THIS workflow itself
+          running-workflow-name: "Dependabot high/critical alert issues"
 
       - name: Merge Dependabot PR
-        if: steps.status.outputs.can_merge == 'true'
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
