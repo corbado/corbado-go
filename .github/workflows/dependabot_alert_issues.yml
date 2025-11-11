@@ -132,7 +132,7 @@ jobs:
               owner,
               repo,
               pull_number: pr.number,
-              merge_method: 'squash', // or 'merge' / 'rebase'
+              merge_method: 'merge',
             });
 
             core.info(`Merged Dependabot PR #${pr.number}`);
