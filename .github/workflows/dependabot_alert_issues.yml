@@ -47,7 +47,7 @@ jobs:
             const dependencyType = process.env.DEPENDENCY_TYPE || 'unknown';
             const alertUrl = pr.html_url; // link to PR as the "alert" surface
 
-            const teamMention = '@Dopeamin';
+            const teamMention = '@Dopeamin / @snacker81';
 
             const title = ghsa
               ? `[Dependabot] Advisory for ${pkg} (${ghsa})`
