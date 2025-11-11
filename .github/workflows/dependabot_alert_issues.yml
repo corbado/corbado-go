@@ -1,0 +1,71 @@
+name: Dependabot high/critical alert issues
+
+on:
+  dependabot_alert:
+    types: [created]
+
+permissions:
+  issues: write
+  security-events: read
+  contents: read
+
+jobs:
+  create_issue_for_high_critical:
+    runs-on: ubuntu-latest
+    if: |
+      github.event.alert.severity == 'high' ||
+      github.event.alert.severity == 'critical'
+
+    steps:
+      - name: Create tracking issue for alert
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { owner, repo } = context.repo;
+            const alert = context.payload.alert;
+
+            const severity = (alert.severity || 'unknown').toUpperCase();
+            const pkg = alert.affected_package_name ||
+              (alert.package && alert.package.name) ||
+              'unknown-package';
+            const ghsa = alert.ghsa_id || 
+              alert.external_identifier || 
+              'unknown-GHSA';
+            const alertUrl = alert.html_url || 
+              alert.url || 
+              '(no URL provided)';
+
+            const teamMention = '@Dopeamin';
+
+            const title = `[Dependabot] ${severity} vulnerability in ${pkg} (${ghsa})`;
+
+            // Avoid duplicates: search by GHSA id in title
+            const search = await github.rest.search.issuesAndPullRequests({
+              q: `repo:${owner}/${repo} "${ghsa}" in:title is:issue`,
+            });
+
+            if (search.data.total_count > 0) {
+              console.log('Issue already exists for this alert, skipping.');
+              return;
+            }
+
+            const body = `${teamMention}
+
+            A new **${severity}** Dependabot alert was detected.
+
+            - **Package**: \`${pkg}\`
+            - **Advisory (GHSA)**: \`${ghsa}\`
+            - **Alert URL**: ${alertUrl}
+
+            This issue was created automatically by a GitHub Actions workflow.`;
+
+            await github.rest.issues.create({
+              owner,
+              repo,
+              title,
+              body,
+              labels: ['security', 'dependabot', severity.toLowerCase()],
+              
+              assignees: ['Dopeamin'],
+            });
