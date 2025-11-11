@@ -116,8 +116,7 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          wait-interval: 10 # seconds between polls
-          # optional: avoid waiting on THIS workflow itself
+          wait-interval: 60
           running-workflow-name: "Dependabot high/critical alert issues"
 
       - name: Merge Dependabot PR
